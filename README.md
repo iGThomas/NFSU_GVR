@@ -26,5 +26,5 @@ Fun fact if you install the system recovery disk and then run regedit it will op
 
 The install will succeed but with some font errors missing which can be ignored. 
 
-At some point on Disc 2 is asks for Net Framework version X.X.X to be installed (to be continued)
+At some point on Disc 2 is asks for Net Framework version 1.1.4322. you can find it on the webarchiev for windows XP especially: https://archive.org/details/dotnetfx_202102
 
