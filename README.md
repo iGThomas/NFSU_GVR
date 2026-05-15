@@ -31,4 +31,10 @@ At some point on Disc 2 is asks for Net Framework version 1.1.4322. you can find
 After installing the dotnet I was able to install the disc 2 but then got the error on some shell script that was ran by the disc located on C:\GvrPlus\1\scripts\GvRPlusExportDatabaseScript.exe:
 Error: Database installation started.COM objectwith CLSID (10020200-E260-[truncated]) is either not valid or not registered. Failure changing Account Password.  Press enter to continue
 
-I believe it's linekd to the cabinet username and password which is just cabinet/cabinet (to be continued)
+I believe it's linekd to the cabinet username and password which is just cabinet/cabinet (NOT SURE)
+
+The database is required in this game since from what I read the whole frontend is made in SQL and then it somehow launches the UndergroundGVR.exe (game) through it with arguments (someone ported the game to Windows with some custom launcher)
+
+To install the database I exported the setup files from the system recovery disk which was located inside c:\gvr\Database
+There were two folders:  _MSDERelA and _SqlXml
+the MSDRelA is the important one but it won't launch the setup because it requires special argument so copy the files inside the repo and install the setup like this: setup.exe SAPWD=sa DISABLENETWORKPROTOCOLS=1 SECURITYMODE=SQL /qb
