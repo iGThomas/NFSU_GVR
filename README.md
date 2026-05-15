@@ -28,3 +28,7 @@ The install will succeed but with some font errors missing which can be ignored.
 
 At some point on Disc 2 is asks for Net Framework version 1.1.4322. you can find it on the webarchiev for windows XP especially: https://archive.org/details/dotnetfx_202102
 
+After installing the dotnet I was able to install the disc 2 but then got the error on some shell script that was ran by the disc located on C:\GvrPlus\1\scripts\GvRPlusExportDatabaseScript.exe:
+Error: Database installation started.COM objectwith CLSID (10020200-E260-[truncated]) is either not valid or not registered. Failure changing Account Password.  Press enter to continue
+
+I believe it's linekd to the cabinet username and password which is just cabinet/cabinet (to be continued)
