@@ -44,6 +44,9 @@ After installing the game I noticed that the password was changed so I wanted to
 
 The password was then also in plain text: Q31y2Z29wpEsd
 
+To login into the DB command: osql -U sa -P Q31y2Z29wpEsd -S .
+
+To view the DB easily in a UI view I downloaded an old SQL tool from microsoft: http://download.microsoft.com/download/SQLSVR2000/Trial/2000/NT45/EN-US/SQLEVAL.exe
 
 
 
