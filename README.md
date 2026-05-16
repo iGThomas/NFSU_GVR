@@ -37,4 +37,5 @@ The database is required in this game since from what I read the whole frontend 
 
 To install the database I exported the setup files from the system recovery disk which was located inside c:\gvr\Database
 There were two folders:  _MSDERelA and _SqlXml
-the MSDRelA is the important one but it won't launch the setup because it requires special argument so copy the files inside the repo and install the setup like this: setup.exe SAPWD=sa DISABLENETWORKPROTOCOLS=1 SECURITYMODE=SQL /qb
+the MSDRelA is the important one but it won't launch the setup because it requires special argument so copy the files inside the repo and install the setup like this: setup.exe SAPWD="q2Z35o" DISABLENETWORKPROTOCOLS=1 SECURITYMODE=SQL /qb
+(added the default password found thanks to Ratface from Emuline.org)
