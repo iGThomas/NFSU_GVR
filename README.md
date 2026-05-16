@@ -54,6 +54,10 @@ Key O - Operator Menu
 Scrolling in operator mode via arrows
 Key S - Start / Reset Car
 Key N - Nitros
+Key V - Change View
+Key Q - Quit
+Key E - E-brake
+Key M - Reduce song volume - Stop Music - Change Song
 
 
 
