@@ -46,6 +46,12 @@ To login into the DB command: osql -U sa -P Q31y2Z29wpEsd -S .
 
 To view the DB easily in a UI view I downloaded an old SQL tool from microsoft: http://download.microsoft.com/download/SQLSVR2000/Trial/2000/NT45/EN-US/SQLEVAL.exe
 
+Another requirement for the game to succesfully start is to have the nvidia drivers, unfortunately I couldn't (yet) start the game in VM but on a cheap laptop (Acer Aspire 9300) with AMD and Nvidia Go 6100 the game started once the drivers were installed for Video.
+
+Fun fact the dongle isn't even needed to boot the game while it's needed when you run the game via the recovery disc. On a standalone XP SP3 there's probably some registry missing that I didn't copy about the dongle and it bypassed the dongle.
+
+Career mode is greyed out because there's no smart card reader.
+
 Game Controls:
 Numpad 8 Accelerate
 Numpad 4 Left
