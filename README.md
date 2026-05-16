@@ -46,6 +46,15 @@ To login into the DB command: osql -U sa -P Q31y2Z29wpEsd -S .
 
 To view the DB easily in a UI view I downloaded an old SQL tool from microsoft: http://download.microsoft.com/download/SQLSVR2000/Trial/2000/NT45/EN-US/SQLEVAL.exe
 
+Game Controls:
+Numpad 8 Accelerate
+Numpad 4 Left
+Numpad 6 Right
+Key O - Operator Menu
+Scrolling in operator mode via arrows
+Key S - Start / Reset Car
+Key N - Nitros
+
 
 
 
