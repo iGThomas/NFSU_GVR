@@ -24,14 +24,12 @@ String -> RUNTIMESKUCODE = XPeCli
 
 Fun fact if you install the system recovery disk and then run regedit it will open this exact path as if it's the last thing they checked/added before creating a restore image :)
 
-The install will succeed but with some font errors missing which can be ignored. 
+When installing disc 1 it will give popups about locked file detection on some fonts, they can be ignored. An error about NvCpl.dll missing can also be seen if Nvidia drivers
 
 At some point on Disc 2 is asks for Net Framework version 1.1.4322. you can find it on the webarchiev for windows XP especially: https://archive.org/details/dotnetfx_202102
 
 After installing the dotnet I was able to install the disc 2 but then got the error on some shell script that was ran by the disc located on C:\GvrPlus\1\scripts\GvRPlusExportDatabaseScript.exe:
 Error: Database installation started.COM objectwith CLSID (10020200-E260-[truncated]) is either not valid or not registered. Failure changing Account Password.  Press enter to continue
-
-I believe it's linekd to the cabinet username and password which is just cabinet/cabinet (NOT SURE)
 
 The database is required in this game since from what I read the whole frontend is made in SQL and then it somehow launches the UndergroundGVR.exe (game) through it with arguments (someone ported the game to Windows with some custom launcher)
 
