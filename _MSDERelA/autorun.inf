@@ -1,0 +1,39 @@
+[autorun]
+OPEN=SETUP.EXE /AUTORUN
+ICON=SETUP.EXE,1
+shell\configure=&Configure...
+shell\configure\command=SETUP.EXE
+shell\install=&Install...
+shell\install\command=SETUP.EXE
+
+[ProductFeatures]
+
+[ProductInformation]
+ProductCode={4743636A-D097-4F5F-8C4F-4F73BC32C0FC}
+DisplayName=SQL Server 2000 Desktop Engine
+Version=8.0
+;Make this be 1 to do autorun even if the product is installed.  Default for Office
+;is to not autorun maintenance mode setup if the product is installed.
+;AutorunIfInstalled=1
+
+[ServicePack]
+NTVersion=4
+; 0x300 as a decimal number.
+SPLevel=1280
+MessageText=%s cannot be installed on this computer.  This product requires Microsoft Windows NT Version 4.0 Service Pack 5 or higher.  Please download the service pack from www.microsoft.com prior to installing.
+
+[InstallFont]
+
+[InstallFontBold]
+
+[InstallMSI]
+;Make this be zero to aways suppress installing Windows installer
+;If this is missing or one, we upgrade Windows installer only on systems
+;prior to NT 5.
+;Make this be 2 to upgrade Windows installer even on NT 5 and later.
+InstMsi=1
+
+[IE]
+;before 5.00.0909.1400, IE uses msls3.dll 317.  After 5.00.0909.1400, IE uses msls3.dll 325
+Version=5.00.0909.1400
+MessageText=This beta version of Microsoft Windows 2000 must be upgraded to install %s.

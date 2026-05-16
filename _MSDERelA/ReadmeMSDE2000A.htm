@@ -1,0 +1,887 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML DIR="LTR"><HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Microsoft SQL Server 2000 Desktop Engine (MSDE 2000) Release A</TITLE>
+</HEAD>
+<body topmargin=0 id="bodyID" class = "dtBODY">
+<!-- Document last modified on  Monday, October 13, 2003 - 11:53 AM -->
+
+<Style TYPE="text/css">
+<!--
+
+/* Style sheet optimized for IE4x - Last updated 2/9/99 */
+/* changed h1-h4 font sizes */
+
+body    		{ color: #000000;
+		background: #FFFFFF;  	
+		font-size: 70%;    		
+		font-family: Verdana, Arial, Helvetica, Sans Serif }
+
+a:link	 	{ color: "#0000FF"; text-decoration:"underline";}
+
+a:visited 	{ color: "#660000"; text-decoration:"underline";}
+
+a:active, a:hover 	{ color: "#FF0000";  cursor:hand; text-decoration:"underline";}
+
+h1
+		{ font-size: 190%; 
+		margin-bottom:" .5em"; clear:both; }
+
+h2
+		{ font-size: 175%;  
+		margin-top: 1.5em;
+		margin-bottom:" .5em"; clear:both; }
+
+h3
+		{ font-size: 160%; 
+		margin-top: 1.2em;  
+		margin-bottom: ".5em"; clear:both; }
+
+h4
+		{ font-size: 145%; 
+		margin-bottom:" .5em"; clear:both; }
+
+h5
+		{ font-size: 115%;  
+		margin-top: 1.5em;
+		margin-bottom:" .5em"; clear:both; }
+
+h6
+		{ font-size: 110%; 
+		margin-top: 1.2em;  
+		margin-bottom: ".5em"; clear:both; }
+
+p
+		{ margin-top:" .6em"; 
+		margin-bottom: ".6em"; }
+			
+ol
+		{ margin-top: ".5em"; 
+		margin-bottom: 0; 
+		margin-left: "2.1em"; 
+		padding-left: "0em"; }
+	
+ul
+		{ margin-top: ".6em"; 	
+		margin-bottom: 0;
+		list-style-type: disc;
+		margin-left: "1.5em";
+		padding-left: "0em"; }
+		
+li
+		{ margin-bottom: ".7em"; clear:both; }
+
+dd
+		{ margin-bottom: 0; 
+		margin-left: "1.5em"; }
+
+em
+		{ color: "#FF0000"; } 
+
+/* for defined terms, follow the "Document Conventions" listing in the Microsoft Manual of Style: */
+/* Keywords, functions, and anything else the user must enter exactly as shown are bold--add "font-weight: bold;" to the dt tag */
+/* Variables, book titles, and placeholders the user must provide are italic--add "font-style: italic;" to the dt tag */
+/* pre-defined arguments are bold and italic--add "font-weight: bold;" and "font-style: italic;" to the dt tag */
+
+dt
+		{ margin-top: "2em"; }
+
+pre
+		{ margin-top: "1.2em";
+		margin-bottom: "1.5em"; }
+
+code
+		{ font-family: Courier New; 
+		font-size: 115% }
+
+table
+		{ font-size: 100%;
+		margin-top: "1em"; 
+		margin-bottom: "1em"; 
+		cellpadding: "0.5em"; }
+		
+th
+		{ text-align: left;
+		background: #DDDDDD;
+		vertical-align: bottom;}
+		
+tr
+		{ vertical-align: top; }
+
+td
+		{ background: #EEEEEE;
+		vertical-align: top; }
+
+/* Alert text ID formats */
+
+#Alert_Note        { color: "#000000"; margin-left:" 1.5em"; margin-top:" 1em"; margin-bottom:"1em" }
+
+#Alert_Important { color: "#8B0000"; margin-left:" 1.5em"; margin-top:" 1em"; margin-bottom:"1em"  }
+
+#Alert_Warning  { color: "B22222"; margin-left:" 1.5em"; margin-top:" 1em"; margin-bottom:"1em"  }
+		  
+// -->
+</style>
+<!--Document last modified on Monday, October 13, 2003 at 11:53 AM-->
+<H1>Microsoft SQL Server 2000 Desktop Engine (MSDE 2000) Release A</H1>
+
+<H5>October 13, 2003</H5>
+
+<P>&copy; Microsoft Corporation, 2003. All rights reserved.</P>
+<P style="background-color: #C0FFFF">&nbsp;<BR>The Microsoft&reg; SQL Server&trade; documentation team welcomes your suggestions and comments about this readme documentation, but cannot answer technical support questions. You can quickly and directly send e-mail feedback using the link below. Please submit all feedback in English.<BR><BR>To submit written feedback about this document, click here:&nbsp;&nbsp;<A HREF="mailto:sqldocfb@microsoft.com?subject=MSDE 2000 Release A readme file&body=---Please type comments here, leaving the subject line in place.---">Submit feedback</A>.<BR>&nbsp;</P>
+
+<H1><A NAME="_contents_ar5q"></A>Contents</H1>
+
+<P>1.0 <A HREF="#_introduction">Introduction</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;1.1 <A HREF="#_1461_msde_2000_documentation_d3jb">MSDE 2000 Documentation</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;1.2 <A HREF="#_1462_additional_information_about_msde_2_wluf">Additional Information About MSDE 2000 Release A</A></P>
+
+<P>2.0 <A HREF="#_downloading_and_extracting_sp3">Downloading and Extracting MSDE 2000 Release A</A></P>
+
+<P>3.0 <A HREF="#_3460_installing_msde_2000_release_a_fzpy">Installing MSDE 2000 Release A</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;3.1 <A HREF="#_3461_msde_2000_setup_documentation_wluf">MSDE 2000 Setup Documentation</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;3.2 <A HREF="#_3462_installation_prerequisites_fzpy">Installation Prerequisites</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;3.3 <A HREF="#_3463_stopping_services_before_installing_238p">Stopping Services Before Installing MSDE 2000 Release A</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;3.4 <A HREF="#_3464_install_msde_2000_release_a_d3jb">Install MSDE 2000 Release A</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.1 <A HREF="#_verify_the_version_of_microsoft_data_acc_d3jb">Verify the Version of Microsoft Data Access Components</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.2 <A HREF="#_3464461_security_considerations_for_msde_d3jb">Security Considerations for MSDE 2000 Release A</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.3 <A HREF="#_3464462_msde_2000_setup_parameters_wluf">MSDE 2000 Setup Parameters</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.4 <A HREF="#_3464463_msde_2000_release_a_installation_fzpy">MSDE 2000 Release A Installation Examples</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;3.5 <A HREF="#_3465_restart_services_ar5q">Restart Services</A></P>
+
+<P>4.0 <A HREF="#_documentation_notes">Documentation Notes</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;4.1 <A HREF="#_database_and_desktop_engine_enhancements">Desktop Engine Enhancements</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.1 <A HREF="#_expanded_error_messages_for_distributed__d3jb">Expanded Error Messages for Distributed Queries</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.2 <A HREF="#_debugging_functionality_changes_f8s1">Debugging Functionality Changes</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;4.2 <A HREF="#_replication_enhancements">Replication Enhancements</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.1 <A HREF="#_transactional_replication_update_statements_on_unique_columns">Transactional Replication UPDATE Statements on Unique Columns</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.2 <A HREF="#_restriction_on_non-unique_clustered_indexes">Restriction on Non-unique Clustered Indexes</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3 <A HREF="#_change_to_requirements_for_attaching_40o_wluf">Change to Requirements for Attaching or Restoring a Replication Database</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;4.3 <A HREF="#_5464_sql_server_agent_enhancements_705">SQL Server Agent Enhancements</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.1 <A HREF="#_sql_server_agent_logs_account_information">SQL Server Agent Logs Account Information</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.2 <A HREF="#_sql_server_agent_permission_checks_d3jb">SQL Server Agent Permission Checks</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.3 <A HREF="#_5464465_sql_server_agent_mail_mapi_profi_d3jb">SQL Agent Mail MAPI Profiles</A></P>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;4.4 <A HREF="#_db-library_and_embedded_sql_for_c">DB-Library and Embedded SQL for C</A></P>
+
+<H1><A NAME="_introduction"></A>1.0 Introduction</H1>
+
+<P>Microsoft SQL Server 2000 Desktop Engine (MSDE 2000) Release A is a downloadable version of MSDE 2000 with a new End-User License Agreement (EULA) that gives users different rights from previous MSDE 2000 licenses.</P>
+
+<P>After downloading and extracting the MSDE 2000 Release A files, use Desktop Engine Setup.exe to install instances of MSDE 2000 Release A. Desktop Engine Setup.exe is a command prompt utility; it has no user interface. You instead use command prompt switches or an .ini file to specify the installation options.</P>
+
+<P>Once installed, MSDE 2000 Release A functions the same as MSDE 2000 Service Pack (SP) 3a. These are the differences between MSDE 2000 Release A and MSDE 2000 SP3a:
+
+<UL type="disc">
+	<LI>The MSDE 2000 Release A EULA is new.</li>
+
+	<LI>MSDE 2000 Release A cannot be used to upgrade earlier versions of MSDE; it can only be used to install new instances of MSDE 2000 Release A. Use the MSDE part of the SQL Server 2000 service pack files to:
+<UL type="disc">
+	<LI>Upgrade MSDE 1.0 to MSDE 2000.</li>
+
+	<LI>Apply the latest service pack to an instance of MSDE 2000. For example, use the MSDE part of SQL Server 2000 SP3a to upgrade instances of MSDE 2000 SP1 or MSDE 2000 SP2 to MSDE 2000 SP3a.</li>
+</UL>
+
+<P>The latest SQL Server 2000 service pack files are available at this <A HREF="http://go.microsoft.com/fwlink/?LinkId=12734" target=_blank>Web Site</A>.
+MSDE 2000 Release A does not include the merge modules that are sometimes used to embed earlier versions of MSDE 2000 in application setup utilities. To distribute the MSDE 2000 Release A files with applications, you must write an application setup wrapper utility that:
+
+<UL type="disc">
+	<LI>Calls Desktop Engine Setup.exe to install an instance of MSDE 2000 Release A.</li>
+
+	<LI>Installs the application.</li>
+</UL>
+
+<P>For more information about distributing MSDE 2000 Release A, see this Microsoft <A HREF="http://go.microsoft.com/fwlink/?LinkId=20396" target=_blank>Web page</A>.
+</li>
+
+	<LI>A new readme file, ReadmeMSDE2000A.htm.</li>
+</UL>
+
+<P>MSDE 2000 Release A contains the same fixes as MSDE 2000 SP3a , including those that address issues raised by the Slammer worm. You do not need to apply MSDE 2000 SP3a to MSDE 2000 Release A, or to upgrade MSDE 2000 SP3a or SP3 to MSDE 2000 Release A.</P>
+
+<P>MSDE 2000 Release A returns the same version information as MSDE 2000 SP3a. <B>@@VERSION</B> and <B>SERVERPROPERTY('ProductVersion')</B> report a build number of 8.00.760. <B>SERVERPROPERTY('ProductLevel')</B> returns SP3. <B>@@VERSION</B> and <B>SERVERPROPERTY('Edition')</B> report the edition as Desktop Engine.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_1461_msde_2000_documentation_d3jb"></A>1.1 MSDE 2000 Documentation</H1>
+
+<P>SQL Server 2000 Books Online is the primary documentation set for MDSE 2000. The current version of Books Online contains updated information about MSDE 2000. Current versions of Books Online are available at these locations:
+
+<UL type="disc">
+	<LI>In the MSDN Library. The latest version of Books Online is available at this <A HREF="http://go.microsoft.com/fwlink/?LinkId=20283" target=_blank>Web site</A>.</li>
+
+	<LI>Periodically, updates to Books Online are also made available as a set of downloadable files at this <A HREF="http://go.microsoft.com/fwlink/?LinkId=9506" target=_blank>Books Online download site</A>.</li>
+</UL>
+
+<P>In July 2003 Books Online was updated to document new behavior introduced in MSDE 2000 SP3a. This documentation also applies to MSDE 2000 Release A and is currently available in the MSDN Library only.</P>
+
+<P>Additional MSDE 2000 information will be included in a new SQL Server 2000 Books Online update to be published on the Books Online download site in December 2003, and in the January 2004 MSDN Library. This update will be named SQL Server 2000 Books Online (Updated - 2004).</P>
+
+<P>Additional information about MSDE 2000 is available from the <A HREF="http://go.microsoft.com/fwlink/?LinkId=20284" target=_blank>Microsoft MSDE 2000 Web site</A>.</P>
+
+<P>Because MSDE 2000 Release A functionality is the same as MSDE 2000 SP3a, documentation references to MSDE 2000 SP3a also apply to MSDE 2000 Release A. The exceptions are the MSDE 2000 SP3a features not supported in MSDE 2000 Release A: 
+
+<UL type="disc">
+	<LI>Upgrades from earlier versions of MSDE.</li>
+
+	<LI>The use of MSDE 2000 merge modules.</li>
+</UL>
+
+<P>In any SQL Server 2000 documentation, references to the components included in MSDE 2000 (the database engine, database client connectivity components and programming APIs, Replication, and Data Transformations Services) also apply to MSDE 2000 Release A, except for features not included in MSDE 2000.</P>
+
+<P>The MSDE 2000 Release A version of Setup.exe installs the readme.txt file from the original release of SQL Server 2000. The information in this copy of readme.txt is not relevant to MSDE 2000 Release A. Use the readme file named ReadmeMSDE2000A.htm for MSDE 2000 Release A.</P>
+
+<H5>Updated SQL Server Samples Are Available</H5>
+
+<P>Samples for the SQL Server 2000 database engine that were updated for SP3 and SP3a are available from this <A HREF="http://go.microsoft.com/fwlink/?LinkId=11615" target=_blank>Microsoft Web site</A>. All samples that reference the SQL Server 2000 components included in MSDE 2000 (the dataset engine, database client connectivity components and programming APIs, Replication, and Data Transformations Services) also apply to MSDE 2000 Release A, except for features not supported in MSDE 2000.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_1462_additional_information_about_msde_2_wluf"></A>1.2 Additional Information About MSDE 2000 Release A</H1>
+
+<P>Any information about MSDE 2000 Release A that was not available in time to be included in this readme file will be published in Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=829925" target=_blank>829925</A>.</P>
+
+<P>MSDE 2000 Release A contains all of the fixes included in MSDE 2000 SP3a. The list of the fixes in SQL Server 2000 SP3a is available in Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=306908" target=_blank>306908</A>.</P>
+
+<H3>QFE Fixes</H3>
+
+<P>MSDE 2000 Release A includes all publicly issued SQL Server 2000 SP2 security bulletins that were addressed in MSDE 2000 SP3a.</P>
+
+<P>If you received an MSDE 2000 hotfix after October 14, 2002, the hotfix is probably not included in MSDE 2000 Release A. Contact your primary support provider about obtaining the same hotfix for MSDE 2000 Release A.</P>
+
+<H3>SQL Server CE Server Tools Updates</H3>
+
+<P>You should also update the server replication components on Microsoft Internet Information Services (IIS) servers if you have, or plan to build, replication topologies that include both:
+
+<UL type="disc">
+	<LI>Microsoft SQL Server 2000 Windows&reg; CE Edition (SQL Server CE) and</li>
+
+	<LI>Databases and publishers running MSDE 2000 Release A.</li>
+</UL>
+
+<P>An updated SQL Server CE Server Tools installer is available at this <A HREF="http://go.microsoft.com/fwlink/?LinkId=11696" target=_blank>Microsoft Web site</A>.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_downloading_and_extracting_sp3"></A>2.0 Downloading and Extracting MSDE 2000 Release A</H1>
+
+<P>MSDE 2000 Release A is available as a downloadable self-extracting file named MSDE2000A.exe. After downloading MSDE2000A.exe, run the file on your computer to create a set of folders and files on your disk or a network share. After file extraction is complete, you can install MSDE 2000 Release A from the folders on your disk.</P>
+
+<P>When downloading and extracting MSDE 2000 Release A installation files, follow these guidelines:
+
+<UL type="disc">
+	<LI>Download MSDE2000A.exe and place it either in a folder on the computer where you are installing MSDE 2000 Release A, or in a folder on a network share. From that folder, run the file. The self-extraction program prompts you for the name of the folder where you want the installation files placed.
+<BLOCKQUOTE class="dtBlock">
+<!--NOTE--><P ID="Alert_Note"><B>Note</B>&nbsp;&nbsp;When you extract the installation files to a network share, the path to the folder that you specify is relative to the folder containing the self-extraction program.</P><!--/NOTE--></BLOCKQUOTE>
+</li>
+
+	<LI>On the local drive or network share to which you download the installation files, you must have free space approximately three times the size of the self-extracting file. This includes space to store the self-extracting file, space for storing the extracted installation files, and sufficient temporary working space for the self-extraction program.</li>
+
+	<LI>You can rename or move the folder after extracting the components; however, make sure that the directory path name does not contain blank spaces.</li>
+</UL>
+
+<BLOCKQUOTE class="dtBlock">
+<!--NOTE--><P ID="Alert_Note"><B>Note</B>&nbsp;&nbsp;Some of the files in MSDE 2000 are system files. To view the system files, in Windows Explorer, click <B>Options</B> on the <B>View</B> menu, click the <B>View</B> tab, and then select the <B>Show all files</B> check box.</P><!--/NOTE--></BLOCKQUOTE>
+
+<H5>Downloading MSDE 2000 Release A</H5>
+
+<P>To download the MSDE 2000 Release A file, follow these steps:
+
+<UL type="disc">
+	<LI>Go to the <A HREF="http://go.microsoft.com/fwlink/?LinkId=20285" target=_blank>MSDE 2000 Downloads Web site</A>.</li>
+
+	<LI>In the <B>Full Download</B> box in the upper-right of this page, select the language you want your instance of MSDE 2000 to use, and click <B>Go</B>.</li>
+
+	<LI>On the next page, locate the <B>Files in this Download</B> section at the bottom of the page. Depending on the language, select one of these files:
+<UL type="disc">
+	<LI>If you selected English, download the file MSDE2000A.exe to a folder on your computer.</li>
+
+	<LI>If you selected another language, download the file <I>LLL</I>_MSDE2000A.exe, where <I>LLL</I> represents the selected language.</li>
+</UL>
+</li>
+</UL>
+
+<H5>Extracting the MSDE 2000 Release A Installation Files</H5>
+
+<P>After downloading either MSDE2000A.exe or <I>LLL</I>_MSDE2000A.exe, you must extract the MSDE 2000 Release A installation files:
+
+<UL type="disc">
+	<LI>Open Windows Explorer and navigate to the folder where you downloaded the MSDE 2000 Release A download file (either MSDE2000A.exe or <I>LLL</I>_MSDE2000A.exe, where <I>LLL</I> represents the selected language).</li>
+
+	<LI>Double-click the download file to extract the MSDE 2000 Release A installation files. When asked, specify the folder where the installation files are to be extracted.</li>
+</UL>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3460_installing_msde_2000_release_a_fzpy"></A>3.0 Installing MSDE 2000 Release A</H1>
+
+<P>To install MSDE 2000 Release A, use the instructions in the following sections.</P>
+
+<H5>Before Installing MSDE 2000 Release A</H5>
+
+<P>If your instance of MSDE 2000 Release A will be used by an application, first check with the application provider or application documentation to verify that the application runs successfully on MSDE 2000 Release A.</P>
+
+<P>Problems can occur if you use a Terminal Services connection to attempt to install a new instance of MSDE 2000 Release A. If problems are encountered, restart Setup from the local computer without using Terminal Services.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3461_msde_2000_setup_documentation_wluf"></A>3.1 MSDE 2000 Setup Documentation</H1>
+
+<P>The documentation for Desktop Engine Setup.exe is found in SQL Server 2000 Books Online. The latest version of SQL Server 2000 Books Online in the MSDN Library documents the behavior of Desktop Engine Setup.exe in MSDE 2000 Release A. See "<A HREF="http://go.microsoft.com/fwlink/?LinkId=20286" target=_blank>Customizing Desktop Engine Setup.exe</A>."</P>
+
+<P>"Customizing Desktop Engine Setup.exe" documents the functionality of the version of Setup.exe included in MSDE 2000 SP3a. Because MSDE 2000 Release A includes the same Setup.exe, but does not support upgrades, the topic describes the following switches and parameters, which are not supported by MSDE 2000 Release A: <B>UPGRADE</B>, <B>UPGRADEUSER</B>, <B>UPGRADEPWD</B>, or <B>/upgradesp</B>.</P>
+
+<P>This topic will be updated in the January 2004 release of MSDN. For more information about this update of SQL Server 2000 Books Online, see <A HREF="#_1461_msde_2000_documentation_d3jb">1.1 MSDE 2000 Documentation</A>.</P>
+
+<P>Earlier versions of "Customizing Desktop Engine Setup.exe," such as the one in the original version of SQL Server 2000 Books Online, describe the behavior of the original version of Desktop Engine Setup.exe, which was different from Desktop Engine Setup.exe included in MSDE 2000 Release A.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3462_installation_prerequisites_fzpy"></A>3.2 Installation Prerequisites</H1>
+
+<P>Your computer must meet the hardware and software requirements for SQL Server 2000 before you attempt to install MSDE 2000 Release A.</P>
+
+<H5>Hardware Requirements</H5>
+
+<P>This table shows the hardware requirements for installing and running MSDE 2000.</P>
+<div class="tablediv"><table border=1 class="dtTABLE" cols=2 frame=box rules=all width=615>
+
+<TR VALIGN="top">
+<TD width=50%><B>Hardware</B></TD>
+<TD width=50%><B>Minimum requirements</B></TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=50%>Computer</TD>
+<TD width=50%>Intel Pentium or compatible, 166 MHz or higher</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=50%>Memory (RAM)</TD>
+<TD width=50%>128 MB on Windows XP
+<P>64 MB minimum on Windows 2000</P>
+
+<P>32 MB minimum on all other operating systems</P>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=50%>Hard disk space</TD>
+<TD width=50%>44 MB</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=50%>Drive</TD>
+<TD width=50%>CD-ROM drive</TD>
+</TR>
+</table></div>
+
+<P>MSDE 2000 does not have a hardware compatibility list (HCL). If your computer meets the minimum requirements listed in the preceding table, MSDE 2000 software works on the hardware certified for use with the Microsoft Windows operating system. For more information about hardware certified for use with the Windows operating system, see the Microsoft Windows Hardware Compatibility List on this <A HREF="http://go.microsoft.com/fwlink/?LinkId=20287" target=_blank>Microsoft Web site</A>.</P>
+
+<H5>Operating System Requirements</H5>
+
+<P>To use MSDE 2000, you must have installed one of these operating systems:
+
+<UL type="disc">
+	<LI>Windows Server 2003 Standard Edition, Windows Server 2003 Enterprise Edition, Windows Server 2003 Datacenter Edition.</li>
+
+	<LI>Windows 2000 Server, Windows 2000 Advanced Server, Windows 2000 Datacenter Server.</li>
+
+	<LI>Windows NT Server 4.0, SP5 or later; Windows NT Server 4.0, Enterprise Edition, SP5 or later; Windows NT Workstation 4.0, SP5 or later.</li>
+
+	<LI>Windows XP Professional, Windows XP Home Edition.</li>
+
+	<LI>Windows 2000 Professional.</li>
+
+	<LI>Windows Millennium Edition.</li>
+
+	<LI>Windows 98. Windows 98 Second Edition is required if the computer does not have a network card.</li>
+</UL>
+
+<H5>Software and System Requirements</H5>
+
+<P>MSDE 2000 requires Microsoft Internet Explorer 5.0 or later be installed. A minimum installation is sufficient, and Internet Explorer does not have to be the default browser.</P>
+
+<P>Except on Windows 98 and Window Millennium Edition, file and print sharing must be active to run Desktop Engine Setup.exe. To verify:
+
+<OL type="1">
+	<LI>In Control Panel, double-click <B>Network Connections</B>.</li>
+
+	<LI>On the <B>Advanced</B> menu, click <B>Advanced Settings</B>.</li>
+
+	<LI>On the <B>Adaptors and Bindings</B> tab, ensure that <B>File and Print Sharing for Microsoft Networks</B> is selected.</li>
+</OL>
+
+<P>A MSDE 2000 Release A installation will fail if either of the following security policies has been set to <B>Do not allow installation</B>:
+
+<UL type="disc">
+	<LI>The <B>Devices: Unsigned driver installation behavior</B> local security policy for Windows XP.</li>
+
+	<LI>The <B>Unsigned non-driver installation behavior</B> local security policy for Windows 2000.</li>
+</UL>
+
+<P>If you use the <B>Do not allow installation</B> setting, you must change it to <B>Silently succeed</B> before installing MSDE 2000 Release A. If necessary, you can return the policy to its previous setting after the installation is complete.</P>
+
+<BLOCKQUOTE class="dtBlock">
+<!--NOTE--><P ID="Alert_Note"><B>Note</B>&nbsp;&nbsp;<B>Do not allow installation</B> is not the default setting for these security policies.</P><!--/NOTE--></BLOCKQUOTE>
+
+<P>To set these policies:
+
+<OL type="1">
+	<LI>In Control Panel, double-click <B>Administrative Tools</B>.</li>
+
+	<LI>Double-click <B>Local Security Policy</B>.</li>
+
+	<LI>Expand <B>Local Policies</B>.</li>
+
+	<LI>Select <B>Security Options</B>.</li>
+
+	<LI>Ensure that the following option in the right pane is set to <B>Silently Succeed</B> before installing MSDE 2000 Release A:
+<UL type="disc">
+	<LI>On Windows XP and Windows 2003: <B>Devices: Unsigned driver installation behavior</B>.</li>
+
+	<LI>On Windows 2000: <B>Unsigned non-driver installation behavior</B>.</li>
+</UL>
+</li>
+</OL>
+
+<P>When installing MSDE 2000 Release A on a computer running Windows NT 4.0 SP6a, you must apply the hotfix described in Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=258437" target=_blank>258437</A>.</P>
+
+<P>Before you install MSDE 2000 Release A on the French version of Windows NT 4.0, follow the instructions in Knowledge Base article <A HREF="http://go.microsoft.com/fwlink/?LinkId=9327" target=_blank>259484</A>.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3463_stopping_services_before_installing_238p"></A>3.3 Stopping Services Before Installing MSDE 2000 Release A</H1>
+
+<P>You can install MSDE 2000 Release A without shutting down services. If you do not shut down services, however, you are prompted to reboot the computer when Setup is complete. Without rebooting, the following services will fail to start:
+
+<UL type="disc">
+	<LI>Microsoft Distributed Transaction Coordinator (MS DTC) and the Microsoft Search and MSSQLServerOLAPService services.</li>
+
+	<LI>Microsoft Component Services, Microsoft Message Queuing, and Microsoft COM Transaction Integrator.</li>
+
+	<LI>All applications, including Control Panel. (optional)</li>
+</UL>
+
+<P>You can reduce the possibility of having to restart your computer after installing MSDE 2000 Release A by stopping these services and applications before running Setup.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3464_install_msde_2000_release_a_d3jb"></A>3.4 Install MSDE 2000 Release A</H1>
+
+<P>Run Desktop Engine Setup.exe to install MSDE 2000 Release A. Examples of typical installation procedures are given in <A HREF="#_3464463_msde_2000_release_a_installation_fzpy">3.4.4 MSDE 2000 Release A Installation Examples</A>.</P>
+
+<P>You can install up to 16 copies, or instances, of MSDE 2000 and the SQL Server 2000 database engine on the same computer. One instance has no instance name, and is called the default instance. The other 15 instances must have unique instance names, and are called named instances. When installing a new instance of MSDE 2000 Release A, use the Desktop Engine Setup.exe <B>INSTANCENAME</B> parameter to specify the name of a named instance. If you do not specify an instance name, Setup will attempt to install a default instance. Instance names must follow the rules on this <A HREF="http://go.microsoft.com/fwlink/?LinkId=20337" target=_blank>Microsoft Web page</A>.</P>
+
+<P>Do not specify the name of an existing instance of MSDE 2000 or SQL Server 2000 when you install MSDE 2000 Release A. To find the existing instances on your computer:
+
+<OL type="1">
+	<LI>In Windows Explorer, right-click <B>My Computer</B>, and then click <B>Manage</B>.</li>
+
+	<LI>Expand <B>Services and Applications</B>.</li>
+
+	<LI>Click <B>Services</B>.</li>
+</OL>
+
+<P>A default instance will be listed in the right pane as a service named MSSQLSERVER. Named instances will be listed as services named MSSQL$<I>InstanceName</I>, where <I>InstanceName</I> is the name of the instance.</P>
+
+<P>You can only use MSDE 2000 Release A to install new instances of MSDE 2000. Do not use it to upgrade instances running earlier versions of MSDE 2000. When running the MSDE 2000 Release A version of Desktop Engine Setup.exe, do not use these switches or parameters: <B>UPGRADE</B>, <B>UPGRADEUSER</B>, <B>UPGRADEPWD</B>, or <B>/upgradesp</B>. Use SQL Server 2000 SP3a to upgrade existing instances of MSDE 2000 to MSDE 2000 SP3a. For more information about upgrades, see <A HREF="#_introduction">1.0 Introduction</A>.</P>
+
+<P>Always start Desktop Engine Setup.exe by running Setup.exe. Do not attempt to install MSDE 2000 by directly invoking one of the MSDE 2000 .msi files, such as by double-clicking one of the MSDE 2000 .msi files. You must run Setup from the command prompt and specify parameters to install or upgrade any instance of MSDE.</P>
+
+<P>You can run Desktop Engine Setup.exe from your hard drive, a network share, or a CD-ROM. If you create your own CD-ROM for installing MSDE 2000 Release A, the volume label on the CD-ROM must be <I>SQL2KSP3</I>. If you are an independent software vendor (ISV) creating a CD-ROM for the purpose of distributing MSDE 2000 Release A as a component of your application, the CD-ROM volume label must be identical to the <B>VolumeLabel</B> property in the <B>Media</B> table of the Windows Installer package (*.msi).</P>
+
+<P>You can install the upgrade for Desktop Engine from a CD-ROM only if you are using Windows Installer version 2.0.2600.0 or later. If you need to upgrade Windows Installer, MSDE 2000 Release A includes the files needed to upgrade Windows Installer.</P>
+
+<P class="label"><B>To upgrade Windows Installer</B>
+
+<OL type="1">
+	<LI>In Windows Explorer, navigate to the \MSDE\MSI folder in the folders that you extracted from MSDE2000A.exe.</li>
+
+	<LI>On Windows 98 and Windows Millennium Edition, run InstMsi20.exe. On Windows 2000, Windows XP, and Windows 2003, run InstMsiW20.exe.</li>
+
+	<LI>When prompted, restart the computer.</li>
+</OL>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_verify_the_version_of_microsoft_data_acc_d3jb"></A>3.4.1 Verify the Version of Microsoft Data Access Components</H1>
+
+<P>MSDE 2000 Release A includes updates to Microsoft Data Access Components (MDAC). When you install MSDE 2000 Release A, MDAC 2.7 SP1a is also installed unless Setup detects the same version or a newer version of MDAC.</P>
+
+<P>There are three conditions under which you should consider performing an additional installation of the MDAC components before or after installing MSDE 2000 Release A:
+
+<UL type="disc">
+	<LI>When installing MSDE 2000 Release A on a computer running Windows XP, MDAC 2.7 will not be updated to MDAC 2.7 SP1a. If your system requires any of the fixes included in MDAC 2.7 SP1a, you must first apply Windows XP SP1 before you install MSDE 2000 Release A. Windows XP SP1 will install MDAC 2.7, and then MSDE 2000 Release A will apply the patches needed for that release.</li>
+
+	<LI>If you install MSDE 2000 Release A on Windows 98, Windows Millennium Edition, or Windows NT 4.0, and later upgrade the computer to Windows 2000 or Windows XP, you must download the MDAC 2.7 SP1 Refresh and install it after the upgrade. Download MDAC 2.7 SP1 Refresh from the <A HREF="http://go.microsoft.com/fwlink/?LinkId=9371" target=_blank>Microsoft Data Access Downloads page</A>. You must download the version that matches the language of your computer and instance of MSDE 2000. For example, if you installed a French instance of MSDE 2000 on a computer running a French operating system, download the French version of MDAC 2.7 SP1a.</li>
+
+	<LI>If you install a language version of MSDE 2000 Release A that is different from the language of the operating system (such as installing an English version of MSDE 2000 on a computer running a Russian version of Windows), you may have to install MDAC 2.7 SP1 Refresh. If the computer has a version of MDAC earlier than 2.7 SP1a, Desktop Engine Setup will install its copy of MDAC 2.7 SP1a, changing the language of the MDAC components. To ensure this does not happen, before installing a copy of MSDE 2000 Release A that has a different language than the operating system, first check that the version of MDAC on the computer is at least MDAC 2.7 SP1a. If it is an earlier version, download MDAC 2.7 SP1 Refresh from the <A HREF="http://go.microsoft.com/fwlink/?LinkId=9371" target=_blank>Microsoft Data Access Downloads page</A> and install it. Instructions for determining the version of MDAC currently on your computer are in Knowledge Base article <A HREF="http://support.microsoft.com?kbid=301202" target=_blank>301202</A>.</li>
+</UL>
+
+<P>For more information about MDAC 2.7 SP1a, see the <A HREF="http://go.microsoft.com/fwlink/?LinkId=9371" target=_blank>Microsoft Data Access Downloads page</A>. For more information about MDAC versions, see Knowledge Base artcle <A HREF="http://support.microsoft.com?kbid=822758" target=_blank>822758</A>. Fixes included in MDAC 2.7 SP1a are documented in Knowledge Base article <A HREF="http://support.microsoft.com?kbid=326848" target=_blank>326848</A>.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3464461_security_considerations_for_msde_d3jb"></A>3.4.2 Security Considerations for MSDE 2000 Release A</H1>
+
+<P>If no application on another computer will connect to your instance of MSDE 2000, the instance does not need network support, and it is prudent to turn off these unused resources. By default, Desktop Engine Setup.exe does not enable network support when installing new instances of MSDE 2000 Release A. You can use the <B>DISABLENETWORKPROTOCOLS=0</B> parameter to enable network support during installation. Or, if you disable network support when installing an instance of MSDE 2000 Release A, you can later reconfigure the instance to enable network support. For more information about disabling and restoring network access, see Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=814130" target=_blank>814130</A>.</P>
+
+<P>By default, Desktop Engine Setup.exe will not install a new instance of MSDE 2000 unless you use the <B>SAPWD</B> parameter to specify a strong <B>sa</B> password. You should always assign a strong password to the <B>sa</B> login unless the application using your instance of MSDE depends in some way on a null <B>sa</B> password. Even if the instance of MSDE 2000 is using Windows Authentication, the <B>sa</B> login becomes immediately active if the instance is ever switched to Mixed Mode. A null, blank, simple, or well-known <B>sa</B> password could be used for unauthorized access. If you need to assign a strong <B>sa</B> password before upgrading your instance of MSDE 2000 to SP3a, see Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=322336" target=_blank>322336</A>.</P>
+
+<P>For more information about strong passwords, see "<A HREF="http://go.microsoft.com/fwlink/?LinkId=20480" target=_blank>Security Rules</A>" in SQL Server 2000 Books Online.</P>
+
+<P>Whenever possible, for greater security, use Windows Authentication with your MSDE 2000 installation. Consider switching from Mixed Mode to Windows Authentication Mode if the following are true:
+
+<UL type="disc">
+	<LI>The applications using MSDE 2000 can run using Windows Authentication.</li>
+
+	<LI>You have defined Windows Authentication logins for all users who need to connect to the instance. For more information about adding logins, see "Adding a Windows User or Group" in SQL Server 2000 Books Online.</li>
+
+	<LI>The instance of MSDE 2000 is not running on Windows 98 or Windows ME.</li>
+</UL>
+
+<P>For more information on changing an instance of MSDE 2000 from Mixed Mode to Windows Authentication Mode, see Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=322336" target=_blank>322336</A>.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3464462_msde_2000_setup_parameters_wluf"></A>3.4.3 MSDE 2000 Setup Parameters</H1>
+
+<P>MSDE 2000 is designed to be distributed with applications and installed by the setup program of the application. The Desktop Engine Setup.exe utility is usually called by an application setup utility, but can also be run from a command prompt window. The MSDE 2000 setup utility does not have a graphical user interface. Instead, this utility accepts a set of switches and parameters that specify the actions the utility should take.</P>
+
+<P>You can only use MSDE 2000 Release A to install new instances of MSDE 2000. Do not use it to upgrade instances running earlier versions of MSDE 2000. When running the MSDE 2000 Release A version of Desktop Engine Setup.exe, do not use these switches or parameters: <B>UPGRADE</B>, <B>UPGRADEUSER</B>, <B>UPGRADEPWD</B>, or <B>/upgradesp</B>. Use SQL Server 2000 SP3a to upgrade existing instances of MSDE 2000 to MSDE 2000 SP3a. For more information about upgrades, see <A HREF="#_introduction">1.0 Introduction</A>.</P>
+
+<P>This readme only discusses the more commonly used Setup parameters and switches. All of the switches and parameters supported by Desktop Engine Setup.exe are documented in "Customizing Desktop Engine Setup.exe" in SQL Server 2000 Books Online. The version of this topic that describes the behavior of Desktop Engine Setup.exe included in MSDE 2000 Release A is at this <A HREF="http://go.microsoft.com/fwlink/?LinkId=20286" target=_blank>Microsoft Web page</A>. For more information about setup documentation, see <A HREF="#_1461_msde_2000_documentation_d3jb">1.1 MSDE 2000 Documentation</A>.</P>
+
+<P>You must enclose the values for MSDE Setup parameters in double quotation marks if the values specified have special characters, such as blanks. Otherwise quotation marks are optional.</P>
+
+<P>Most installations of MSDE 2000 Release A are made using only these Setup parameters:</P>
+<div class="tablediv"><table border=1 class="dtTABLE" cols=2 frame=box rules=all width=615>
+
+<TR VALIGN="top">
+<TD width=47%><B>Parameter</B></TD>
+<TD width=53%><B>Description</B></TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=47%><B>SAPWD="</B><I>AStrongPassword</I><B>"</B></TD>
+<TD width=53%>Specifies a strong password to be assigned to the <B>sa</B> administrator login.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=47%><B>INSTANCENAME="</B><I>InstanceName</I><B>"</B></TD>
+<TD width=53%>Specifies the name of the instance. If <B>INSTANCENAME</B> is not specified, Setup installs a default instance.</TD>
+</TR>
+</table></div>
+
+<P>Other parameters often used to tailor an installation are:</P>
+<div class="tablediv"><table border=1 class="dtTABLE" cols=2 frame=box rules=all width=615>
+
+<TR VALIGN="top">
+<TD width=47%><B>Parameter</B></TD>
+<TD width=53%><B>Description</B></TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=47%><B>DISABLENETWORKPROTOCOLS=</B><I>n</I></TD>
+<TD width=53%>Specifies whether the instance will accept network connections from applications running on other computers. By default, or if you specify <B>DISABLENTWORKPROTOCOL=1</B>, Setup configures the instance to not accept network connections. Specify <B>DISABLENETWORKPROTOCOLS=0</B> to enable network connections.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=47%><B>SECURITYMODE=SQL</B></TD>
+<TD width=53%>Specifies that the instance be installed in Mixed Mode, where the instance supports both Windows Authentication and SQL Authentication logins.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=47%><B>DATADIR="</B><I>data_folder_path</I><B>"</B></TD>
+<TD width=53%>Specifies the folder where Setup installs the system databases, error logs, and installation scripts. The value specified for <I>data_folder_path</I> must end with a backslash (\). For a default instance, Setup appends MSSQL\ to the value specified. For a named instance, Setup appends MSSQL$<I>InstanceName</I>\, where <I>InstanceName</I> is the value specified with the <B>INSTANCENAME</B> parameter. Setup builds three folders at the specified location: a Data folder, a Log folder, and a Script folder.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=47%><B>TARGETDIR="</B><I>executable_folder_path</I><B>"</B></TD>
+<TD width=53%>Specifies the folder where Setup installs the MSDE 2000 executable files. The value specified for <I>executable_folder_path</I> must end with a backslash (\). For a default instance, Setup appends MSSQL\Binn to the value specified. For a named instance, Setup appends MSSQL$<I>InstanceName</I>\Binn, where <I>InstanceName</I> is the value specified with the <B>INSTANCENAME</B> parameter.</TD>
+</TR>
+</table></div>
+
+<P>When you use <B>DISABLENETWORKPROTOCOLS=0</B> to enable network support for an instance of MSDE 2000, applications connecting to the instance over a network use Microsoft Data Access Components (MDAC). All versions of Windows supported for use with MSDE 2000 include a version of the MDAC software that works with MSDE 2000 Release A. For more information about network communications, see this <A HREF="http://go.microsoft.com/fwlink/?LinkId=20385" target=_blank>Microsoft Web page</A>.</P>
+
+<H5>Using an .ini File</H5>
+
+<P>Desktop Engine Setup.exe parameters can be specified in two locations:
+
+<UL type="disc">
+	<LI>On the command prompt when running Setup.exe.</li>
+
+	<LI>In an .ini file whose location is specified by a <B>/settings</B> switch. An .ini file is a text file, such as a file created using Notepad, and saved with a file name that has an extension of .ini. In the .ini file, the first line is [Options], and then the parameters are specified, one parameter per line.</li>
+</UL>
+
+<BLOCKQUOTE class="dtBlock">
+<!--IMPORTANT--><P ID="Alert_Important"><B CLASS="notes">Important</B>&nbsp;&nbsp;If you use an .ini file during setup, avoid storing security credentials in it.</P><!--/IMPORTANT--></BLOCKQUOTE>
+
+<P>This example specifies the parameters on the command prompt:</P>
+
+<PRE class="code">setup SAPWD="<I>AStrongPassword</I>" INSTANCENAME=<B>"</B><I>InstanceName</I><B>"</B> TARGETDIR=<B>"</B>C:\MyInstanceFolder<B>"</B>
+</PRE>
+
+<P>To run Setup with the same parameters using an .ini file, use Notepad to create a file named MyParameters.ini with these contents:</P>
+
+<PRE class="code">[Options]
+INSTANCENAME=<B>"</B><I>InstanceName</I><B>"</B>
+TARGETDIR=<B>"</B>C:\MyInstanceFolder<B>"</B></PRE>
+
+<P>Then run Setup using the <B>/settings</B> switch to point to the .ini file:</P>
+
+<PRE class="code">setup /settings "MyParameters.ini" SAPWD="<I>AStrongPassword</I>"
+</PRE>
+
+<H5>Requesting a Setup Log</H5>
+
+<P>You will need a verbose log to verify that the installation succeeded or to assist in debugging any problems that occur.</P>
+
+<P>To generate a verbose log, specify <B>/L*v</B> &lt;<I>LogFileName&gt;</I>. &lt;<I>LogFileName</I>&gt; is the name of a log file where Setup will record all of its actions. If you do not specify a path as part of the name, the log file is created in the current folder. If you are executing Setup from a compact disc, you must specify the full path to a folder on the hard disk of your computer. </P>
+
+<P>This example creates a log file, MSDELog.log, in the root folder of the C: drive:</P>
+
+<PRE class="code">setup SAPWD="<I>AStrongSAPassword</I>" /L*v C:/MSDELog.log
+</PRE>
+
+<P>If installation succeeds, an entry similar to the following will be at the end of the log:</P>
+
+<PRE class="code">=== Logging stopped: 5/16/03&nbsp; 0:06:10 ===
+MSI (s) (BC:7C): Product: Microsoft SQL Server Desktop Engine -- Installation operation completed successfully.
+</PRE>
+
+<P>If the installation does not succeed, an entry similar to the following will be at the end of the log:</P>
+
+<PRE class="code">=== Logging stopped: 5/15/03&nbsp; 23:50:34 ===
+MSI (c) (6A:CE): Product: Microsoft SQL Server Desktop Engine -- Installation operation failed.
+</PRE>
+
+<P>If the installation failed, search for the string "value 3" in the error log. Within 10 lines of the string will be a failure notice for a custom action. The notice will have additional information about the nature of the failure.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3464463_msde_2000_release_a_installation_fzpy"></A>3.4.4 MSDE 2000 Release A Installation Examples</H1>
+
+<P>The examples in this section illustrate how to perform typical installations of MSDE 2000 Release A.</P>
+
+<P>The examples install new instances of MSDE 2000 Release A that have been configured with network connectivity disabled. If your instance must accept connections from applications running on other computers, also specify <B>DISABLENETWORKPROTOCOLS=0</B>.</P>
+
+<P>These examples install instances using the defaults for all configuration items such as file locations. The configurations can be controlled by setup parameters, such as <B>DATADIR</B> and <B>TARGETDIR</B>. For more information about the configuration parameters that you can specify with Setup, see "Customizing Desktop Engine Setup.exe" in SQL Server 2000 Books Online. The version of this topic that describes the behavior of Desktop Engine Setup.exe included in MSDE 2000 Release A is at this <A HREF="http://go.microsoft.com/fwlink/?LinkId=20286" target=_blank>Web page</A>. For more information about Setup documentation, see <A HREF="#_1461_msde_2000_documentation_d3jb">1.1 MSDE 2000 Documentation</A>.</P>
+
+<P class="label"><B>To install a new instance of Desktop Engine</B>
+
+<OL type="1">
+	<LI>Open a command prompt window.</li>
+
+	<LI>From the command prompt, use the <B>cd</B> command to navigate to the folder containing the MSDE 2000 Release A Setup utility:
+<PRE class="code">cd <I>c:\MSDE2000AFolder</I>\MSDE</PRE>
+
+<P>where <I>c:\MSDE2000AFolder</I> is the path to the folder where you extracted the MSDE 2000 Release A files.
+</li>
+
+	<LI>Execute one of the following commands:
+<UL type="disc">
+	<LI>To install a default instance configured to use Windows Authentication Mode, execute:
+<PRE class="code">setup SAPWD="<I>AStrongSAPwd</I>"
+</PRE>
+
+<P>Where <I>AStrongSAPwd</I> is a strong password to be assigned to the <B>sa</B> login.
+</li>
+
+	<LI>To install a named instance configured to use Windows Authentication Mode, execute:
+<PRE class="code">setup INSTANCENAME="<I>InstanceName</I>" SAPWD="<I>AStrongSAPwd</I>"
+</PRE>
+
+<P>Where <I>AStrongSAPwd</I> is a strong password to be assigned to the <B>sa</B> login and <I>InstanceName</I> is the name to be assigned to the instance.
+</li>
+
+	<LI>To install a default instance configured to use Mixed Mode, execute:
+<PRE class="code">setup SAPWD="<I>AStrongSAPwd</I>" SECURITYMODE=SQL
+</PRE>
+
+<P>Where <I>AStrongSAPwd</I> is a strong password to be assigned to the <B>sa</B> login.
+</li>
+
+	<LI>To install a named instance configured to use Mixed Mode, execute:
+<PRE class="code">setup INSTANCENAME="<I>InstanceName</I>" SECURITYMODE=SQL SAPWD="<I>AStrongSAPwd</I>"
+</PRE>
+
+<P>Where <I>AStrongSAPwd</I> is a strong password to be assigned to the <B>sa</B> login and <I>InstanceName</I> is the name to be assigned to the instance.
+</li>
+</UL>
+</li>
+</OL>
+
+<BLOCKQUOTE class="dtBlock">
+<!--IMPORTANT--><P ID="Alert_Important"><B CLASS="notes">Important</B>&nbsp;&nbsp;If you are using an .ini file during setup, avoid storing credentials in the .ini file.</P><!--/IMPORTANT--></BLOCKQUOTE>
+
+<BLOCKQUOTE class="dtBlock">
+<!--IMPORTANT--><P ID="Alert_Important"><B CLASS="notes">Important</B>&nbsp;&nbsp;Always specify a strong password for the <B>sa</B> login, even when the instance is configured to use Windows Authentication Mode.</P><!--/IMPORTANT--></BLOCKQUOTE>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_3465_restart_services_ar5q"></A>3.5 Restart Services</H1>
+
+<P>When Setup completes, it may prompt you to restart the system. After the system restarts (or after Setup completes without requesting a restart), use the Services application in Control Panel to make sure that any services you stopped before applying the service pack are now running. This includes services such as MS DTC and the Microsoft Search, MSSQLServer, MSSQLServerOLAPService, and SQLServerAgent services or their instance-specific equivalents.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_documentation_notes"></A>4.0 Documentation Notes</H1>
+
+<P>This section covers features that are not documented in the latest versions of SQL Server 2000 Books Online. These features were originally made to the MSDE 2000 components as part of SQL Server 2000 service packs, and have not yet been added to SQL Server 2000 Books Online. Some of the items mention the service pack in which they were originally introduced.</P>
+
+<P>Any information about MSDE 2000 Release A that was not available in time to be included in this readme file will be published in Microsoft Knowledge Base article <A HREF="http://support.microsoft.com?kbid=829925" target=_blank>829925</A>.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_database_and_desktop_engine_enhancements"></A>4.1 Desktop Engine Enhancements</H1>
+
+<P>The following enhancements apply to the database engine included in MSDE 2000 Release A.</P>
+
+<H1><A NAME="_expanded_error_messages_for_distributed__d3jb"></A>4.1.1 Expanded Error Messages for Distributed Queries</H1>
+
+<P>For distributed queries, MSDE 2000 Release A returns provider error information in addition to the server error information returned by earlier versions of MSDE 2000. When a query between linked servers results in an error, MSDE 2000 checks to see if the provider supports the <B>IErrorRecords</B> OLE DB interface. If this interface is supported, MSDE 2000 calls the <B>GetErrorInfo</B> function to get additional error information from the provider and returns this information to the user as part of the error message. If the <B>IErrorRecords</B> interface is not supported, there is no change in MSDE 2000 behavior: MSDE 2000 returns a generic error.</P>
+
+<P>For example, run the following query against a server that uses MSDASQL, which does not support <B>sql_variant</B>:</P>
+
+<PRE class="code">SELECT * FROM remote2k.dqtable.dbo.sqlvariantnotnull 
+--Remote2k is a loopback server.
+</PRE>
+
+<P>Prior to SP3, MSDE 2000 returned the following error message:</P>
+
+<PRE class="code">Server: Msg 7356, Level 16, State 1, Line 1
+OLE DB provider 'msdasql' supplied inconsistent metadata for a column. 
+Metadata information was changed at execution time.
+</PRE>
+
+<P>MSDE 2000 SP3 or later, including MSDE 2000 Release A, returns the following error message:</P>
+
+<PRE class="code">Server: Msg 7356, Level 16, State 1, Line 1
+OLE DB provider 'msdasql' supplied inconsistent metadata for a column. 
+Metadata information was changed at execution time.
+OLE DB error trace [Non-interface error:  Column 'sql_variant' (compile-time
+ordinal 3) of object '"dqtable"."dbo"."sqlvariantnotnull"' was reported 
+to have a DBCOLUMNFLAGS_ISFIXEDLENGTH of 16 at compile time and 0 at run time].
+</PRE>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_debugging_functionality_changes_f8s1"></A>4.1.2 Debugging Functionality Changes</H1>
+
+<P>The functionality for debugging stored procedures with Microsoft Visual Studio&reg; 6.0 and earlier or with SQL Server Query Analyzer prior to SP3 is turned off by default in MSDE 2000 Release A. Application debugging (stopping at a SQL Server Transact-SQL breakpoint while debugging a client application) is also turned off by default. To enable debugging functionality, run <B>sp_sdidebug</B>, passing the parameter <B>legacy_on</B>. To disable debugging, pass <B>legacy_off </B>to this procedure. </P>
+
+<BLOCKQUOTE class="dtBlock">
+<!--NOTE--><P ID="Alert_Note"><B>Note</B>&nbsp;&nbsp;Running the <B>sp_sdidebug</B> stored procedure on production servers is not recommended.</P><!--/NOTE--></BLOCKQUOTE>
+
+<P>For more information, see Microsoft Knowledge Base article <A HREF="http://go.microsoft.com/fwlink/?LinkId=11714" target=_blank>328151</A>.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_replication_enhancements"></A>4.2 Replication Enhancements</H1>
+
+<P>This section discusses enhancements to SQL Server 2000 replication that are included with MSDE 2000 Release A.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_transactional_replication_update_statements_on_unique_columns"></A>4.2.1 Transactional Replication UPDATE Statements on Unique Columns</H1>
+
+<P>In transactional replication, UPDATE statements usually are replicated as updates. But if the update changes any column that is part of a unique index, a clustered index, or an expression that is used as a unique constraint, the update is performed as a DELETE statement followed by an INSERT statement at the Subscriber. This is done because this type of update can affect multiple rows, and a uniqueness violation can occur if updates are delivered row by row. </P>
+
+<P>If the update affects only one row, there is no chance for a uniqueness violation. Therefore, trace flag 8207 has been added to SP1 or later to allow updates to any unique column that affect only one row to be replicated as UPDATE statements. This optimization has been added specifically for applications that install user-defined UPDATE triggers at the Subscriber and require these triggers to fire for updates that affect only one row on a unique column.</P>
+
+<P>To use trace flag 8207, turn it on from the command prompt (<code class="ce">sqlservr.exe -T8207</code>) or at run time using DBCC TRACEON(8207, -1) before the Log Reader Agent is started.</P>
+
+<BLOCKQUOTE class="dtBlock">
+<!--IMPORTANT--><P ID="Alert_Important"><B CLASS="notes">Important</B>&nbsp;&nbsp;Typically, trace flag 8207 is used with read-only transactional replication. Do not use this trace flag with updatable subscriptions if the primary key UPDATE can occur at the Subscriber. </P><!--/IMPORTANT--></BLOCKQUOTE>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_restriction_on_non-unique_clustered_indexes"></A>4.2.2 Restriction on Non-unique Clustered Indexes</H1>
+
+<P>You cannot create a non-unique clustered index on a table after it is published for transactional replication. Before creating the index, you must first drop any publication that includes the table.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_change_to_requirements_for_attaching_40o_wluf"></A>4.2.3 Change to Requirements for Attaching or Restoring a Replication Database</H1>
+
+<P>Change the owner of a published database to the <B>sa</B> built-in administrator login before attaching or restoring the database if:
+
+<UL type="disc">
+	<LI>The instance is running MDSE 2000 Release A.</li>
+
+	<LI>The user attaching the database is not a member of the <B>sysadmin</B> fixed server role.</li>
+
+	<LI>Cross-database ownership chaining has not been allowed.</li>
+</UL>
+
+<P>If all of these conditions are true, you should execute the <B>sp_changedbowner</B> stored procedure on the attached or restored database. Assign ownership to the <B>sa</B> login to ensure that replication functions correctly.</P>
+
+<BLOCKQUOTE class="dtBlock">
+<!--NOTE--><P ID="Alert_Note"><B>Note</B>&nbsp;&nbsp;You must be a member of the <B>sysadmin</B> fixed server role to execute<B> sp_changedbowner </B>. </P><!--/NOTE--></BLOCKQUOTE>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_5464_sql_server_agent_enhancements_705"></A>4.3 SQL Server Agent Enhancements</H1>
+
+<P>This section discusses enhancements to SQL Server Agent included in MSDE 2000 Release A.</P>
+
+<H1><A NAME="_sql_server_agent_logs_account_information"></A>4.3.1 SQL Server Agent Logs Account Information</H1>
+
+<P>The SQL Server Agent Job History now records the Windows account under which each job step runs. This information helps administrators diagnose security issues with scheduled jobs, including scheduled jobs that are defined for replication and Data Transformation Services (DTS) tasks.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_sql_server_agent_permission_checks_d3jb"></A>4.3.2 SQL Server Agent Permission Checks</H1>
+
+<P>SQL Server now checks that the Agent job owner has permission to append or overwrite the output log file from each job. This happens in three ways:
+
+<UL type="disc">
+	<LI>If the job owner is a member of the <B>sysadmin</B> fixed server role, the job output log file can be written to the server. </li>
+
+	<LI>If the job owner is a Windows user, SQL Server tests to see if the user has permission to write to the selected job output log file location on the server.</li>
+
+	<LI>If the job owner is a SQL Server user, SQL Server tests the SQL Server Agent proxy account for permission to write to the selected job output log file location on the server. If the proxy account has not been set, no log is written. </li>
+</UL>
+
+<P>In all cases, jobs are written with SQL Server Agent credentials, but SQL Server now tests to ensure the user has permission to write to the selected job output log file location on the server. Errors appear in the job history, but the job steps do not fail if the log file cannot be written.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_5464465_sql_server_agent_mail_mapi_profi_d3jb"></A>4.3.3 SQL Agent Mail MAPI Profiles</H1>
+
+<P>In the 32-bit version of SQL Server 2000, SQL Agent Mail can be configured to use an Extended MAPI e-mail profile for sending e-mail alerts. You can use an Extended MAPI e-mail application, such as Microsoft Outlook, to create an Extended MAPI profile. In the 64-bit version of SQL Server 2000, SQL Agent Mail can only use a Simple MAPI profile for sending e-mail alerts. Do not use Simple MAPI profiles in the 32-bit version of SQL Server 2000.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+<H1><A NAME="_db-library_and_embedded_sql_for_c"></A>4.4 DB-Library and Embedded SQL for C</H1>
+
+<P>Although the DB-Library and Embedded SQL for C APIs are still supported in SQL Server 2000 (including MSDE 2000 Release A), no future versions of SQL Server will include the necessary files for programming applications that use them. Connections from existing applications written using DB-Library and Embedded SQL for C will still be supported in the next version of SQL Server, but this support will be dropped in a future release. When writing new applications, therefore, avoid using these components. Furthermore, when modifying existing applications, you are strongly encouraged to remove dependencies on these technologies. Instead of DB-Library or Embedded SQL for C, you can use ADO, OLE DB, or ODBC to access data in SQL Server. For more information about these technologies, see SQL Server Books Online.</P>
+
+<P><A HREF="#_contents_ar5q">[Top]</A></P>
+
+</BODY>
+</HTML>
