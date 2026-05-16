@@ -39,3 +39,12 @@ To install the database I exported the setup files from the system recovery disk
 There were two folders:  _MSDERelA and _SqlXml
 the MSDRelA is the important one but it won't launch the setup because it requires special argument so copy the files inside the repo and install the setup like this: setup.exe SAPWD="q2Z35o" DISABLENETWORKPROTOCOLS=1 SECURITYMODE=SQL /qb
 (added the default password found thanks to Ratface from Emuline.org)
+
+After installing the game I noticed that the password was changed so I wanted to know what it was, I dug further, decrypted the GvrPlusExportDatabaseScript.exe file which was installed inside the GvrPlus folder after installing the game. Decryption was done by using dnSpy and opening the GvrPlusExportDatabaseScript.exe there I noticed some sort of encryption was happening and changing the DB password. With a small python script I decrypted the whole nfscabinetXml.enc file and got the raw nfscabinetXml which is the whole DB of the game.
+
+The password was then also in plain text: Q31y2Z29wpEsd
+
+
+
+
+
