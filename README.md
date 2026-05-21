@@ -77,6 +77,8 @@ If the recovery disc does not boot correctly, try changing:
 This section covers a clean installation on real hardware without the recovery disc.
 
 **Tested on:** Acer Aspire 9300 — AMD Turion 64 CPU, NVIDIA GeForce Go 6100
+> ⚠️ In BIOS settings it's important to set SATA to IDE instead of AHCI otherwise you'll get a blue screen on installation. If you can't do that it won't be compatible.
+
 
 ### Step 1 — Clean Install Windows XP
 
