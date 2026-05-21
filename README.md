@@ -23,6 +23,7 @@ This project documents what I discovered while trying to install and run the Glo
 - [GPU Driver Requirement](#gpu-driver-requirement)
 - [Dongle and Smart Card Notes](#dongle-and-smart-card-notes)
 - [Game Controls](#game-controls)
+- [Launch Arguments](#launch-arguments)
 - [Current Status](#current-status)
 - [Credits](#credits)
 
@@ -336,6 +337,23 @@ Career mode is greyed out due to the absence of a smart card reader.
 | `M` | Reduce song volume / stop music / change song |
 
 ---
+
+## Launch Arguments
+
+To be used in CMD with UniverShell2.exe. For example ./UniverShell2.exe -debug -minvol 0 -maxvol 10
+
+- nosnapshot
+- texmem
+- minvol
+- maxvol
+- debug
+- anisotropic
+- multisample
+- threadmonitor
+- fps
+- releasemouse
+- notop
+- editor
 
 ## Current Status
 
