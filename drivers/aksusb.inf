@@ -1,0 +1,108 @@
+; HASP/Hardlock USB driver
+; Copyright (c) 2001 Aladdin Knowledge Systems
+
+[Version]
+signature="$CHICAGO$"
+Provider=%Fast%
+;LayoutFile=LAYOUT.INF
+Class=USB
+ClassGuid={36fc9e60-c465-11cf-8056-444553540000}
+CatalogFile=aksusb.cat        ; new catalog file name
+DriverVer=10/20/2001,1.28     ; new DriverVer directive
+
+; Table of Contents
+[Manufacturer]
+%FastMfg%=Aladdin
+
+[ControlFlags]
+ExcludeFromSelect.NTx86=*
+
+[Aladdin]
+%USB\VID_0529&PID_0001.DeviceDesc%=aksusb, USB\VID_0529&PID_0001 ;USB Protection Device
+
+;;****************************************************************************
+;; Windows 9x
+;;****************************************************************************
+[aksusb]
+AddReg=aksusb.AddReg
+CopyFiles=aksusb.CopyList.W9X
+
+[aksusb.CopyList.W9x]
+aksusb.sys,,,0x0000022
+
+
+;;****************************************************************************
+;; NT 5.0
+;;****************************************************************************
+[aksusb.NT]
+AddReg=aksusb.AddReg.NT
+CopyFiles=aksusb.CopyList.NT
+
+[aksusb.CopyList.NT]
+aksusb.sys,,,0x00000022
+
+[aksusb.NT.Services]
+AddService=aksusb,0x02,aksusb.addservices
+
+;;----------------------------------------------------------------------------
+;; aksusb Parameters
+;;----------------------------------------------------------------------------
+;;****************************************************************************
+;; Windows 9x parameters
+;;****************************************************************************
+
+[aksusb.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,aksusb.sys
+;HKR,,MyLittleTag,,MyEntryInTheRegistry
+
+
+;;****************************************************************************
+;; NT 5.0
+;;****************************************************************************
+
+[aksusb.AddReg.NT]
+;BUGBUG: PropPageProvider stuff not enabled for setupapi yet!
+HKR,,EnumPropPages32,,"sysclass.dll,USBEnumPropPages"
+
+[aksusb.addservices]
+DisplayName    = %svcdesc%
+ServiceType    = 1		;SERVICE_KERNEL_DRIVER
+StartType      = 3		;SERVICE_AUTO_START
+ErrorControl   = 1		;SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\aksusb.sys
+LoadOrderGroup = Base
+
+
+;;****************************************************************************
+;; common definitions
+;;****************************************************************************
+
+;;****************************************************************************
+;; Destination Directory
+;;****************************************************************************
+[DestinationDirs]
+aksusb.CopyList.NT          = 10,System32\Drivers
+
+DefaultDestDir              = 12        ; LDID_SYS
+aksusb.CopyList.W9x         = 10,System32\Drivers
+
+;;****************************************************************************
+;; Source Files
+;;****************************************************************************
+[sourcedisksnames]
+1=%INSTDISK%,,,""
+
+[SourceDisksFiles]
+aksusb.sys=1
+
+
+
+
+[Strings]
+Fast="Aladdin Knowledge Systems"
+FastMfg="Aladdin Knowledge Systems"
+svcdesc="Aladdin USB Key"
+INSTDISK="Aladdin Install Disk"
+USB\VID_0529&PID_0001.DeviceDesc="Aladdin USB Key"
+

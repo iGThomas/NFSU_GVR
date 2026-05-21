@@ -1,0 +1,915 @@
+; NVIDIA Windows 2000/XP Display INF file
+; Copyright (c) NVIDIA Corporation. All rights reserved.
+
+[Version]
+Signature   = "$Windows NT$"
+Provider    = %NVIDIA%
+ClassGUID   = {4D36E968-E325-11CE-BFC1-08002BE10318}
+Class       = Display
+CatalogFile = NV4_DISP.CAT
+DriverVer   = 02/24/2005, 7.1.8.4
+
+[DestinationDirs]
+DefaultDestDir        = 11
+nv4.Miniport          = 12
+nv.Display            = 11
+nv.CoInstaller        = 11
+nv.Panel              = 11
+nv.Help               = 18
+nv.oldrm              = 12
+nv.delete.systemfiles = 11
+
+[SourceDisksNames]
+1 = %DiskID1%
+2 = %DiskID2%
+3 = %DiskID3%
+4 = %DiskID4%
+5 = %DiskID5%
+6 = %DiskID6%
+
+[SourceDisksFiles]
+nv4_mini.sys = 1
+nvcod.dll    = 1
+nvsvc32.exe  = 1
+nv4_disp.dll = 2
+nvhwvid.dll  = 2
+nvoglnt.dll  = 3
+nvcpl.dll    = 4
+nvmctray.dll = 4
+nvcpl.hlp    = 4
+nvwddi.dll   = 4
+nvnt4cpl.dll = 4
+nvwcplen.hlp = 4
+
+[Manufacturer]
+%NVIDIA% = NVIDIA.Mfg
+
+[NVIDIA.Mfg]
+%NVIDIA_NV10.DEV_0100.1% = nv4,                      PCI\VEN_10DE&DEV_0100
+%NVIDIA_NV10.DEV_0101.1% = nv4,                      PCI\VEN_10DE&DEV_0101
+%NVIDIA_NV10.DEV_0103.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0103
+%NVIDIA_NV11.DEV_0110.1% = nv4,                      PCI\VEN_10DE&DEV_0110
+%NVIDIA_NV11.DEV_0111.1% = nv4,                      PCI\VEN_10DE&DEV_0111
+%NVIDIA_NV11.DEV_0113.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0113
+%NVIDIA_CR11.DEV_01A0.1% = nv4_Crush11,              PCI\VEN_10DE&DEV_01A0
+%NVIDIA_NV15.DEV_0150.1% = nv4,                      PCI\VEN_10DE&DEV_0150
+%NVIDIA_NV15.DEV_0151.1% = nv4,                      PCI\VEN_10DE&DEV_0151
+%NVIDIA_NV15.DEV_0152.1% = nv4,                      PCI\VEN_10DE&DEV_0152
+%NVIDIA_NV15.DEV_0153.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0153
+%NVIDIA_NV17.DEV_0170.1% = nv4,                      PCI\VEN_10DE&DEV_0170
+%NVIDIA_NV17.DEV_0171.1% = nv4,                      PCI\VEN_10DE&DEV_0171
+%NVIDIA_NV17.DEV_0172.1% = nv4,                      PCI\VEN_10DE&DEV_0172
+%NVIDIA_NV17.DEV_0173.1% = nv4,                      PCI\VEN_10DE&DEV_0173
+%NVIDIA_NV17.DEV_0178.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0178
+%NVIDIA_NV17.DEV_017A.1% = nv4_WSApps_DualView,      PCI\VEN_10DE&DEV_017A
+%NVIDIA_NV18.DEV_0181.1% = nv4,                      PCI\VEN_10DE&DEV_0181
+%NVIDIA_NV18.DEV_0182.1% = nv4,                      PCI\VEN_10DE&DEV_0182
+%NVIDIA_NV18.DEV_0185.1% = nv4,                      PCI\VEN_10DE&DEV_0185
+%NVIDIA_NV18.DEV_0188.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0188
+%NVIDIA_NV18.DEV_018A.1% = nv4_WSApps_DualView,      PCI\VEN_10DE&DEV_018A
+%NVIDIA_NV18.DEV_018B.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_018B
+%NVIDIA_CR17.DEV_01F0.1% = nv4_Crush11,              PCI\VEN_10DE&DEV_01F0
+%NVIDIA_NV20.DEV_0200.1% = nv4,                      PCI\VEN_10DE&DEV_0200
+%NVIDIA_NV20.DEV_0201.1% = nv4,                      PCI\VEN_10DE&DEV_0201
+%NVIDIA_NV20.DEV_0202.1% = nv4,                      PCI\VEN_10DE&DEV_0202
+%NVIDIA_NV20.DEV_0203.1% = nv4_DccApps,              PCI\VEN_10DE&DEV_0203
+%NVIDIA_NV25.DEV_0250.1% = nv4,                      PCI\VEN_10DE&DEV_0250
+%NVIDIA_NV25.DEV_0251.1% = nv4,                      PCI\VEN_10DE&DEV_0251
+%NVIDIA_NV25.DEV_0253.1% = nv4,                      PCI\VEN_10DE&DEV_0253
+%NVIDIA_NV25.DEV_0258.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0258
+%NVIDIA_NV25.DEV_0259.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0259
+%NVIDIA_NV25.DEV_025B.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_025B
+%NVIDIA_NV28.DEV_0280.1% = nv4,                      PCI\VEN_10DE&DEV_0280
+%NVIDIA_NV28.DEV_0281.1% = nv4,                      PCI\VEN_10DE&DEV_0281
+%NVIDIA_NV28.DEV_0282.1% = nv4,                      PCI\VEN_10DE&DEV_0282
+%NVIDIA_NV28.DEV_0288.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0288
+%NVIDIA_NV28.DEV_0289.1% = nv4_WSApps,               PCI\VEN_10DE&DEV_0289
+%NVIDIA_NV30.DEV_0301.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0301
+%NVIDIA_NV30.DEV_0302.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0302
+%NVIDIA_NV30.DEV_0308.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_0308
+%NVIDIA_NV30.DEV_0309.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_0309
+%NVIDIA_NV31.DEV_0311.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0311
+%NVIDIA_NV31.DEV_0312.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0312
+%NVIDIA_NV31.DEV_0314.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0314
+%NVIDIA_NV34.DEV_0321.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0321
+%NVIDIA_NV34.DEV_0322.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0322
+%NVIDIA_NV34.DEV_0323.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0323
+%NVIDIA_NV34.DEV_0326.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0326
+%NVIDIA_NV34.DEV_0327.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0327
+%NVIDIA_NV34.DEV_032A.1% = nv4_WSApps_NV3x_DualView, PCI\VEN_10DE&DEV_032A
+%NVIDIA_NV34.DEV_032B.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_032B
+%NVIDIA_NV35.DEV_0330.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0330
+%NVIDIA_NV35.DEV_0331.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0331
+%NVIDIA_NV35.DEV_0332.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0332
+%NVIDIA_NV35.DEV_0333.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0333
+%NVIDIA_NV35.DEV_0334.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0334
+%NVIDIA_NV35.DEV_0338.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_0338
+%NVIDIA_NV35.DEV_033F.1% = nv4_WSApps_NV3x,          PCI\VEN_10DE&DEV_033F
+%NVIDIA_NV36.DEV_0341.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0341
+%NVIDIA_NV36.DEV_0342.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0342
+%NVIDIA_NV36.DEV_0343.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0343
+%NVIDIA_NV36.DEV_0344.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0344
+%NVIDIA_NV36.DEV_034E.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_034E
+%NVIDIA_NV40.DEV_0040.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0040
+%NVIDIA_NV40.DEV_0041.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0041
+%NVIDIA_NV40.DEV_0042.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0042
+%NVIDIA_NV40.DEV_0045.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0045
+%NVIDIA_NV40.DEV_004E.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_004E
+%NVIDIA_NV41.DEV_00C1.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00C1
+%NVIDIA_NV41.DEV_00C2.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00C2
+%NVIDIA_NV41.DEV_00CD.1% = nv4_WSApps_NV3x,          PCI\VEN_10DE&DEV_00CD
+%NVIDIA_NV41.DEV_00CE.1% = nv4_WSApps_NV3x,          PCI\VEN_10DE&DEV_00CE
+%NVIDIA_NV43.DEV_0140.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0140
+%NVIDIA_NV43.DEV_0141.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0141
+%NVIDIA_NV43.DEV_0145.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0145
+%NVIDIA_NV43.DEV_014E.1% = nv4_WSApps_NV3x,          PCI\VEN_10DE&DEV_014E
+%NVIDIA_NV43.DEV_014F.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_014F
+%NVIDIA_NV44.DEV_0161.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0161
+%NVIDIA_NV44.DEV_0165.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0165
+%NVIDIA_NV48.DEV_0211.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0211
+%NVIDIA_NV48.DEV_0212.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0212
+%NVIDIA_NV48.DEV_0215.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_0215
+%NVIDIA_BR02.DEV_00F1.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00F1
+%NVIDIA_BR02.DEV_00F2.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00F2
+%NVIDIA_BR02.DEV_00F3.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00F3
+%NVIDIA_BR02.DEV_00F8.1% = nv4_WSApps_NV3x_DOEB,     PCI\VEN_10DE&DEV_00F8
+%NVIDIA_BR02.DEV_00F9.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00F9
+%NVIDIA_BR02.DEV_00FA.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00FA
+%NVIDIA_BR02.DEV_00FB.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00FB
+%NVIDIA_BR02.DEV_00FC.1% = nv4_NV3x,                 PCI\VEN_10DE&DEV_00FC
+%NVIDIA_BR02.DEV_00FD.1% = nv4_WSApps_NV3x_DualView, PCI\VEN_10DE&DEV_00FD
+%NVIDIA_BR02.DEV_00FE.1% = nv4_WSApps_NV3x,          PCI\VEN_10DE&DEV_00FE
+%NVIDIA_Win2KDualView%   = nvDual,                   DISPLAY\nvWin2kDualView
+%NVIDIA_MultiView%       = nvDual,                   DISPLAY\nvMultiView
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[nv4]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+
+[nv4.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = Default16BPP_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 80
+MaximumNumberOfDevices           = 4
+
+[nv4_WSApps]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_WSApps.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+AddReg    = nv_CoInstaller_nView_Quadro_AddReg, nv_CoInstaller_WSApps_AddReg
+
+[nv4_WSApps.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = nv_WSApps_AddReg
+AddReg = Default32BPP_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_WSApps.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_WSApps.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 80
+MaximumNumberOfDevices           = 4
+
+[nv4_WSApps_DualView]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_WSApps_DualView.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+AddReg    = nv_CoInstaller_nView_Quadro_AddReg, nv_CoInstaller_WSApps_AddReg, nv_CoInstaller_NVEPCLNT_AddReg
+
+[nv4_WSApps_DualView.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = nv_WSApps_AddReg
+AddReg = nvDualView_AddReg
+AddReg = TestAnalogLoadAlways_AddReg
+AddReg = Default32BPP_AddReg
+AddReg = NVEPCLNT_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_WSApps_DualView.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_WSApps_DualView.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 80
+MaximumNumberOfDevices           = 4
+
+[nv4_DccApps]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_DccApps.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+AddReg    = nv_CoInstaller_nView_Quadro_AddReg, nv_CoInstaller_DCCApps_AddReg
+
+[nv4_DccApps.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = nv_DccApps_AddReg
+AddReg = Default32BPP_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_DccApps.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_DccApps.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 80
+MaximumNumberOfDevices           = 4
+
+[nv4_Crush11]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_Crush11.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+
+[nv4_Crush11.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = Crush11_AddReg
+AddReg = nv_ControlPanelSettings
+AddReg = Default16BPP_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_Crush11.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_Crush11.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 80
+MaximumNumberOfDevices           = 4
+
+[nv4_NV3x]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_NV3x.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+
+[nv4_NV3x.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = NV3xLoadService_AddReg
+AddReg = Default16BPP_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_NV3x.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_NV3x.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 128
+MaximumNumberOfDevices           = 4
+
+[nv4_WSApps_NV3x]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_WSApps_NV3x.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+AddReg    = nv_CoInstaller_nView_Quadro_AddReg, nv_CoInstaller_WSApps_AddReg
+
+[nv4_WSApps_NV3x.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = NV3xLoadService_AddReg
+AddReg = nv_WSApps_AddReg
+AddReg = Default32BPP_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_WSApps_NV3x.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_WSApps_NV3x.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 128
+MaximumNumberOfDevices           = 4
+
+[nv4_WSApps_NV3x_DualView]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_WSApps_NV3x_DualView.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+AddReg    = nv_CoInstaller_nView_Quadro_AddReg, nv_CoInstaller_WSApps_AddReg, nv_CoInstaller_NVEPCLNT_AddReg
+
+[nv4_WSApps_NV3x_DualView.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = nv_WSApps_AddReg
+AddReg = nvDualView_AddReg
+AddReg = TestAnalogLoadAlways_AddReg
+AddReg = Default32BPP_AddReg
+AddReg = NVEPCLNT_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_WSApps_NV3x_DualView.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_WSApps_NV3x_DualView.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 160
+MaximumNumberOfDevices           = 10
+
+[nv4_WSApps_NV3x_DOEB]
+CopyFiles    = nv4.Miniport, nv.Display, nv4.icd, nv.Panel, nv.Help
+DelFiles     = nv.oldrm, nv.delete.systemfiles
+RegisterDLLs = nv.RegisterCPL
+
+[nv4_WSApps_NV3x_DOEB.CoInstallers]
+CopyFiles = nv.CoInstaller
+AddReg    = nv_CoInstaller_AddReg
+AddReg    = nv_CoInstaller_nView_Quadro_AddReg, nv_CoInstaller_WSApps_AddReg
+
+[nv4_WSApps_NV3x_DOEB.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+AddReg = nv4_icdSoftwareSettings
+AddReg = nv_ControlPanelSettings
+AddReg = NV3xLoadService_AddReg
+AddReg = nv_WSApps_AddReg
+AddReg = Default32BPP_AddReg
+AddReg = DOEB_AddReg
+DelReg = nv_ClearRegistrySwitches
+
+[nv4_WSApps_NV3x_DOEB.Services]
+AddService = nv,    0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+AddService = NVSvc, 0x00000000, nv_NVSVC_Inst
+DelService = nvarch
+DelService = nvgfx
+
+[nv4_WSApps_NV3x_DOEB.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 128
+MaximumNumberOfDevices           = 4
+
+[nvDual]
+CopyFiles = nv4.Miniport, nv.Display, nv4.icd
+
+[nvDual.SoftwareSettings]
+AddReg = nv_SoftwareDeviceSettings
+
+[nvDual.Services]
+AddService = nv, 0x00000002, nv4_Generic_Service_Inst, nv4_EventLog_Inst
+
+[nvDual.GeneralConfigData]
+MaximumDeviceMemoryConfiguration = 80
+MaximumNumberOfDevices           = 4
+
+[nv4_Generic_Service_Inst]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 1                  ; SERVICE_SYSTEM_START
+ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+LoadOrderGroup = Video
+ServiceBinary  = %12%\nv4_mini.sys
+AddReg         = nv4_Generic_Service_AddReg
+
+[nv4_EventLog_Inst]
+AddReg = nv4_EventLog_AddReg
+
+[nv4_EventLog_AddReg]
+HKR,, EventMessageFile, 0x00020000, "%SystemRoot%\System32\IoLogMsg.dll;%SystemRoot%\System32\drivers\nv4_mini.sys"
+HKR,, TypesSupported,   0x00010001, 7
+
+[nv4_Generic_Service_AddReg]
+HKR, Video, Service, %REG_SZ%, nv
+
+[nv_NVSVC_Inst]
+DisplayName    = %NVSVC.name%
+Description    = %NVSVC.desc%
+ServiceType    = 16                 ; SERVICE_WIN32_OWN_PROCESS
+StartType      = 2                  ; SERVICE_AUTO_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %11%\nvsvc32.exe
+
+[nv_CoInstaller_Data]
+OriginalInfSourcePath = %01%
+
+[nv_CoInstaller_AddReg]
+HKR,, CoInstallers32, %REG_MULTI_SZ%,  "nvcodins.dll,NVCoInstaller"
+HKR, Uninstall, Uninstaller, %REG_SZ%, "nvudisp.exe"
+HKR, Uninstall, Script,      %REG_SZ%, "nvdisp.nvu"
+HKR, Uninstall, Name,        %REG_SZ%, %NVUninstall.desc%
+HKR, Uninstall, CopyFiles,   %REG_MULTI_SZ%, "default.tvp,keystone.exe,nvappbar.exe,nvapps.xml,nvcolor.exe,nvdspsch.exe,nview.dll,nvshell.dll,nvtuicpl.cpl,nvwdmcpl.dll,nvwimg.dll,nwiz.exe"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsar.dll,nvwrsar.dll,nvcpar.hlp,nvwcpar.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrscs.dll,nvwrscs.dll,nvcpcs.hlp,nvwcpcs.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsda.dll,nvwrsda.dll,nvcpda.hlp,nvwcpda.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsde.dll,nvwrsde.dll,nvcpde.hlp,nvwcpde.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsel.dll,nvwrsel.dll,nvcpel.hlp,nvwcpel.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrseng.dll,nvwrseng.dll,nvcpeng.hlp,nvwcpeng.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrses.dll,nvwrses.dll,nvcpes.hlp,nvwcpes.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsesm.dll,nvwrsesm.dll,nvcpesm.hlp,nvwcpesm.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsfi.dll,nvwrsfi.dll,nvcpfi.hlp,nvwcpfi.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsfr.dll,nvwrsfr.dll,nvcpfr.hlp,nvwcpfr.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrshe.dll,nvwrshe.dll,nvcphe.hlp,nvwcphe.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrshu.dll,nvwrshu.dll,nvcphu.hlp,nvwcphu.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsit.dll,nvwrsit.dll,nvcpit.hlp,nvwcpit.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsja.dll,nvwrsja.dll,nvcpja.hlp,nvwcpja.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsko.dll,nvwrsko.dll,nvcpko.hlp,nvwcpko.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsnl.dll,nvwrsnl.dll,nvcpnl.hlp,nvwcpnl.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsno.dll,nvwrsno.dll,nvcpno.hlp,nvwcpno.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrspl.dll,nvwrspl.dll,nvcppl.hlp,nvwcppl.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrspt.dll,nvwrspt.dll,nvcppt.hlp,nvwcppt.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsptb.dll,nvwrsptb.dll,nvcpptb.hlp,nvwcpptb.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrsru.dll,nvwrsru.dll,nvcpru.hlp,nvwcpru.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrssk.dll,nvwrssk.dll,nvcpsk.hlp,nvwcpsk.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrssl.dll,nvwrssl.dll,nvcpsl.hlp,nvwcpsl.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrssv.dll,nvwrssv.dll,nvcpsv.hlp,nvwcpsv.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvcpth.hlp,nvwcpth.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrstr.dll,nvwrstr.dll,nvcptr.hlp,nvwcptr.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrszhc.dll,nvwrszhc.dll,nvcpzhc.hlp,nvwcpzhc.hlp"
+HKR, Uninstall, CopyFiles,   %REG_SZ_APPEND%, "nvrszht.dll,nvwrszht.dll,nvcpzht.hlp,nvwcpzht.hlp"
+
+[nv_CoInstaller_nView_Quadro_AddReg]
+HKR, Uninstall, CopyFiles, %REG_SZ_APPEND%, "advanced.tvp,cad.tvp,dcc.tvp,finance.tvp"
+
+[nv_CoInstaller_DCCApps_AddReg]
+HKR, Uninstall, CopyFiles, %REG_SZ_APPEND%, "nvdccapp.cfg>nvwsapps.cfg"
+
+[nv_CoInstaller_WSApps_AddReg]
+HKR, Uninstall, CopyFiles, %REG_SZ_APPEND%, "nvwsapps.cfg"
+
+[nv_CoInstaller_NVEPCLNT_AddReg]
+HKR, Uninstall, CopyFiles, %REG_SZ_APPEND%, "nvepclnt.exe"
+
+[nv.Display]
+nv4_disp.dll,nv4_disp.dll,nv4dtmp.dll
+nvsvc32.exe
+nvhwvid.dll
+
+[nv.CoInstaller]
+nvcod.dll
+nvcodins.dll,nvcod.dll
+
+[nv4.Miniport]
+nv4_mini.sys,nv4_mini.sys,nv4mtmp.sys
+
+[nv4.icd]
+nvoglnt.dll,nvoglnt.dll,nvotmp.dll
+
+[nv.Panel]
+nvcpl.dll
+nvmctray.dll
+nvwddi.dll
+nvnt4cpl.dll
+
+[nv.Help]
+nvcpl.hlp
+nvwcplen.hlp
+
+[nv.RegisterCPL]
+11,,nvcpl.dll,1
+
+[nv.oldrm]
+nvarch.sys,,,1
+nvgfx.sys,,,1
+
+[nv.delete.systemfiles]
+nv4oglnt.dll,,,1
+nvopenglnt.dll,,,1
+nvinstnt.dll,,,1
+nvdmcpl.dll,,,1
+nvdesk32.dll,,,1
+nvqtwk.dll,,,1
+dmcpl.exe,,,1
+nviewimg.dll,,,1
+
+[nv_SoftwareDeviceSettings]
+HKR,, InstalledDisplayDrivers,     %REG_MULTI_SZ%, nv4_disp
+HKR,, VgaCompatible,               %REG_DWORD%,    0
+HKR,, MultiFunctionSupported,      %REG_DWORD%,    1
+HKR,, RotateFlag,                  %REG_DWORD%,    4
+HKR,, NV_R&T,                      %REG_MULTI_SZ%, "R&T0000=*,*,*,*,*,IBM251F.VSC2F0C.VSC3411.VSC3E19,HDLK"
+HKR,, NV_R&T,                      %REG_SZ_APPEND%,"R&T0001=1920,1080,*,30,*,CRTX,OEM,7425,2200,48,56,562,2,5,++I"
+HKR,, NV_R&T,                      %REG_SZ_APPEND%,"R&T0002=1920,1080,*,60,*,BNQ766A,ADD,CVTRB"
+HKR,, NV_R&T,                      %REG_SZ_APPEND%,"R&T0003=1920,1200,*,60,*,BNQ766A,ADD,CVTRB"
+HKR,, DevSwitchSuppressMask,       %REG_DWORD%,    7
+HKLM,"Software\NVIDIA Corporation\Global\NvSvc\OemConfigurations",LoadLimitedSID,%REG_SZ%,"S-1-5-11"
+HKR,, "DefaultSettings.XResolution",%REG_DWORD%,800
+HKR,, "DefaultSettings.YResolution",%REG_DWORD%,600
+
+HKR,, NV_Modes, %REG_MULTI_SZ%,  "{*}S 720x480 720x576=1;320x200 320x240 400x300 480x360 512x384 640x400=F;SHV 2048x1536x32=1;1920x1200x32 1920x1440x8,16=1D;640x480 800x600 1024x768 1280x768 1280x1024 1600x900 1600x1200 1920x1200x8,16=3D;1920x1440x32=9;1920x1080=C01E;2048x1536x8,16=D;{1A0}S 1920x1200x32 1920x1440x8,16 2048x1536x8,16=20;800x480=3D;{40-18B,1F0-34E}SHV 800x600=1DC2;848x480=1DFF;1920x1080x32=1F;640x480 1024x768x8,16=1FC2;1600x1200x32 1920x1200 1920x1440 2048x1536x8,16=2;"
+HKR,, NV_Modes, %REG_SZ_APPEND%, "1280x768x32 1280x1024x32=2C2;1280x720x32 1280x960x32 1360x768x32=2FF;1600x900x8,16=3C2;1600x1024x32 1920x1080x8,16=3F;1600x900x32 1600x1200x8,16=42;1152x864x32=6FF;1280x768x8,16 1280x1024x8,16=7C2;1600x1024x8,16=7F;1280x720x8,16 1280x960x8,16 1360x768x8,16=7FF;1024x768x32=FC2;1152x864x8,16=FFF;{40-CE,110-14F,161-18B,1F0,210-34E}SHV 1280x800x32=2FF;1280x800x8,16=7FF;960x600=DFF;{40-CE,140-14F,161-165,1A0,210-21E,301-34E}SHV 2048x1536x8,16=10;1920x1440x32 2048x1536x32=4;"
+HKR,, NV_Modes, %REG_SZ_APPEND%, "{40-CE,140-14F,161-165,210-21E,258-25B,288-34E}SHV 960x600=1000;{40-CE,140-14F,161-165,210-21E,301-34E}SHV 1920x1440x32=10;1152x864x32 1280x720x32 1280x768x32 1280x800x32 1280x960x32 1280x1024x32 1360x768x32=100;2048x1536x32=1A;1088x612x8,16=1FFF;800x600 848x480 960x600=200;1088x612x32=FFF;{4D-4E,CD-CE,14E,258-25B,288-289,308-309,32A-32B,338-33F,34E}SH 960x1200=803D;{4D-4E,CD-CE,14E,338,33F}SHV 800x600 1024x768 1280x1024 1600x1200 1920x1154 1920x1200=8032;"
+
+[nv_WSApps_AddReg]
+HKR,,"NvCplConfiguration",%REG_DWORD%,0x100000
+
+[nv_DccApps_AddReg]
+HKR,,"NvCplConfiguration",%REG_DWORD%,0x100000
+
+[Crush11_AddReg]
+HKLM,"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", LargePageMinimum, %REG_DWORD%, 0xffffffff
+
+[NV3xLoadService_AddReg]
+HKLM,"Software\NVIDIA Corporation\Global\NvSvc",BitIndicators,%REG_DWORD%,1
+
+[nvDualView_AddReg]
+HKR,, NvCplTwinViewInDualView, %REG_DWORD%, 1
+HKR,, EnableWin2kDualview, %REG_DWORD%, 1
+HKR,, ForceNHeads, %REG_DWORD%, 2
+HKR,, DualviewLockDevices, %REG_BINARY%,01,00,01,00,02,00,02,00
+HKR,, NT4MultiDevEnable, %REG_DWORD%, 0
+HKCR,CLSID\{6D0E6651-1CD8-11d6-92C4-0003479E4848},,,"NVIDIA NT4 Multimon Control Panel Extension"
+HKCR,CLSID\{6D0E6651-1CD8-11d6-92C4-0003479E4848}\InProcServer32,,,"nvnt4cpl.dll"
+HKCR,CLSID\{6D0E6651-1CD8-11d6-92C4-0003479E4848}\InProcServer32,ThreadingModel,,Apartment
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Controls Folder\Display\shellex\PropertySheetHandlers\NVIDIA NT4 Multimon CPL",,,"{6D0E6651-1CD8-11d6-92C4-0003479E4848}"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved",{6D0E6651-1CD8-11d6-92C4-0003479E4848},,"NVIDIA NT4 Multimon Control Panel Extension"
+HKLM,"Software\NVIDIA Corporation\Global\Display",CplEnableW2k,%REG_DWORD%, 1
+
+[TestAnalogLoadAlways_AddReg]
+HKR,, TestAnalogLoadAlways, %REG_DWORD%, 1
+
+[Default16BPP_AddReg]
+HKR,, "DefaultSettings.BitsPerPel",%REG_DWORD%,16
+
+[Default32BPP_AddReg]
+HKR,, "DefaultSettings.BitsPerPel",%REG_DWORD%,32
+
+[DOEB_AddReg]
+HKR,, EdgeBlendingData, %REG_BINARY%, 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak",NvCplEnableDesktopOverlapPage,%REG_DWORD%,1
+
+[NVEPCLNT_AddReg]
+HKLM,"Software\NVIDIA Corporation\Global\nView",nvepclnt, %REG_DWORD%, 1
+
+[nv4_icdSoftwareSettings]
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\RIVATNT",Version, %REG_DWORD%, 00000002
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\RIVATNT",DriverVersion, %REG_DWORD%, 0x00010000
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\RIVATNT",Dll, %REG_SZ%, nvoglnt
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\RIVATNT",Flags, %REG_DWORD%, 00000001
+HKR,, "_oni.exe:OGL_ExtensionStringNVArch",   %REG_DWORD%, 4
+
+[nv_ControlPanelSettings]
+HKCR,CLSID\{FFB699E0-306A-11d3-8BD1-00104B6F7516},,,"NVIDIA CPL Extension"
+HKCR,CLSID\{FFB699E0-306A-11d3-8BD1-00104B6F7516}\InProcServer32,,,"%11%\nvcpl.dll"
+HKCR,CLSID\{FFB699E0-306A-11d3-8BD1-00104B6F7516}\InProcServer32,ThreadingModel,,Apartment
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak",NvCplExposeWin2kDualView,%REG_DWORD%,1
+HKLM,"Software\Microsoft\Windows\CurrentVersion\Controls Folder\Display\shellex\PropertySheetHandlers\NVIDIA CPL Extension",,,"{FFB699E0-306A-11d3-8BD1-00104B6F7516}"
+HKLM,Software\Microsoft\Windows\CurrentVersion\Run,NvCplDaemon,,"RUNDLL32.EXE %11%\NvCpl.dll,NvStartup"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,NvCplDaemon,,"RUNDLL32.EXE %11%\NvCpl.dll,NvStartup"
+HKLM,Software\NVIDIA Corporation\Global\nView,"InitProfile",,"default.tvp"
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Run,"nwiz",,"nwiz.exe /install"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,NvExportOEMDefaults,,"RUNDLL32.EXE %11%\NVCPL.DLL,ExportOEMDefaults"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,NvRegisterMCTray,,"RUNDLL32.EXE %11%\NVMCTRAY.DLL,NvMCRegisterApp %11%\NvCpl.dll"
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak",NvCplTvLocaleAutoDetect,%REG_DWORD%,1
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak",NvCplAllowForceTVDetection,%REG_DWORD%,1
+HKLM,Software\Microsoft\Windows\CurrentVersion\Run,NvMediaCenter,,"RUNDLL32.EXE %11%\NvMcTray.dll,NvTaskbarInit"
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak\OemConfigurations",MediaCenterLoadPolicy,%REG_DWORD%,1
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak\State",GlobalStartupDefaults,%REG_DWORD%,1
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak",NvCplEnableActiveApp,%REG_DWORD%,1
+
+[nv_ClearRegistrySwitches]
+HKR,, NVREGSWITCHES
+HKR,, NV4_Modes
+HKR,, NV5_Modes
+HKR,, NV0A_Modes
+HKR,, NVVANTA_Modes
+HKR,, NV5M64_Modes
+HKR,, NV5ULTRA_Modes
+HKR,, NV10_Modes
+HKR,, NV10DDR_Modes
+HKR,, NV10GL_Modes
+HKR,, NV11_Modes
+HKR,, NV11DDR_Modes
+HKR,, NV11GL_Modes
+HKR,, CRUSH11_Modes
+HKR,, NV15_Modes
+HKR,, NV15DDR_Modes
+HKR,, NV15BR_Modes
+HKR,, NV15GL_Modes
+HKR,, NV17_Modes
+HKR,, NV17GL_Modes
+HKR,, NV18_Modes
+HKR,, NV18GL_Modes
+HKR,, NV1F_Modes
+HKR,, NV20_Modes
+HKR,, NV20_1_Modes
+HKR,, NV20_2_Modes
+HKR,, NV20_3_Modes
+HKR,, NV25_Modes
+HKR,, NV25GL_Modes
+HKR,, NV28_Modes
+HKR,, NV28GL_Modes
+HKR,, NV30_Modes
+HKR,, NV30GL_Modes
+HKR,, NV4_Modes_Delta
+HKR,, NV5_Modes_Delta
+HKR,, NV0A_Modes_Delta
+HKR,, NVVANTA_Modes_Delta
+HKR,, NV5M64_Modes_Delta
+HKR,, NV5ULTRA_Modes_Delta
+HKR,, NV10_Modes_Delta
+HKR,, NV10DDR_Modes_Delta
+HKR,, NV10GL_Modes_Delta
+HKR,, NV11_Modes_Delta
+HKR,, NV11DDR_Modes_Delta
+HKR,, NV11M_Modes_Delta
+HKR,, NV11GL_Modes_Delta
+HKR,, CRUSH11_Modes_Delta
+HKR,, NV15_Modes_Delta
+HKR,, NV15DDR_Modes_Delta
+HKR,, NV15BR_Modes_Delta
+HKR,, NV15GL_Modes_Delta
+HKR,, NV20_Modes_Delta
+HKR,, NV20_1_Modes_Delta
+HKR,, NV20_2_Modes_Delta
+HKR,, NV20_3_Modes_Delta
+HKR,, NV17_Modes_Delta
+HKR,, NV17GL_Modes_Delta
+HKR,, NV18_Modes_Delta
+HKR,, NV18GL_Modes_Delta
+HKR,, NV1F_Modes_Delta
+HKR,, NV25_Modes_Delta
+HKR,, NV25GL_Modes_Delta
+HKR,, NV28_Modes_Delta
+HKR,, NV28GL_Modes_Delta
+HKR,, NV30_Modes_Delta
+HKR,, NV30GL_Modes_Delta
+HKR,, VPucodeCtrl
+HKR,, MB_Enable
+HKR,, DCBOverride0
+HKR,, DCBOverride1
+HKR,, NV_Modes
+HKR,, UseCompressedModeFormat
+HKR,, FlatPanelMode
+HKR,, DMTOVERRIDE
+HKR,, DisableExtRefresh
+HKR,, Max16x12
+HKR,, Disable19x12x32at60
+HKR,, Disable16x12x32ge70
+HKR,, Disable19x10x32ge70
+HKR,, DellSwitch1
+HKR,, OglStencil
+HKR,, CapabilityOverride
+HKR,, OGL_EnableFSAA
+HKR,, OGL_DefaultSwapInterval
+HKR,, OGL_TexMemorySpaceEnables
+HKR,, OGL_TexStagingBufferSize
+HKR,, OGL_TexStagingBufferMultSize
+HKR,, OGL_DLStagingBufferSizeWords
+HKR,, OGL_DlMemorySpaceEnables
+HKR,, "4x42.exe:OGL_TexClampBehavior"
+HKR,, "alice.exe:OGL_TexClampBehavior"
+HKR,, "codmp.exe:OGL_TexClampBehavior"
+HKR,, "codsp.exe:OGL_TexClampBehavior"
+HKR,, "diablo ii.exe:OGL_TexClampBehavior"
+HKR,, "et.exe:OGL_TexClampBehavior"
+HKR,, "idmain.exe:OGL_TexClampBehavior"
+HKR,, "jamp.exe:OGL_TexClampBehavior"
+HKR,, "jasp.exe:OGL_TexClampBehavior"
+HKR,, "jk2mp.exe:OGL_TexClampBehavior"
+HKR,, "jk2sp.exe:OGL_TexClampBehavior"
+HKR,, "moh_breakthrough.exe:OGL_ExtensionStringVersion"
+HKR,, "moh_breakthrough.exe:OGL_TexClampBehavior"
+HKR,, "moh_breakthrough_demo.exe:OGL_ExtensionStringVersion"
+HKR,, "moh_breakthrough_demo.exe:OGL_TexClampBehavior"
+HKR,, "moh_spearhead.exe:OGL_ExtensionStringVersion"
+HKR,, "moh_spearhead.exe:OGL_TexClampBehavior"
+HKR,, "moh_spearhead_demo.exe:OGL_ExtensionStringVersion"
+HKR,, "moh_spearhead_demo.exe:OGL_TexClampBehavior"
+HKR,, "mohaa.exe:OGL_ExtensionStringVersion"
+HKR,, "mohaa.exe:OGL_TexClampBehavior"
+HKR,, "oni.exe:OGL_ExtensionStringNVArch"
+HKR,, "_oni.exe:OGL_ExtensionStringNVArch"
+HKR,, "quake3.exe:OGL_TexClampBehavior"
+HKR,, "sof2.exe:OGL_TexClampBehavior"
+HKR,, "sof2mp.exe:OGL_TexClampBehavior"
+HKR,, "_vcvisual:OGL_ExtensionStringVersion"
+HKR,, "wolfmp.exe:OGL_TexClampBehavior"
+HKR,, "wolfsp.exe:OGL_TexClampBehavior"
+HKR,, "x29.exe:OGL_ExtensionStringVersion"
+HKR,, "_x29.exe:OGL_ExtensionStringVersion"
+HKR,, TwinViewInfo
+HKR,, PrevTwinViewInfo
+HKR,, SaveSettings
+HKR,, NvCplConfiguration
+HKR,, EnableWin2KDualview
+HKR,, NV_R&T
+HKR,, EdgeBlendingData
+HKR,, NT4MultiDevEnable
+HKR,, D3D_60461791
+HKR,, DisableVersionCheck
+HKR,, DrvOptions
+HKR,, DevSwitchSuppressMask
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\RIVATNT"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\NVIDIA"
+HKLM,"Software\NVIDIA Corporation\RIVA TNT\OpenGL"
+HKLM,"SYSTEM\CurrentControlSet\Hardware Profiles\Current\System\CurrentControlSet\SERVICES\NV4\DEVICE0"
+HKLM,"SYSTEM\CurrentControlSet\Hardware Profiles\Current\System\CurrentControlSet\SERVICES\NV"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Controls Folder\Display\shellex\PropertySheetHandlers\NVIDIA NT4 Multimon CPL"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Controls Folder\Device\shellex\PropertySheetHandlers\NVIDIA CPL Extension"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved",{6D0E6651-1CD8-11d6-92C4-0003479E4848}
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved",{FFB699E0-306A-11d3-8BD1-00104B6F7516}
+HKCU,Software\Microsoft\Windows\CurrentVersion\Run,NvMediaCenter
+HKLM,Software\Microsoft\Windows\CurrentVersion\Run,NvMediaCenter
+HKCU,"Software\NVIDIA Corporation\Global\Display"
+HKLM,"Software\NVIDIA Corporation\Global\Display"
+HKCU,"Software\NVIDIA Corporation\Global\NVTweak"
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak"
+HKCU,"Software\NVIDIA Corporation\Global\NVSvc"
+HKLM,"Software\NVIDIA Corporation\Global\NVSvc"
+HKCU,"Software\NVIDIA Corporation\Global\OpenGL"
+HKLM,"Software\NVIDIA Corporation\Global\OpenGL"
+HKR,, NvCplDisplayTvLocaleVisited
+HKR,, NvCplEnableHardwarePage
+HKR,, NvCplTwinViewInDualView
+HKR,, NvCplTvLocaleAutoDetect
+HKR,, NvCplEnablenForcePage
+HKLM, Software\Microsoft\Windows\CurrentVersion\Run,NVDeployClient
+HKR,, OverlayMode2
+HKR,, OverlayMode3
+HKR,, OverlayMode4
+HKR,, OverlayColorControlEnable
+HKR,, OverlayBrightness
+HKR,, OverlayContrast
+HKR,, OverlayHue
+HKR,, OverlaySaturation
+HKR,, OverlayGamma
+HKR,, OverlayMaxGamma
+HKR,, OverlaySharpness
+HKR,, OverlayDVC
+HKR,, VMBrightness
+HKR,, VMContrast
+HKR,, VMHue
+HKR,, VMSaturation
+HKR,, VMGamma
+HKR,, VMMaxGamma
+HKR,, VMSharpness
+HKR,, VMDVC
+
+[Strings]
+; Non-Localizable Strings
+REG_SZ         = 0x00000000
+REG_MULTI_SZ   = 0x00010000
+REG_EXPAND_SZ  = 0x00020000
+REG_BINARY     = 0x00000001
+REG_DWORD      = 0x00010001
+REG_SZ_APPEND  = 0x00010008
+
+; Localizable Strings
+NVIDIA                 = "NVIDIA"
+NVIDIA_NV10.DEV_0100.1 = "NVIDIA GeForce 256"
+NVIDIA_NV10.DEV_0101.1 = "NVIDIA GeForce DDR"
+NVIDIA_NV10.DEV_0103.1 = "NVIDIA Quadro"
+NVIDIA_NV11.DEV_0110.1 = "NVIDIA GeForce2 MX/MX 400"
+NVIDIA_NV11.DEV_0111.1 = "NVIDIA GeForce2 MX 100/200"
+NVIDIA_NV11.DEV_0113.1 = "NVIDIA Quadro2 MXR/EX"
+NVIDIA_CR11.DEV_01A0.1 = "NVIDIA GeForce2 Integrated GPU"
+NVIDIA_NV15.DEV_0150.1 = "NVIDIA GeForce2 GTS/GeForce2 Pro"
+NVIDIA_NV15.DEV_0151.1 = "NVIDIA GeForce2 Ti"
+NVIDIA_NV15.DEV_0152.1 = "NVIDIA GeForce2 Ultra"
+NVIDIA_NV15.DEV_0153.1 = "NVIDIA Quadro2 Pro"
+NVIDIA_NV17.DEV_0170.1 = "NVIDIA GeForce4 MX 460"
+NVIDIA_NV17.DEV_0171.1 = "NVIDIA GeForce4 MX 440"
+NVIDIA_NV17.DEV_0172.1 = "NVIDIA GeForce4 MX 420"
+NVIDIA_NV17.DEV_0173.1 = "NVIDIA GeForce4 MX 440-SE"
+NVIDIA_NV17.DEV_0178.1 = "NVIDIA Quadro4 550 XGL"
+NVIDIA_NV17.DEV_017A.1 = "NVIDIA Quadro NVS"
+NVIDIA_NV18.DEV_0181.1 = "NVIDIA GeForce4 MX 440 with AGP8X"
+NVIDIA_NV18.DEV_0182.1 = "NVIDIA GeForce4 MX 440SE with AGP8X"
+NVIDIA_NV18.DEV_0185.1 = "NVIDIA GeForce4 MX 4000"
+NVIDIA_NV18.DEV_0188.1 = "NVIDIA Quadro4 580 XGL"
+NVIDIA_NV18.DEV_018A.1 = "NVIDIA Quadro NVS with AGP8X"
+NVIDIA_NV18.DEV_018B.1 = "NVIDIA Quadro4 380 XGL"
+NVIDIA_CR17.DEV_01F0.1 = "NVIDIA GeForce4 MX Integrated GPU"
+NVIDIA_NV20.DEV_0200.1 = "NVIDIA GeForce3"
+NVIDIA_NV20.DEV_0201.1 = "NVIDIA GeForce3 Ti 200"
+NVIDIA_NV20.DEV_0202.1 = "NVIDIA GeForce3 Ti 500"
+NVIDIA_NV20.DEV_0203.1 = "NVIDIA Quadro DCC"
+NVIDIA_NV25.DEV_0250.1 = "NVIDIA GeForce4 Ti 4600"
+NVIDIA_NV25.DEV_0251.1 = "NVIDIA GeForce4 Ti 4400"
+NVIDIA_NV25.DEV_0253.1 = "NVIDIA GeForce4 Ti 4200"
+NVIDIA_NV25.DEV_0258.1 = "NVIDIA Quadro4 900 XGL"
+NVIDIA_NV25.DEV_0259.1 = "NVIDIA Quadro4 750 XGL"
+NVIDIA_NV25.DEV_025B.1 = "NVIDIA Quadro4 700 XGL"
+NVIDIA_NV28.DEV_0280.1 = "NVIDIA GeForce4 Ti 4800"
+NVIDIA_NV28.DEV_0281.1 = "NVIDIA GeForce4 Ti 4200 with AGP8X"
+NVIDIA_NV28.DEV_0282.1 = "NVIDIA GeForce4 Ti 4800 SE"
+NVIDIA_NV28.DEV_0288.1 = "NVIDIA Quadro4 980 XGL"
+NVIDIA_NV28.DEV_0289.1 = "NVIDIA Quadro4 780 XGL"
+NVIDIA_NV30.DEV_0301.1 = "NVIDIA GeForce FX 5800 Ultra"
+NVIDIA_NV30.DEV_0302.1 = "NVIDIA GeForce FX 5800"
+NVIDIA_NV30.DEV_0308.1 = "NVIDIA Quadro FX 2000"
+NVIDIA_NV30.DEV_0309.1 = "NVIDIA Quadro FX 1000"
+NVIDIA_NV31.DEV_0311.1 = "NVIDIA GeForce FX 5600 Ultra"
+NVIDIA_NV31.DEV_0312.1 = "NVIDIA GeForce FX 5600"
+NVIDIA_NV31.DEV_0314.1 = "NVIDIA GeForce FX 5600XT"
+NVIDIA_NV34.DEV_0321.1 = "NVIDIA GeForce FX 5200 Ultra"
+NVIDIA_NV34.DEV_0322.1 = "NVIDIA GeForce FX 5200 "
+NVIDIA_NV34.DEV_0323.1 = "NVIDIA GeForce FX 5200LE"
+NVIDIA_NV34.DEV_0326.1 = "NVIDIA GeForce FX 5500"
+NVIDIA_NV34.DEV_0327.1 = "NVIDIA GeForce FX 5100"
+NVIDIA_NV34.DEV_032A.1 = "NVIDIA Quadro NVS 280 PCI"
+NVIDIA_NV34.DEV_032B.1 = "NVIDIA Quadro FX 500/FX 600"
+NVIDIA_NV35.DEV_0330.1 = "NVIDIA GeForce FX 5900 Ultra"
+NVIDIA_NV35.DEV_0331.1 = "NVIDIA GeForce FX 5900"
+NVIDIA_NV35.DEV_0332.1 = "NVIDIA GeForce FX 5900XT"
+NVIDIA_NV35.DEV_0333.1 = "NVIDIA GeForce FX 5950 Ultra"
+NVIDIA_NV35.DEV_0334.1 = "NVIDIA GeForce FX 5900ZT"
+NVIDIA_NV35.DEV_0338.1 = "NVIDIA Quadro FX 3000"
+NVIDIA_NV35.DEV_033F.1 = "NVIDIA Quadro FX 700"
+NVIDIA_NV36.DEV_0341.1 = "NVIDIA GeForce FX 5700 Ultra"
+NVIDIA_NV36.DEV_0342.1 = "NVIDIA GeForce FX 5700"
+NVIDIA_NV36.DEV_0343.1 = "NVIDIA GeForce FX 5700LE"
+NVIDIA_NV36.DEV_0344.1 = "NVIDIA GeForce FX 5700VE"
+NVIDIA_NV36.DEV_034E.1 = "NVIDIA Quadro FX 1100"
+NVIDIA_NV40.DEV_0040.1 = "NVIDIA GeForce 6800 Ultra"
+NVIDIA_NV40.DEV_0041.1 = "NVIDIA GeForce 6800"
+NVIDIA_NV40.DEV_0042.1 = "NVIDIA GeForce 6800 LE"
+NVIDIA_NV40.DEV_0045.1 = "NVIDIA GeForce 6800 GT"
+NVIDIA_NV40.DEV_004E.1 = "NVIDIA Quadro FX 4000"
+NVIDIA_NV41.DEV_00C1.1 = "NVIDIA GeForce 6800 "
+NVIDIA_NV41.DEV_00C2.1 = "NVIDIA GeForce 6800 LE "
+NVIDIA_NV41.DEV_00CD.1 = "NVIDIA Quadro FX 3450/4000 SDI"
+NVIDIA_NV41.DEV_00CE.1 = "NVIDIA Quadro FX 1400"
+NVIDIA_NV43.DEV_0140.1 = "NVIDIA GeForce 6600 GT"
+NVIDIA_NV43.DEV_0141.1 = "NVIDIA GeForce 6600"
+NVIDIA_NV43.DEV_0145.1 = "NVIDIA GeForce 6610 XL"
+NVIDIA_NV43.DEV_014E.1 = "NVIDIA Quadro FX 540"
+NVIDIA_NV43.DEV_014F.1 = "NVIDIA GeForce 6200"
+NVIDIA_NV44.DEV_0161.1 = "NVIDIA GeForce 6200 TurboCache(TM)"
+NVIDIA_NV44.DEV_0165.1 = "NVIDIA Quadro NVS 285"
+NVIDIA_NV48.DEV_0211.1 = "NVIDIA GeForce 6800  "
+NVIDIA_NV48.DEV_0212.1 = "NVIDIA GeForce 6800 LE  "
+NVIDIA_NV48.DEV_0215.1 = "NVIDIA GeForce 6800 GT "
+NVIDIA_BR02.DEV_00F1.1 = "NVIDIA GeForce 6600 GT "
+NVIDIA_BR02.DEV_00F2.1 = "NVIDIA GeForce 6600 "
+NVIDIA_BR02.DEV_00F3.1 = "NVIDIA GeForce 6200 "
+NVIDIA_BR02.DEV_00F8.1 = "NVIDIA Quadro FX 3400/4400"
+NVIDIA_BR02.DEV_00F9.1 = "NVIDIA GeForce 6800 Series GPU"
+NVIDIA_BR02.DEV_00FA.1 = "NVIDIA GeForce PCX 5750"
+NVIDIA_BR02.DEV_00FB.1 = "NVIDIA GeForce PCX 5900"
+NVIDIA_BR02.DEV_00FC.1 = "NVIDIA GeForce PCX 5300"
+NVIDIA_BR02.DEV_00FD.1 = "NVIDIA Quadro PCI-E Series"
+NVIDIA_BR02.DEV_00FE.1 = "NVIDIA Quadro FX 1300"
+NVIDIA_Win2KDualView   = "NVIDIA Dualview"
+NVIDIA_MultiView       = "NVIDIA Multiview"
+DiskID1 = "NVIDIA Windows 2000/XP Driver Library Installation Disk 1"
+DiskID2 = "NVIDIA Windows 2000/XP Driver Library Installation Disk 2"
+DiskID3 = "NVIDIA Windows 2000/XP Driver Library Installation Disk 3"
+DiskID4 = "NVIDIA Windows 2000/XP Driver Library Installation Disk 4"
+DiskID5 = "NVIDIA Windows 2000/XP Driver Library Installation Disk 5"
+DiskID6 = "NVIDIA Windows 2000/XP Driver Library Installation Disk 6"
+NVSVC.name = "NVIDIA Display Driver Service"
+NVSVC.desc = "Provides system and desktop level support to the NVIDIA display driver"
+NVUninstall.desc = "NVIDIA Display Driver"

@@ -1,0 +1,1395 @@
+
+[Version]
+signature="$Windows NT$"
+ClassGUID={00000000-0000-0000-0000-000000000000}
+layoutfile=LAYOUT.INF
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[StartMenu.ObjectsToDelete]
+1,%intro%,%main%,0
+1,%pifedit%,%main%,0
+1,%control%,%main%,0
+1,%winfile%,%main%,0
+1,%cmd%,%main%,0
+1,%setup%,%main%,0
+1,%readme%,%main%,0
+1,%ntbooks%,%main%,0
+1,%cmdref%,%main%,0
+1,%printman%,%main%,0
+1,%clipbrd%,%main%,0
+1,%terminal%,%accessories%,0
+1,%mplayer%,%accessories%,0
+1,%sndrec32%,%accessories%,0
+1,%sndvol32%,%accessories%,0
+1,%sndvol32old%,%accessories_multimedia%,0
+1,%sndvol32old%,%accessories_multimedia%,1
+1,%cdplayerold%,%accessories_multimedia%,0
+1,%cdplayerold%,%accessories_multimedia%,1
+1,%cdplayer%,%accessories%,0
+1,%pbrush%,%accessories%,0
+1,%printman%,%accessories%,0
+1,%sync_manager%,%accessories%,0
+1,%write%,%accessories%,0
+1,%du_networking%,%accessories%,0
+1,%network_and_dialup%,%accessories_communications%,1
+1,%sol%,%prexp_accessories_games%,0
+1,%winmine%,%prexp_accessories_games%,0
+1,%freecell%,%prexp_accessories_games%,0
+1,%pinball%,%prexp_accessories_games%,0
+1,%hearts%,%prexp_accessories_games%,0
+1,%spider%,%prexp_accessories_games%,0
+1,%sol%,%prexp_accessories_games%,1
+1,%winmine%,%prexp_accessories_games%,1
+1,%freecell%,%prexp_accessories_games%,1
+1,%pinball%,%prexp_accessories_games%,1
+1,%hearts%,%prexp_accessories_games%,1
+1,%spider%,%prexp_accessories_games%,1
+1,%ihearts%,%prexp_accessories_games%,0
+1,%ispades%,%prexp_accessories_games%,0
+1,%ibackgammon%,%prexp_accessories_games%,0
+1,%icheckers%,%prexp_accessories_games%,0
+1,%ireversi%,%prexp_accessories_games%,0
+1,%ihearts%,%prexp_accessories_games%,1
+1,%ispades%,%prexp_accessories_games%,1
+1,%ibackgammon%,%prexp_accessories_games%,1
+1,%icheckers%,%prexp_accessories_games%,1
+1,%ireversi%,%prexp_accessories_games%,1
+1,%dcomcnfg%,%admintools%,1
+1,%ntbooks%,,0
+1,%dvdplay%,%accessories_entertainment%,1
+1,%musrmgr%,%admintools%,0
+1,%musrmgr%,%admintools%,1
+1,%explorer%,"",0
+1,%ciadmin%,%admintools%,1
+1,%CHAREDIT%,%accessories%,0
+1,%ntbackup%,%accessories%,0
+1,%maint_wiz%,%systemtools%,1
+1,%compatwizard%,%systemtools%,1
+1,%compatwizard%,%accessories%,1
+0,%accessories_multimedia%,"",0
+0,%accessories_multimedia%,"",1
+1,%cmd%,"",0
+1,%tlntadmn%,%admintools%,1
+1,%oldnetcon%,%accessories_communications%,1
+1,%dialer%,%accessories_communications%,1
+
+
+
+
+
+1,%windisk%,%admintools%,0
+1,%perfmon%,%admintools%,0
+1,%ntbackup%,%admintools%,0
+1,%eventvwr%,%admintools%,0
+1,%winmsd%,%admintools%,0
+1,%rasadmin%,%admintools%,0
+
+
+
+
+
+
+
+1,%windisk%,%admintools%,1
+1,%perfmon%,%admintools%,1
+1,%eventvwr%,%admintools%,1
+1,%winmsd%,%admintools%,1
+1,%rasadmin%,%admintools%,1
+1,%eventvwr%,%nt4admintools%,1
+1,%windisk%,%nt4admintools%,1
+1,%ntbackup%,%nt4admintools%,1
+1,%perfmon%,%nt4admintools%,1
+1,%winmsd%,%nt4admintools%,1
+1,%rasadmin%,%nt4admintools%,1
+0,%nt4admintools%,"",0
+1,%devmgmt%,%admintools%,1
+1,%diskmgmt%,%admintools%,1
+1,%svcmgmt%,%admintools%,1
+1,%fsmgmt%,%admintools%,1
+1,%ntbackup%,%admintools%,1
+1,%ntwksvcmgmt%,%admintools%,1
+1,%scheduled_tasks%,%admintools%,1
+1,%charmap%,%accessories%,1
+0,%prexp_accessories_games%,"",0
+0,%prexp_accessories_games%,"",1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[StartMenuItems]
+%remote_assistance% = rcimlby.exe,"%%SYSTEMROOT%%\system32\rcimlby.exe -LaunchRA","%%SYSTEMROOT%%\system32\rcimlby.exe",,"@%systemroot%\system32\rcbdyctl.dll,-151","%systemroot%\system32\rcbdyctl.dll",152
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[StartMenuGroups]
+Accessories = %accessories%,0,"%SystemRoot%\system32\shell32.dll",21761
+Accessibility = %accessibility%,0,"%SystemRoot%\system32\shell32.dll",21760
+Startup = %startup%,0,"%SystemRoot%\system32\shell32.dll",21787
+StartupCommon = %startup%,1,"%SystemRoot%\system32\shell32.dll",21787
+AdminTools = %admintools%,1,"%SystemRoot%\system32\shell32.dll",21762
+Entertainment = %accessories_entertainment%,0,"%SystemRoot%\system32\shell32.dll",21772
+StartMenuCommon = %startmenucommon%,0
+SystemTools = %systemtools%,1,"%SystemRoot%\system32\shell32.dll",21788
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[AdminTools]
+%compmgmt% = compmgmt.msc,"compmgmt.msc /s",mycomput.dll,2,"@%SystemRoot%\system32\shell32.dll,-22535","%SystemRoot%\system32\shell32.dll",22023
+%neweventvwr% = eventvwr.msc,"eventvwr.msc /s",els.dll,0,"@%SystemRoot%\system32\shell32.dll,-22541","%SystemRoot%\system32\shell32.dll",22029
+%sysmon% = perfmon.msc,"perfmon.msc /s",sysmon.ocx,0,"@%SystemRoot%\system32\shell32.dll,-22567","%SystemRoot%\system32\shell32.dll",22055
+%datasrcodbc% = odbcad32.exe,odbcad32.exe,odbcad32.exe,0,"@%SystemRoot%\system32\shell32.dll,-22537","%SystemRoot%\system32\shell32.dll",22025
+%locsecpol% = secpol.msc,"secpol.msc /s",wsecedit.dll,0,"@%SystemRoot%\system32\shell32.dll,-22552","%SystemRoot%\system32\shell32.dll",22040
+%services% = services.msc,"services.msc /s",filemgmt.dll,0,"@%SystemRoot%\system32\shell32.dll,-22571","%SystemRoot%\system32\shell32.dll",22059
+
+
+[Accessories]
+%cmd% = cmd.exe,cmd.exe,cmd.exe,0,"@%SystemRoot%\system32\shell32.dll,-22534","%SystemRoot%\system32\shell32.dll",22022
+%notepad% = notepad.exe,notepad.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22563","%SystemRoot%\system32\shell32.dll",22051
+%synchronize% = mobsync.exe,mobsync.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22574","%SystemRoot%\system32\shell32.dll",22062
+%windowstour% = tourstart.exe,tourstart.exe,,0,"@%SystemRoot%\system32\tourstart.exe,-2","%SystemRoot%\system32\tourstart.exe",1
+%compatwizard% = ,"hcp://system/compatctr/compatmode.htm",compatUI.dll,0, "@%systemRoot%\system32\compatUI.dll,-117", "%SystemRoot%\system32\compatUI.dll", 115
+
+[Entertainment]
+
+[StartMenuCommon]
+%windowsupdate% = wupdmgr.exe,wupdmgr.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22580"
+%windowscatalog% = ,"http://go.microsoft.com/fwlink/?LinkId=374",moricons.dll,107,"@%SystemRoot%\system32\shell32.dll,-22587","%SystemRoot%\system32\shell32.dll",22075
+%oobe_desc% = oobe\msoobe.exe,"%%SYSTEMROOT%%\system32\oobe\msoobe.exe /A",,0,"@%SystemRoot%\system32\oobe\msoobe.exe,-2001","%SystemRoot%\system32\oobe\msoobe.exe",2000
+%configureprograms% = appwiz.cpl,"control.exe appwiz.cpl,,3",moricons.dll,-114,"@%SystemRoot%\system32\xpsp1res.dll,-10078","%SystemRoot%\system32\xpsp1res.dll",10077
+
+[SystemTools]
+%ntbackup% = ntbackup.exe,ntbackup.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22530","%SystemRoot%\system32\shell32.dll",22018
+%oobe_desc% = oobe\msoobe.exe,"%%SYSTEMROOT%%\system32\oobe\msoobe.exe /A",,0,"@%SystemRoot%\system32\oobe\msoobe.exe,-2001","%SystemRoot%\system32\oobe\msoobe.exe",2000
+%migwiz_desc% = usmt\migwiz.exe,"%%SYSTEMROOT%%\system32\usmt\migwiz.exe",,0,"@%SystemRoot%\system32\usmt\migwiz.exe,-203","%SystemRoot%\system32\usmt\migwiz.exe",202
+
+
+[DEL_OOBE_ACTIVATE]
+ProfileItems = OOBE_ACTIVATE
+
+[OOBE_ACTIVATE]
+Name=%oobe_desc%,0x0000002
+SubDir=%startmenucommon%
+
+[DEL_ACTIVATE]
+ProfileItems = OOBE_ACTIVATE, OOBE_ACTIVATE2
+
+[OOBE_ACTIVATE2]
+Name=%oobe_desc%,0x0000002
+SubDir=%systemtools%
+
+[RESTORE_OOBE_ACTIVATE]
+ProfileItems = RESTORE_OOBE_ACTIVATE_STARTMENU, RESTORE_OOBE_ACTIVATE_SYSTEMTOOLS
+
+[RESTORE_OOBE_ACTIVATE_STARTMENU]
+Name = %oobe_desc%
+CmdLine = 11,,"%%SYSTEMROOT%%\system32\oobe\msoobe.exe /A"
+SubDir = %startmenucommon%
+InfoTip = "@%SystemRoot%\system32\oobe\msoobe.exe,-2001"
+DisplayResource="%SystemRoot%\system32\oobe\msoobe.exe",2000
+
+
+[RESTORE_OOBE_ACTIVATE_SYSTEMTOOLS]
+Name = %oobe_desc%
+CmdLine = 11,,"%%SYSTEMROOT%%\system32\oobe\msoobe.exe /A"
+SubDir=%systemtools%
+InfoTip = "@%SystemRoot%\system32\oobe\msoobe.exe,-2001"
+DisplayResource="%SystemRoot%\system32\oobe\msoobe.exe",2000
+
+
+
+[ProductCatalogsToInstall]
+NT5INF.CAT, 1   
+NT5.CAT
+NTPRINT.CAT
+NT5IIS.CAT
+MAPIMIG.CAT 
+CLASSES.CAT       
+DAJAVAC.CAT
+DX3.CAT     
+FP4.CAT    
+IMS.CAT
+MSJDBC.CAT        
+MSMSGS.CAT  
+
+
+TCLASSES.CAT      
+WFC.CAT     
+XMLDSOC.CAT
+HPCRDP.CAT
+
+MW770.CAT
+IASNT4.CAT
+MSTSWEB.CAT 
+OEMBIOS.CAT
+tabletpc.cat
+
+mediactr.cat
+
+
+[ProductCatalogsToUninstall]
+ICH2USB.CAT
+IEEXCEP.CAT     
+OEEXCEP.CAT     
+OE5EXCEP.CAT    
+QFE.CAT
+QFEB3.CAT
+QFERC2.CAT
+QFERC3.CAT
+SP0.CAT
+SP1.CAT
+SP2.CAT
+SP3.CAT
+SP4.CAT
+SP5.CAT
+SP6.CAT
+SP7.CAT
+SP8.CAT
+SP9.CAT
+SP10.CAT
+NT5PRTX.CAT
+IE501SP.CAT
+
+
+
+IDXWU.CAT
+IDXDU.CAT
+
+
+
+DX4.08.00.0400.10brz.CAT
+DX4.08.00.0400.10chs.CAT
+DX4.08.00.0400.10cht.CAT
+DX4.08.00.0400.10cze.CAT
+DX4.08.00.0400.10dut.CAT
+DX4.08.00.0400.10eng.CAT
+DX4.08.00.0400.10frn.CAT
+DX4.08.00.0400.10ger.CAT
+DX4.08.00.0400.10itn.CAT
+DX4.08.00.0400.10jpn.CAT
+DX4.08.00.0400.10kor.CAT
+DX4.08.00.0400.10pol.CAT
+DX4.08.00.0400.10rus.CAT
+DX4.08.00.0400.10spa.CAT
+DX4.08.00.0400.10swe.CAT
+DX4.08.00.0400.10.CAT
+DX4.08.00.0400.10D.CAT
+DX4.08.00.0400.10engD.CAT
+BDA4.08.00.0400.10.CAT
+BDA4.08.00.0400.10D.CAT
+
+
+
+DX4.08.00.0400.14brz.CAT
+DX4.08.00.0400.14chs.CAT
+DX4.08.00.0400.14cht.CAT
+DX4.08.00.0400.14cze.CAT
+DX4.08.00.0400.14dut.CAT
+DX4.08.00.0400.14eng.CAT
+DX4.08.00.0400.14frn.CAT
+DX4.08.00.0400.14ger.CAT
+DX4.08.00.0400.14itn.CAT
+DX4.08.00.0400.14jpn.CAT
+DX4.08.00.0400.14kor.CAT
+DX4.08.00.0400.14pol.CAT
+DX4.08.00.0400.14rus.CAT
+DX4.08.00.0400.14spa.CAT
+DX4.08.00.0400.14swe.CAT
+DX4.08.00.0400.14.CAT
+DX4.08.00.0400.14D.CAT
+DX4.08.00.0400.14engD.CAT
+BDA4.08.00.0400.14.CAT
+BDA4.08.00.0400.14D.CAT
+
+
+
+DXNT.CAT
+DXBDA.CAT
+DXXP.CAT
+
+,WindowsUpdateCatalog       
+,SPLevel                    
+
+
+[OsComponentPackagesToRemove]
+{89820200-ECBD-11cf-8B85-00AA005B4383}=0x00060000   
+{44BBA840-CC51-11CF-AAFA-00AA00B6015C}=0x00060000   
+{A2F3B5A7-2D39-4A4E-96E6-BFADEBCBB27B}=0x00020046   
+{B15C73EE-0AD0-41C2-BC15-D0A623F0078C}=0x00020046   
+{BA63DE4B-CAD8-49C5-A3F2-E976BEB019C8}=0x00020046   
+{E9A84D17-E5C1-4890-A557-4460207F6AAF}=0x00020046   
+{F1CAE27D-85D3-4642-B9E9-48D7F9F56C82}=0x00020046   
+{CEB436C4-6F1A-11D2-BA10-00A0C9CCA9A1}=0x00050014   
+{CEB43705-6F1A-11D2-BA10-00A0C9CCA9A1}=0x00050014   
+{4F645220-306D-11D2-995D-00C04F98BBC9}=0x00050006   
+{8621B4C0-C35B-4f46-89EB-529E75F501EA}=0x00010003   
+{2E742517-5D48-4DBD-BF93-48FDCF36E634}=0x00020000   
+
+
+
+
+[DeviceInfsToInstall]
+1394.inf
+1394vdbg.inf
+61883.inf
+avc.inf
+battery.inf
+cdrom.inf
+cpu.inf
+enum1394.inf
+flash.inf
+disk.inf
+display.inf
+dot4.inf
+dot4prt.inf
+fdc.inf
+flpydisk.inf
+genprint.inf
+hal.inf
+input.inf
+keyboard.inf
+legcydrv.inf
+machine.inf
+mchgr.inf
+mdmsetup.inf
+mf.inf
+monitor.inf
+mshdc.inf
+msmouse.inf
+msports.inf
+multiprt.inf
+ntapm.inf
+netclass.inf
+netirsir.inf
+ntprint.inf
+pcmcia.inf
+pnpscsi.inf
+sbp2.inf
+scsi.inf
+smartcrd.inf
+sti.inf
+tape.inf
+usb.inf
+wdmaudio.inf
+volume.inf
+volsnap.inf
+wceusbsh.inf
+
+
+
+
+
+[DeviceInfsToInstallIfExists]
+memstpci.inf
+mwtpdsp.inf
+
+
+
+
+
+
+
+[DetectionOrder]
+{4D36E968-E325-11CE-BFC1-08002BE10318}      
+{4D36E972-E325-11CE-BFC1-08002BE10318}      
+
+
+
+
+
+
+
+
+
+
+
+[NonBatchedDetection]
+{4D36E96D-E325-11CE-BFC1-08002BE10318}      
+
+[InstalledDevicesToSkip]
+
+
+[Files.Install.CleanInstall]
+CopyFiles=Files.System, \
+          Files.System.CopyAlways, \
+          Files.NoWin31.System32ToSysroot, \
+          Files.NoWin31.System32ToSystem
+
+[Files.Install.CleanInstall.Win31]
+CopyFiles=Files.System, \
+          Files.System.CopyAlways
+
+
+[Files.Install.Upgrade]
+CopyFiles=Files.System.CopyAlways, \
+          Files.NoWin31.System32ToSysroot, \
+          Files.NoWin31.System32ToSystem
+
+[Files.Install.Upgrade.Win31]
+CopyFiles=Files.System.CopyAlways
+
+
+[DestinationDirs]
+Files.System = 11
+Files.System.CopyAlways = 11
+Files.NoWin31.System32ToSysroot = 10
+Files.NoWin31.System32ToSystem = 50
+
+[Files.NoWin31.System32ToSysroot]
+NOTEPAD.EXE
+TASKMAN.EXE
+
+[Files.NoWin31.System32ToSystem]
+AVICAP.DLL
+AVIFILE.DLL
+COMMDLG.DLL
+LZEXPAND.DLL
+KEYBOARD.DRV
+MCIAVI.DRV
+MCISEQ.DRV
+MCIWAVE.DRV
+MMSYSTEM.DLL
+MMTASK.TSK
+MOUSE.DRV
+MSVIDEO.DLL
+OLECLI.DLL
+OLESVR.DLL
+SHELL.DLL
+SOUND.DRV
+SYSTEM.DRV
+TAPI.DLL
+TIMER.DRV
+VER.DLL
+VGA.DRV
+WFWNET.DRV
+WINSPOOL.DRV
+
+
+
+
+[Files.System]
+AUTOEXEC.TMP,AUTOEXEC.NT
+CONFIG.TMP,CONFIG.NT
+
+
+
+
+[Files.System.CopyAlways]
+
+
+
+
+[Files.MarkReadOnly]
+perfmon.msc
+
+
+
+
+[RegistryInfs]
+
+
+
+
+
+[Infs.Always]
+wsh.inf,DefaultInstall
+ie.inf,DefaultInstall
+secdrv.inf,DefaultInstall
+mdac.inf,DefaultInstall
+icwnt5.inf,DefaultInstall
+nt5java.inf,DefaultInstall
+mstask.inf,DefaultInstall.NT
+msoe50.inf,DefaultInstall
+wab50.inf,DefaultInstall
+tshoot.inf,DefaultInstall
+dfrg.inf,DefaultInstall
+msinfo32.inf,DefaultInstall
+axant5.inf,DefaultInstall
+msnetmtg.inf,DefaultInstall
+mplayer2.inf,InstallWMP64
+sr.inf,DefaultInstall
+icminst.inf,DefaultInstall
+apcompat.inf,DefaultInstall
+shell.inf,DefaultInstall
+shl_img.inf,DefaultInstall
+netupnph.inf,DefaultInstall
+devxprop.inf,DefaultInstall
+syssetup.inf,SpecialInstall
+pchealth.inf,DefaultInstall
+oobe.inf,DefaultInstall
+sapi5.inf,DefaultInstall
+moviemk.inf,DefaultInstall
+qmgr.inf,DefaultInstall
+skins.inf,InstallSkins
+wmp.inf,Installwmp7
+wmtour.inf,DefaultInstall
+mymusic.inf,InstallWMPlaylist
+swflash.inf,DefaultInstall
+dimaps.inf,DefaultInstall
+vgx.inf,DefaultInstall
+srchasst.inf,DefaultInstall
+
+[ServicesToRename]
+OLE = RpcSs
+
+[RegistrationPhase1]
+RegisterDlls=EarlyOleControlDlls
+
+[RegistrationPhase2]
+RegisterDlls=OleControlDlls
+
+[RegistrationCrypto]
+RegisterDlls=CryptoDlls
+
+[CryptoDlls]
+11,,rsaenh.dll,1
+11,,dssenh.dll,1
+11,,initpki.dll,1,600
+
+
+[EarlyOleControlDlls]
+11,,atl.dll,1
+11,,txflog.dll,1
+11,,netcfgx.dll,1
+11,,netman.dll,1
+11,,netshell.dll,1
+11,,odbcconf.dll,1
+11,,msiexec.exe,,,"/regserver /q"
+11,,Lodctr.exe,,,"/c:perfd009.dat /h:perfi009.dat /l:009"
+11,,msctf.dll,1
+
+
+[OleControlDlls]
+11,,ole32.dll,1
+11,,mfc42.dll,1
+11,,mfc42u.dll,1
+11,,oleaut32.dll,1
+11,,oleacc.dll,1
+11,,comcat.dll,1
+11,,msvbvm50.dll,1
+11,,msvbvm60.dll,1
+11,,w32time.dll,1
+11,setup,fxsocm.dll,1
+11,,shell32.dll,3
+11,,comctl32.dll,2
+11,,autodisc.dll,1
+11,,shmedia.dll,1
+11,,themeui.dll,3
+11,,wininet.dll,2
+11,,hlink.dll,1
+11,,browseui.dll,3
+11,,browsewm.dll,1
+11,,shdocvw.dll,3,600
+11,,msaatext.dll,1
+11,,mshtml.dll,3
+11,,mshtmled.dll,1
+11,,csseqchk.dll,1
+11,,msrating.dll,1
+11,,mstime.dll,1
+11,,sendmail.dll,1
+11,,urlmon.dll,3
+11,,inetcpl.cpl,2
+11,,licmgr10.dll,1
+11,,inseng.dll,1
+11,,asctrls.ocx,1
+11,,actxprxy.dll,1
+11,,plugin.ocx,1
+11,,hhctrl.ocx,1
+11,,itircl.dll,1
+11,,itss.dll,1
+11,,shgina.dll,3
+11,,occache.dll,3
+11,,webcheck.dll,1
+11,,mlang.dll,1
+11,,imgutil.dll,1
+11,,pngfilt.dll,1
+11,,appwiz.cpl,3
+11,,shimgvw.dll,1
+11,,shsvcs.dll,3
+11,,netplwiz.dll,1
+11,,hnetwiz.dll,1
+11,,imapi.exe,,,"/regserver"
+11,,zipfldr.dll,1
+11,,msxml.dll,1
+11,,nusrmgr.cpl,3
+11,,cdfview.dll,1
+11,,cryptdlg.dll,1
+11,,webvw.dll,1,120
+11,,msieftp.dll,1
+11,,docprop2.dll,1
+11,,iepeers.dll,1
+11,,corpol.dll,1
+11,,digest.dll,2
+11,,iesetup.dll,2
+11,,msident.dll,1
+11,,msjet40.dll,1
+11,,msjtes40.dll,1
+11,,msorcl32.dll,1
+11,,msrd3x40.dll,1
+11,,msjetoledb40.dll,1
+11,,msexch40.dll,1
+11,,msexcl40.dll,1
+11,,msltus40.dll,1
+11,,mspbde40.dll,1
+11,,msrclr40.dll,1
+11,,msrd2x40.dll,1
+11,,mstext40.dll,1
+11,,msxbde40.dll,1
+11,,msxml2.dll,1
+11,,msxml3.dll,1
+11,,winhttp.dll,1
+11,,shmgrate.exe,,,"OCInstallFixup"
+11,,jscript.dll,1
+11,,vbscript.dll,1
+11,,scrrun.dll,1
+11,,dispex.dll,1
+11,,scrobj.dll,1
+11,,msscript.ocx,1
+11,,dsquery.dll,1
+11,,dsuiext.dll,1
+11,,dsprop.dll,1
+11,,hotplug.dll,1
+11,,mmcndmgr.dll,1
+11,,dmocx.dll,1
+11,,gpedit.dll,1
+11,,wmiscmgr.dll,1
+11,,gptext.dll,1
+11,,appmgr.dll,1
+11,,fde.dll,1
+11,,els.dll,1
+11,,filemgmt.dll,1
+11,,mycomput.dll,1
+11,,devmgr.dll,1
+11,,wshcon.dll,1
+11,,wshext.dll,1
+11,,wshom.ocx,1
+11,,tdc.ocx,1
+11,,msr2c.dll,1
+11,,devenum.dll,1
+11,,quartz.dll,1
+11,,qdvd.dll,1
+11,,qdv.dll,1
+11,,qcap.dll,1
+11,,amstream.dll,1
+11,,qedit.dll,1
+11,,qasf.dll,1
+11,,drmstor.dll,1
+11,,drmclien.dll,1
+11,,asfsipc.dll,1
+11,,dxmasf.dll,1
+11,,sbe.dll,1
+11,,encdec.dll,1
+11,,acelpdec.ax,1
+11,,l3codecx.ax,1
+11,,l3codeca.acm,1
+11,,mpg4ds32.ax,1
+11,,mpg2splt.ax,1
+11,,msadds32.ax,1
+11,,encapi.dll,1
+16422,"Movie Maker",wmmfilt.dll,1
+25,%SRCHASST%,srchui.dll,2
+11,,g711codc.ax,1
+11,,tapi3.dll,1
+11,,termmgr.dll,1
+11,,rend.dll,1
+11,,sdpblb.dll,1
+11,,msjava.dll,1
+11,,vmhelper.dll,1
+11,,javaprxy.dll,1
+11,,javacypt.dll,1
+11,,msawt.dll,1
+11,,dx3j.dll,1
+11,,rtcdll.dll,1
+11,,rtcshare.exe,,,"/regserver"
+11,wbem,wbemperf.dll,1
+11,,dgnet.dll,1
+11,,hnetcfg.dll,1,1800
+11,,mydocs.dll,1
+11,,cscui.dll,1
+11,,oleprn.dll,1
+11,,bidispl.dll,1
+
+11,,diactfrm.dll,1
+11,,dinput8.dll,1
+11,,danim.dll,1
+11,,datime.dll,1
+11,,ddrawex.dll,1
+11,,daxctle.ocx,1
+11,,proctexe.ocx,1
+11,,lmrt.dll,1
+11,,dskquota.dll,1
+11,,dskquoui.dll,1
+11,,scardssp.dll,1
+11,,rpcrt4.dll,1
+11,,dxmrtp.dll,1
+11,,polstore.dll,1
+10,msagent,agentctl.dll,1
+10,msagent,agentdp2.dll,1
+10,msagent,agentdpv.dll,1
+10,msagent,agentmpx.dll,1
+10,msagent,mslwvtts.dll,1
+10,msagent,agtintl.dll,1
+10,msagent,agentsr.dll,1
+10,msagent,agentpsh.dll,1
+11,,dfrgsnap.dll,1
+11,,dfrgui.dll,1
+11,,snmpsnap.dll,1
+11,,localsec.dll,1
+11,,wavemsp.dll,1
+11,,wsecedit.dll,1
+11,,cic.dll,1
+11,,sysmon.ocx,1
+11,,certcli.dll,1
+10,PCHealth\HelpCtr\Binaries,HelpSvc.exe,,300,"/install2 /svchost netsvcs /regserver"
+10,PCHealth\HelpCtr\Binaries,HelpHost.exe,,,"/regserver"
+10,PCHealth\HelpCtr\Binaries,HelpCtr.exe,,,"/regserver"
+10,PCHealth\HelpCtr\Binaries,brpinfo.dll,1
+11,,rcImLby.exe,,,"-regserver"
+10,PCHealth\HelpCtr\Binaries,msinfo.dll,1
+10,PCHealth\UploadLB\Binaries,UploadM.exe,,,"/svchost netsvcs /regserver"
+11,,tlntsvr.exe,,,"/Service"
+11,,compatui.dll,1
+11,,iuctl.dll,1
+11,,dmband.dll ,1
+11,,dmcompos.dll,1
+11,,dmime.dll,1
+11,,dmloader.dll,1
+11,,dmstyle.dll,1
+11,,dmsynth.dll,1
+11,,dmusic.dll,1
+11,,dmscript.dll,1
+11,,dswave.dll,1
+11,,dsdmo.dll,1
+11,,dsdmoprp.dll,1
+11,,certmgr.dll,1
+11,,regwizc.dll,1
+11,,smlogcfg.dll,1
+11,,ipsmsnap.dll,1
+11,,capesnpn.dll,1
+11,,mdhcp.dll,1
+11,,scriptpw.dll,1
+11,,regsvr32.exe,,,"/s %11%\cmdlib.wsc"
+11,wbem,CmdEvTgProv.dll,1
+11,,iassvcs.dll,1
+11,,iasacct.dll,1
+11,,iasads.dll,1
+11,,iashlpr.dll,1
+11,,iasnap.dll,1
+11,,iaspolcy.dll,1
+11,,iasrad.dll,1
+11,,iassam.dll,1
+11,,iassdo.dll,1
+11,,iasrecst.dll,1,90
+11,,sendcmsg.dll,1
+11,,dfsshlex.dll,1
+11,,seclogon.dll,1
+11,,sclgntfy.dll,1
+
+18,,tshoot.dll,1
+18,,sniffpol.dll,1
+18,,sstub.dll,1
+11,,gpkcsp.dll,1
+11,,sccbase.dll,1
+11,,slbcsp.dll,1
+11,,slbiop.dll,1
+11,,scredir.dll,1
+11,,rastls.dll,1
+11,,rcbdyctl.dll,1
+11,,cdosys.dll,1
+11,,dataclen.dll,1
+11,,dxtrans.dll,1
+11,,dxtmsft.dll,1
+11,,objsel.dll,1
+11,,confmsp.dll,1
+11,,h323msp.dll,1
+11,,fdeploy.dll,1
+11,,stobject.dll,1
+11,,scripto.dll,1
+11,,inetcfg.dll,1
+11,,tlntsvrp.dll,1
+11,,fontext.dll,1
+11,,activeds.dll,1
+11,,ieaksie.dll,1
+11,,iedkcs32.dll,1
+11,,dx7vb.dll,1
+11,,dx8vb.dll,1
+11,,vbisurf.ax,1
+11,,wstdecod.dll,1
+11,,msvidctl.dll,1
+11,,mswebdvd.dll,1
+11,,userenv.dll,3,1200
+11,,scecli.dll,1,900
+11,,msisip.dll,1
+16427,%MShared%\MSInfo,ieinfo5.ocx,1,300
+11,,wiaservc.dll,1
+11,,sti.dll,1
+11,,wiascr.dll,1
+11,,wiadefui.dll,1
+11,,wiashext.dll,1
+11,,camocx.dll,1
+11,,wiavusd.dll,1
+11,,wiasf.ax ,1
+11,,wiavideo.dll,1
+11,,photowiz.dll,1
+11,,licdll.dll,1
+11,,mmcshext.dll,1
+11,,cabview.dll,1
+11,,vssvc.exe,,,"/Register"
+11,,eventcls.dll,2,600
+11,,swprv.dll,2,600
+11,,vss_ps.dll,1
+11,,credui.dll,1
+11,,rsfsaps.dll,1
+11,,rsnotify.exe,,,"/regserver"
+11,,ntmsevt.dll,1
+11,,ntmsmgr.dll,1
+11,,ntmssvc.dll,1
+11,,rsmps.dll,1
+11,,rsmsink.exe,,,"/RegServer"
+11,,rsmui.exe,,,"/RegServer"
+11,,msctfp.dll,1
+11,,msutb.dll,1
+11,,msimtf.dll,1
+10,ime,mscandui.dll,1
+10,ime,sptip.dll,1
+10,ime,softkbd.dll,1
+11,,DVDUpgrd.exe,,180,"/setup"
+11,,osuninst.dll,1
+
+11,,dpnet.dll,1
+11,,dpnwsock.dll,1
+11,,dpnmodem.dll,1
+11,,dpnaddr.dll,1
+11,,dpnhpast.dll,1
+11,,dpnhupnp.dll,1
+11,,dpnlobby.dll,1
+11,,dpvoice.dll,1
+11,,dpvvox.dll,1
+11,,dpvacm.dll,1
+11,,dplayx.dll,1
+
+11,,rundll32.exe,,,"modemui.dll,CountryRunOnce"
+
+[RemoveFiles.x86]
+system32\migisol.exe
+system32\w95upgnt.dll
+inf\usermig.inf
+inf\usermig.pnf
+inf\wkstamig.inf
+inf\wkstamig.pnf
+
+[SpecialInstall]
+DelReg = OS2.DelReg
+
+[OS2.DelReg]
+HKLM,"SYSTEM\CurrentControlSet\Control\Session Manager\SubSystems","Optional",0x00018002,"Os2"
+
+[AssemblyDirectories]
+asms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Accessibility]
+%magnifier% = magnify.exe,magnify.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22553","%SystemRoot%\system32\shell32.dll",22041
+%reader%    = narrator.exe,narrator.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22560","%SystemRoot%\system32\shell32.dll",22048
+%screenkeyboard% = osk.exe,osk.exe,,0,"@%SystemRoot%\system32\shell32.dll,-22564","%SystemRoot%\system32\shell32.dll",22052
+%utilman% = utilman.exe,"utilman.exe /start",,0,"@%SystemRoot%\system32\shell32.dll,-22577","%SystemRoot%\system32\shell32.dll",22065
+
+
+
+
+
+[Infs.Always]
+
+[OleControlDlls]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Strings]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+main = "Main"
+games = "Games"
+accessories = "Accessories"
+accessories_entertainment = "Accessories\Entertainment"
+accessories_communications = "Accessories\Communications"
+prexp_accessories_games = "Accessories\Games"
+accessories_multimedia = "Accessories\Multimedia"
+accessibility = "Accessories\Accessibility"
+systemtools = "Accessories\System Tools"
+startup = "Startup"
+admintools = "Administrative Tools"
+nt4admintools = "NT 4.0 Administrative Tools"
+startmenucommon = "::0x0016::"
+
+
+
+
+old_srv_config = "Administrative Tools Home Page"
+srv_config = "Configure Your Server"
+srvwiz_infotip = "Sets up and configures Windows services for your network."
+windowsupdate = "Windows Update"
+windowscatalog = "Windows Catalog"
+configureprograms = "Set Program Access and Defaults"
+windowstour = "Tour Windows XP"
+synchronize = "Synchronize"
+sync_manager = "Synchronization Manager"
+winfile = "File Manager"
+control = "Control Panel"
+printman = "Print Manager"
+clipbrd = "ClipBook Viewer"
+dialer = "Phone Dialer"
+cmd = "Command Prompt"
+explorer = "Windows NT Explorer"
+setup = "Windows NT Setup"
+pifedit = "PIF Editor"
+intro = "Introducing Windows NT"
+readme = "Read Me"
+ntbooks = "Books Online"
+cmdref = "Windows NT Help"
+windisk = "Disk Administrator"
+perfmon = "Performance Monitor"
+ntbackup = "Backup"
+compatwizard = "Program Compatibility Wizard"
+migwiz_desc = "Files and Settings Transfer Wizard"
+eventvwr = "Event Viewer"
+dcomcnfg = "DCOM Configuration"
+winmsd = "Windows NT Diagnostics"
+musrmgr = "User Manager"
+pbrush = "Paintbrush"
+paint = "Paint"
+winchat = "Chat"
+terminal = "Terminal"
+charedit = "Private Character Editor"
+notepad = "Notepad"
+cardfile = "Cardfile"
+calc = "Calculator"
+clock = "Clock"
+charmap = "Character Map"
+mplayer = "Media Player"
+sndrec32 = "Sound Recorder"
+sndvol32 = "Volume Control"
+sndvol32old = "Volume Control"
+cdplayer = "CD Player"
+cdplayerold = "CD Player"
+write = "Write"
+packgr32 = "Object Packager"
+hyperterm = "HyperTerminal"
+sol = "Solitaire"
+winmine = "Minesweeper"
+freecell = "Freecell"
+hearts = "Hearts"
+spider = "Spider Solitaire"
+pinball = "Pinball"
+magnifier   = "Magnifier"
+ihearts = "Internet Hearts"
+ispades = "Internet Spades"
+ibackgammon = "Internet Backgammon"
+icheckers = "Internet Checkers"
+ireversi = "Internet Reversi"
+reader      = "Narrator"
+screenkeyboard = "On-Screen Keyboard"
+utilman = "Utility Manager"
+certmgr = "Certificate Manager"
+rasadmin = "Remote Access Admin"
+du_networking = "Dial-Up Networking"
+network_and_dialup = "Network and Dial-up Connections"
+admin_wiz = "Administrative Wizards"
+compmgmt = "Computer Management"
+fsmgmt = "File Service Management"
+neweventvwr = "Event Viewer"
+devmgmt = "Device Management"
+svcmgmt = "System Service Management"
+sysmon = "Performance"
+diskmgmt = "Disk Management"
+ciadmin = "Index Server Management"
+mediasvc = "Removable Storage Management"
+datasrcodbc = "Data Sources (ODBC)"
+scheduled_tasks = "Scheduled Tasks"
+maint_wiz = "Maintenance Wizard"
+locsecpol = "Local Security Policy"
+services = "Services"
+tlntadmn = "Telnet Server Administration"
+oobe_desc   = "Activate Windows"
+oldnetcon = "Network and Dial-up Connections"
+remote_assistance = "Remote Assistance"
+
+
+
+oobe_infotip = "Activate Windows with Microsoft"
+charedit_infotip = "Use Character Editor to modify how a character is shown on the screen."
+cmd_infotip = "Performs text-based (command-line) functions."
+compmgmt_infotip = "Manages disks and provides access to other tools to manage local and remote computers."
+magnifier_infotip = "Enlarges selected text and other on-screen items for easier viewing."
+neweventvwr_infotip = "Displays monitoring and troubleshooting messages from Windows and other programs."
+notepad_infotip = "Creates and edits text files using basic text formatting."
+ntbackup_infotip = "Archives data to protect it from accidental loss."
+reader_infotip = "Reads on-screen text, dialog boxes, menus, and buttons aloud if speakers or a sound output device is installed."
+remote_assistance_infotip = "Lets you invite a friend to connect to your computer and help you with problems."
+screenkeyboard_infotip = "Displays a keyboard that is controlled by a mouse or switch input device."
+synchronize_infotip = "Updates the network copy of materials that were edited offline, such as documents, calendars, and e-mail messages."
+utilman_infotip = "Starts and configures accessibility tools from one window."
+windowsupdate_infotip = "Updates your system with new Windows features, device drivers, and system updates available from Microsoft."
+sysmon_infotip = "Displays graphs of system performance and configures data logs and alerts."
+datasrcodbc_infotip = "Adds, removes, and configures Open Database Connectivity (ODBC) data sources and drivers."
+licmanager_infotip = "Manages client access licensing for a server product."
+dfsmgr_infotip = "Creates and manages distributed file systems that connect shared folders from different computers."
+locsecpol_infotip = "View and modify local security policy, such as user rights and audit policies."
+services_infotip = "Starts and stops services."
+tlntadmn_infotip = "View and modify telnet server settings and connections."
+compatwizard_infotip = "Get older programs to work on Windows XP"
+
+
+ProgramF    = "Program Files"
+SharedTools = "Common Files\Microsoft Shared"
+MShared     = "Microsoft Shared"
+MSIE4       = "Internet Explorer"
+MP2         = "Windows Media Player"
+DisplayName = "Vector Graphics Rendering (VML)"
+SRCHASST    = "srchasst"
+

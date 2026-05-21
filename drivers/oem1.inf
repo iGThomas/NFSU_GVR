@@ -1,0 +1,95 @@
+; akspccard.inf
+;
+; Windows 2000 & XP Setup information file for Aladdin Hasp & Hardlock PCMCIA (PC-Card).
+;
+; (c) Copyright 2000 - 2001 by Aladdin Knowledge Systems
+
+[Version]
+Signature=$Windows NT$
+;Class=Ports
+Provider=%String0%
+DriverVer=12/20/2001,1.01
+catalogfile=akspccard.cat
+;ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
+Class=PCMCIA
+ClassGUID={4d36e977-e325-11ce-bfc1-08002be10318}
+
+;;****************************************************************************
+;; Source Files
+;;****************************************************************************
+[sourcedisksnames]
+1=%INSTDISK%,,,""
+
+[SourceDisksFiles]
+akspccard.sys=1
+
+[DestinationDirs]
+LptPort.CopyList.NT = 10,system32\drivers
+
+[LptPort.CopyList.NT]
+akspccard.sys,,,0x00000022
+
+[Manufacturer]
+%String1%=Std
+
+[Std]
+%Tip1.DevDesc%=LptPort,PCMCIA\FAST_Electronic-Hardlock_V1.0-E258
+%Tip2.DevDesc%=LptPort,PCMCIA\FAST_Electronic-Hardlock_V1.0-9586
+%Tip3.DevDesc%=LptPort,PCMCIA\Aladdin_Knowledge_Systems_Ltd.-Hardlock_V2.0-73FD
+%Tip4.DevDesc%=LptPort,PCMCIA\Aladdin_Knowledge_Systems_Ltd.-PC-CardHASP_V1.1-A809
+
+
+
+[ControlFlags]
+ExcludeFromSelect = PCMCIA\FAST_Electronic-Hardlock_V1.0-E258, \
+	                    PCMCIA\FAST_Electronic-Hardlock_V1.0-9586, \
+		    PCMCIA\Aladdin_Knowledge_Systems_Ltd.-Hardlock_V2.0-73FD, \
+		    PCMCIA\Aladdin_Knowledge_Systems_Ltd.-PC-CardHASP_V1.1-A809
+
+;----------------- WIN NT specific ----------------
+
+[LptPort.NT]
+AddReg=Ports.AddReg
+LogConfig=lsnn
+CopyFiles=LptPort.CopyList.NT
+
+[LptPort.NT.Services]
+AddService = akspccard, 0x00000002, Service_Inst, Parport_EventLog_Inst ; Port Driver (function driver for this device)
+
+[Parport_EventLog_Inst]
+AddReg = Parport_EventLog_AddReg
+
+[Parport_EventLog_AddReg]
+HKR,,EventMessageFile,0x00020000,"%%SystemRoot%%\System32\IoLogMsg.dll;%%SystemRoot%%\System32\drivers\akspccard.sys"
+HKR,,TypesSupported,0x00010001,7
+
+[Service_Inst]
+DisplayName    = %SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_SYSTEM_START (BUGBUG--should be SERVICE_DEMAND_START, 0x3)
+ErrorControl   = 0                 ; SERVICE_ERROR_IGNORE (BUGBUG--should be SERVICE_ERROR_NORMAL, 0x1)
+ServiceBinary  = %12%\akspccard.sys
+LoadOrderGroup = Parallel arbitrator
+
+;----------------------------------------------------
+[Ports.AddReg]
+HKR,,NoSetupUI,0,1
+;HKR,,PortSubClass,1,00
+
+
+[lsnn]
+ConfigPriority=DESIRED
+IOConfig=3bc-3be(3ff::),378-37a(3ff::),278-27a(3ff::)
+
+
+[Strings]
+String0="Aladdin Knowledge Systems"
+String1="Aladdin Knowledge Systems"
+Tip1.DevDesc   = "Hardlock PCMCIA (PC-Card)"
+Tip2.DevDesc   = "Hardlock PCMCIA (PC-Card)"
+Tip3.DevDesc   = "Hardlock PCMCIA (PC-Card)"
+Tip4.DevDesc   = "HASP PCMCIA (PC-Card)"
+PortsClassName="Aladdin PC Card"
+INSTDISK="Aladdin Install Disk"
+SVCDESC="Aladdin PC Card Key"
+;(eof)

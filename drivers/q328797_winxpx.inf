@@ -1,0 +1,32 @@
+[Version]
+Signature="$Windows NT$"
+Class=Exception Package
+ClassGuid={F5776D81-AE53-4935-8E84-B0B283D8BCEF}
+Provider=Microsoft
+CatalogFile=Q328797_WinXPx.cat
+ComponentId={E105AC30-C75F-42B1-9159-475B4953999B}
+DriverVer=10-9-2002
+FriendlyName=WebData Hotfix Package
+
+[SourceDisksNames]
+55="Hotfix Package","",0
+
+[SourceDisksFiles]
+dbnetlib.dll=55
+msdart.dll=55
+sqlunirl.dll=55
+
+[DefaultInstall]
+Copyfiles=Copy.Files
+
+[DefaultInstall.NT]
+Copyfiles=Copy.Files
+
+[DestinationDirs]
+; On Win2k, 11 is the directory ID for \winnt\system32
+Copy.Files=11
+
+[Copy.Files]
+dbnetlib.dll
+msdart.dll
+sqlunirl.dll

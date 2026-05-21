@@ -1,0 +1,2009 @@
+[Version]
+Signature="$Windows NT$"
+SetupClass=BASE
+LayoutFile=layout.inf
+[Component Version]
+Build=2001,12,4414,42
+Master=nt5wks
+[Custom Icons]
+com=345
+com=345
+[Default Flags]
+com_sst=0x00000001 | 0x00000002
+com_core_sst=0x00000001 | 0x00000002
+com_install_fileop=0x0004000
+com_core_install_fileop=0x0004000
+com_uninstall_fileop=0x0004000
+com_core_uninstall_fileop=0x0004000
+[Strings]
+COM_DESC="COM+"
+COM_TIP="Provides support for developing and deploying distributed, component-based applications."
+COMPLUS_MENU_FOLDER="Administrative Tools"
+COM_EXPLORER_LEGACY="Component Services Explorer"
+VBBANK="VB Bank Client"
+VCBANK="VC Bank Client"
+COM+_UTILITIES_DESC="COM+ Utilities Application"
+TXCTX.TRANSACTIONCONTEXT_DESC="COM+ Transaction Context Component"
+TXCTX.TRANSACTIONCONTEXTEX_DESC="COM+ Extended Transaction Context Component"
+QC.RECORDER.1_DESC="Queued Components Recorder"
+QC.LISTENERHELPER.1_DESC="Queued Components Player"
+COM+_DLQ_LISTENER_DESC="COM+ QC Dead Letter Queue Listener"
+QC.DLQLISTENER.1_DESC="COM+ QC Dead Letter Queue Listener Starter"
+EVENTPUBLISHER.EVENTPUBLISHER.1_DESC="COM+ Event Notification Server"
+COMSVCS.TRACKERSERVER_DESC="COM+ Instance Tracking Component"
+MTS.MTSGRP.1_DESC="COM+ Active Process Iteration Server"
+PROCESS_DUMP_DESC="Debug Dump Server"
+SYSAPP_ADMINISTRATOR_ROLE_DESC="Members of this role are allowed to modify the configuration of COM+ applications and components on this system."
+SYSAPP_READER_ROLE_DESC="Members of this role are allowed to examine the configuration of COM+ applications and view information related to active objects and their performance."
+SYSAPP_QC_TRUSTED_USERS_DESC="Members of this role are trusted to faithfully transmit messages for queued components on behalf of other users."
+SYSAPP_SERV_APPLICATION_DESC="This role should include the identities under which COM+ server applications run on your system."
+SYSAPP_ANY_APPLICATION_DESC="This role should include the identities under which any COM+ application (library or server) may run on your system."
+REMOTEHELPER.REMOTEHELPER_DESC="Remote Helper"
+NTOP_MENU_NTOP="Windows NT Option Pack"
+NTOP_MENU_PWS="Personal Web Server"
+NTOP_MENU_MSPWS="Microsoft Personal Web Server"
+NTOP_MENU_IIS="Microsoft Internet Information Services"
+NTOP_MENU_ACCESSORIES="Accessories"
+NTOP_MENU_INTERNET_TOOLS="Internet Tools"
+NTOP_MENU_IE="Internet Explorer"
+NTOP_MENU_MTS="Microsoft Transaction Server"
+NTOP_MENU_MTS_EXPLORER="Transaction Server Explorer"
+NTOP_MENU_SETUP="Setup"
+NTOP_MENU_HELP="Help"
+NTOP_MENU_README="Readme"
+NTOP_MENU_BANK_CLIENT="Bank Client"
+NTOP_MENU_HOCKEY="Hockey"
+NTOP_MENU_TTT_CLIENT="Tic-Tac-Toe Client"
+[Optional Components]
+com
+[com]
+OptionDesc=%COM_DESC%
+Needs=mdac,dtc
+Tip=%COM_TIP%
+IconIndex=*
+Modes=0,1,2,3
+InstallTickCount=120
+UninstallTickCount=10
+SizeApproximation=18874368
+[com_install]
+CopyFiles=COM_SYSTEM32_REG                                 \\
+,COM_SYSTEM32_COM_REG                                      \\
+,COM_SYSTEM32                                              \\
+,COM_SYSTEM32_COM                                          \\
+,COM_SYSTEM32_COM_TLB                                      \\
+,COM_DSNS                                                  \\
+,COM_HLPS                                                  \\                               
+,COM_CHMS
+TlbReg=COM_SYSTEM32_COM_TLB
+DllReg_1=COM_SYSTEM32_REG                                  \\
+,COM_SYSTEM32_COM_REG                                     \\
+,TEXTMODECOPY_SYSTEM32_REG
+AddReg=COM_REGKEYS                                         \\
+,EVENTSYSTEM_REGKEYS
+AddPerfCtr=COM_PERF_COUNTERS
+AddMenuItem=COMPLUS_MENU_ITEMS
+DelMenuItem=DISCONTINUED_MENU_ITEMS
+AddObject=COM_OBJECTS
+InstallComponent=COM_COMPONENTS_INSTALL
+SetComponentProperty=COM_COMPONENTPROPERTY
+ImportComponent=COM_COMPONENTS_IMPORT
+AddRole=COM_ROLES
+SetObjectProperty=COM_OBJPROPERTY
+KillProcess=KILL_PROC_ON_COMPLUS_INSTALL
+StopService=STOP_SRV_ON_COMPLUS_INSTALL
+DelReg=LEGACY_SETUP_KEYS
+,LEGACY_COM1X_BETA2_REGKEYS
+[com_uninstall]
+DelFiles=COM_SYSTEM32_REG_REMOVE                           \\
+,COM_SYSTEM32_COM_REG                                      \\
+,COM_SYSTEM32_REMOVE                                       \\
+,COM_SYSTEM32_COM                                          \\
+,COM_SYSTEM32_COM_TLB                                      \\
+,COM_DSNS                                                  \\
+,COM_HLPS                                                  \\
+,COM_CHMS
+DllUnReg=COM_SYSTEM32_REG_REMOVE                           \\
+,COM_SYSTEM32_COM_REG
+TlbUnReg=COM_SYSTEM32_COM_TLB
+DelReg=COM_REGKEYS
+DelPerfCtr=COM_PERF_COUNTERS
+DelService=ComSysApp
+DelMenuItem=COMPLUS_MENU_ITEMS
+KillProcess=KILL_PROC_ON_COMPLUS_UNINSTALL
+StopService=STOP_SRV_ON_COMPLUS_UNINSTALL
+[late_reg_install]
+AddReg=WIRINGTABLES_REGKEYS                                \\
+,COMPUTERLISTTABLE_REGKEYS                                 \\
+,LOCALCOMPUTERTABLE_REGKEYS                                \\
+,CATSRVINDLLHOST_REGKEYS
+[NTOP_LEGACY_UNINSTALL]
+DelFiles=NTOP_LEGACY_SYSTEM32                              \\ 
+,NTOP_LEGACY_PROGRAMFILES                                  \\
+,SDK_LEGACY_FILES                                          \\
+,NTOP_LEGACY_SYSTEM32_REG                                  \\
+,NTOP_LEGACY_DSNS                                          \\
+,NTOP_LEGACY_HELP_FILES                                    \\
+,NTOP_LEGACY_SYSTEMROOT_FILES
+RemoveEmptyDirs=NTOP_LEGACY_SYSTEM32_DIRECTORIES           \\
+,NTOP_LEGACY_HELP_DIRECTORIES                              \\
+,SDK_LEGACY_DIRECTORIES                                    \\
+,NTOP_LEGACY_SYSTEMROOT_DIRECTORIES
+DllUnReg=NTOP_LEGACY_SYSTEM32_REG                          \\
+,NTOP_LEGACY_REG_NODEL
+TlbUnReg=NTOP_LEGACY_SYSTEM32_TLB
+DelMenuItem=NTOP_LEGACY_MENU_ITEMS
+DelReg=LEGACY_MTS_REGKEYS
+[MTS10_LEGACY_UNINSTALL]
+DelFiles=MTS11_LEGACY_PROGRAMFILES                         \\
+,MTS11_LEGACY_PROGRAMFILES_REG
+RemoveEmptyDirs=MTS11_LEGACY_DIRECTORIES
+DllUnReg=MTS11_LEGACY_PROGRAMFILES_REG
+TlbUnReg=MTS11_LEGACY_PROGRAMFILES_TLB
+DelMenuItem=MTS11_LEGACY_MENU_ITEMS
+DelReg=LEGACY_MTS_REGKEYS
+[B2_LEGACY_UNINSTALL]
+DelFiles=B2_LEGACY_SYSTEM32                                \\
+,B2_LEGACY_SYSTEM32_REG
+DllUnReg=B2_LEGACY_SYSTEM32_REG
+RemoveEmptyDirs=B2_LEGACY_DIRECTORIES
+DelMenuItem=B2_LEGACY_MENU_ITEMS
+[COMPLUS10_LEGACY_UNINSTALL]
+DelFiles=LEGACY_QC_FILES                                    \\
+,DISCONTINUED_FILES                                        \\
+,DISCONTINUED_FILES_REG
+DelReg=LEGACY_REGTRACKER_REGKEYS                           \\
+,LEGACY_CATALOG_REGKEYS									      \\
+,LEGACY_EVENTSYSTEM_REGKEYS	                                \\
+,DANGEROUS_REGKEYS											  \\
+,LEGACY_IMDB_REGKEYS
+DllUnReg=LEGACY_QC_FILES                                   \\
+,DISCONTINUED_FILES_REG
+DelService=ImdbServer
+DelService=ComLB
+DelRoleFromApplication=LEGACY_ROLES
+DelApplication=LEGACY_APPLICATIONS
+[KILL_PROC_ON_COMPLUS_INSTALL]
+mmc.exe
+[STOP_SRV_ON_COMPLUS_INSTALL]
+ComSysApp
+ComLB
+SENS
+EventSystem
+fax
+w3svc
+smtpsvc
+iisadmin
+[KILL_PROC_ON_COMPLUS_UNINSTALL]
+mmc.exe
+[STOP_SRV_ON_COMPLUS_UNINSTALL]
+ComSysApp
+EventSystem
+[PERSISTENT_REG_VALUES]
+Persist=COMPLUS_PERSISTENT_REG_VALUES
+[COMPLUS_PERSISTENT_REG_VALUES]
+[COM_OBJECTS]
+My Computer                                                \\
+,LocalComputer                                             \\
+,0
+My Computer                                                \\
+,ComputerList                                              \\
+,0
+COM+ Utilities                                             \\
+,Applications                                              \\
+,0|0x00000002                         \\
+,Description="""%COM+_UTILITIES_DESC%"""                   \\      
+,ID={9EB3B62C-79A2-11D2-9891-00C04F79AF51}                 \\
+,Activation=Inproc                                         \\
+,IsSystem=Y
+COM+ QC Dead Letter Queue Listener                         \\
+,Applications                                              \\
+,0|0x00000002                         \\
+,Description="""%COM+_DLQ_LISTENER_DESC%"""                \\      
+,ID={7B4E1F3C-A702-11d2-A336-00C04F7978E0}                 \\
+,Activation=Local										   \\
+,Deleteable=N
+[COM_COMPONENTS_INSTALL]
+{ECABAFBC-7F19-11D2-978E-0000F8757E2A}                     \\
+,System Application                                        \\
+,0
+{ECABAFB9-7F19-11D2-978E-0000F8757E2A}                     \\
+,System Application                                        \\
+,0
+{4B2E958D-0393-11D1-B1AB-00AA00BA3258}                     \\
+,System Application                                        \\
+,0
+{ECABB0C4-7F19-11D2-978E-0000F8757E2A}                     \\
+,System Application                                        \\
+,0
+[COM_COMPONENTPROPERTY]
+EventPublisher.EventPublisher.1                            \\
+,System Application                                        \\
+,0|0x00000004              \\
+,Description="""%EVENTPUBLISHER.EVENTPUBLISHER.1_DESC%"""  \\                 
+,Synchronization=0                                         \\
+,Transaction=0                                             \\
+,JustInTimeActivation=0                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=1                            \\
+,COMTIIntrinsics=0
+COMSVCS.TrackerServer                                      \\
+,System Application                                        \\
+,0|0x00000004              \\
+,Description="""%COMSVCS.TRACKERSERVER_DESC%"""            \\       
+,Synchronization=0                                         \\
+,Transaction=0                                             \\
+,JustInTimeActivation=0                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=1                            \\
+,COMTIIntrinsics=0
+Mts.MtsGrp.1                                               \\
+,System Application                                        \\
+,0|0x00000004              \\
+,Description="""%MTS.MTSGRP.1_DESC%"""                     \\      
+,Synchronization=0                                         \\
+,Transaction=0                                             \\
+,JustInTimeActivation=0                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=1                            \\
+,COMTIIntrinsics=0
+PDump.ProcessDump.1                                        \\
+,System Application                                        \\
+,0|0x00000004              \\
+,Description="""%PROCESS_DUMP_DESC%"""                     \\       
+,Synchronization=0                                         \\
+,Transaction=0                                             \\
+,JustInTimeActivation=0                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=1                            \\
+,COMTIIntrinsics=0
+[COM_COMPONENTS_IMPORT]
+RemoteHelper.RemoteHelper                                  \\
+,COM+ Utilities                                            \\
+,0                                       \\
+,Description="""%REMOTEHELPER.REMOTEHELPER_DESC%"""         \\      
+,Synchronization=3                                         \\
+,Transaction=1                                             \\
+,JustInTimeActivation=1                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=0                            \\
+,COMTIIntrinsics=0
+TxCTx.TransactionContext                                   \\
+,COM+ Utilities                                            \\
+,0                                       \\
+,Description="""%TXCTX.TRANSACTIONCONTEXT_DESC%"""         \\      
+,Synchronization=3                                         \\
+,Transaction=4                                             \\
+,JustInTimeActivation=1                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=0                            \\
+,COMTIIntrinsics=0
+TxCTx.TransactionContextEx                                 \\
+,COM+ Utilities                                            \\
+,0                                       \\
+,Description="""%TXCTX.TRANSACTIONCONTEXTEX_DESC%"""       \\      
+,Synchronization=3                                         \\
+,Transaction=4                                             \\
+,JustInTimeActivation=1                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=0                            \\
+,COMTIIntrinsics=0
+QC.Recorder.1                                              \\
+,COM+ Utilities                                            \\
+,0                                       \\
+,Description="""%QC.RECORDER.1_DESC%"""                    \\      
+,Synchronization=3                                         \\
+,Transaction=3                                             \\
+,JustInTimeActivation=1                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=0                            \\
+,COMTIIntrinsics=0
+QC.ListenerHelper.1                                        \\
+,COM+ Utilities                                            \\
+,0                                       \\
+,Description="""%QC.LISTENERHELPER.1_DESC%"""              \\      
+,Synchronization=3                                         \\
+,Transaction=3                                             \\
+,JustInTimeActivation=1                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=0                            \\
+,COMTIIntrinsics=0										\\
+,ComponentTransactionTimeout=0							\\
+,ComponentTransactionTimeoutEnabled=1
+QC.DLQListener.1                                           \\
+,COM+ QC Dead Letter Queue Listener                        \\
+,0                                       \\
+,Description="""%QC.DLQLISTENER.1_DESC%"""                 \\      
+,Synchronization=3                                         \\
+,Transaction=0                                             \\
+,JustInTimeActivation=0                                    \\
+,IISIntrinsics=0                                           \\
+,ComponentAccessChecksEnabled=0                            \\
+,COMTIIntrinsics=0
+[COM_ROLES]
+Administrator                                              \\
+,"""%SYSAPP_ADMINISTRATOR_ROLE_DESC%"""                    \\      
+,"Administrators"                                          \\  
+,0|0x00000100                       \\
+,System Application
+Reader                                                     \\
+,"""%SYSAPP_READER_ROLE_DESC%"""                           \\             
+,"Everyone"                                                \\
+,0|0x00000100                       \\
+,System Application
+QC Trusted User                                            \\
+,"""%SYSAPP_QC_TRUSTED_USERS_DESC%"""                      \\      
+,None                                                      \\
+,0|0x00000100                       \\
+,System Application
+Server Application                                         \\
+,"""%SYSAPP_SERV_APPLICATION_DESC%"""                      \\      
+,"Everyone"                                                \\  
+,0|0x00000100                       \\
+,System Application
+Any Application                                            \\
+,"""%SYSAPP_ANY_APPLICATION_DESC%"""                       \\      
+,"Everyone"                                                \\  
+,0|0x00000100                       \\
+,System Application
+Administrator                                              \\
+,NULL                                                      \\
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,Catsrv.CatalogServer.1                                    \\
+,IAppExport                                                \\
+,ICatalogTableRead1                                        \\
+,ICatalogTableWrite1                                       \\
+,ICatalogSession                                           \\
+,IApplicationControl                                       \\
+,IApplicationControl2                                      \\
+,IRegister                                                 \\
+,ICatalogTableInfo                                         \\
+,ICatalogUtils                                             \\
+,ICatalogUtils2                                             \\
+,IAppImport                                                \\
+,IAppImportPartitions                                      \\
+,ICSServiceControl                                         \\
+,IComExport                                                \\
+,ICatalogSetup                                             \\
+,IReplicationUtil                                          \\
+,INTServiceConfig										\\
+,IRegister2												\\
+,ICatalogSetup2
+Administrator                                              \\
+,NULL                                                      \\ 
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,PDump.ProcessDump.1                                       \\
+,IProcessDump
+Administrator                                              \\
+,NULL                                                      \\ 
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,PDump.ProcessDump.1                                       \\
+,IProcessDump
+Reader                                                     \\
+,NULL                                                      \\
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,Catsrv.CatalogServer.1                                    \\
+,ICatalogTableRead1                                        \\
+,ICatalogTableWrite1                                       \\
+,ICatalogSession                                           \\
+,ICatalog64BitSupport                                       \\
+,ICatalogTableInfo
+Reader                                                     \\
+,NULL                                                      \\
+,None                                                      \\
+,0|0x00000800		                       \\
+,System Application                                        \\
+,Catsrv.CatalogServer.1                                    \\
+,ICatalogUtils		                                       \\
+,WaitForEndWrites
+Reader                                                     \\
+,NULL                                                      \\ 
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,Mts.MtsGrp.1                                              \\
+,IMtsGrp
+Reader                                                     \\
+,NULL                                                      \\ 
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,COMSVCS.TrackerServer                                     \\
+,IGetAppData
+Server Application                                         \\
+,NULL                                                      \\ 
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,COMSVCS.TrackerServer                                     \\
+,IReceiveAppData
+Any Application                                            \\
+,NULL                                                      \\
+,None                                                      \\
+,0|0x00000400                         \\
+,System Application                                        \\
+,EventPublisher.EventPublisher.1                           \\
+,IEventServer											   \\
+,IEventServer2											   \\
+,IEventServerTrace
+[COM_OBJPROPERTY]
+System Application                                         \\
+,Applications                                              \\
+,0|0x00000004              \\
+,ApplicationAccessChecksEnabled=1
+COM+ Utilities                                             \\
+,Applications                                              \\
+,0|0x00000004              \\
+,IsSystem=Y
+[LEGACY_APPLICATIONS]
+COM+ IMDB Proxy Connection Mgr
+COM+ IMDB Utilities
+[LEGACY_ROLES]
+IMDB Trusted User											\\
+,System Application
+[DestinationDirs]
+COM_SYSTEM32=11
+COM_SYSTEM32_REG=11
+COM_SYSTEM32_COM_REG=11,Com
+COM_SYSTEM32_COM=11,Com
+B2_LEGACY_SYSTEM32=11
+B2_LEGACY_SYSTEM32_REG=11
+B2_LEGACY_DIRECTORIES=11
+B2_LEGACY_DSN=39103
+NTOP_LEGACY_SYSTEM32=11
+NTOP_LEGACY_SYSTEM32_DIRECTORIES=11
+NTOP_LEGACY_REG_NODEL=11
+NTOP_LEGACY_SYSTEM32_REG=11
+NTOP_LEGACY_HELP_FILES=18
+NTOP_LEGACY_HELP_DIRECTORIES=18
+NTOP_LEGACY_DSNS=39103
+NTOP_LEGACY_PROGRAMFILES=39102
+NTOP_LEGACY_SYSTEM32_TLB=11
+NTOP_LEGACY_SYSTEMROOT_DIRECTORIES=10
+NTOP_LEGACY_SYSTEMROOT_FILES=10
+SDK_LEGACY_FILES=39102
+SDK_LEGACY_DIRECTORIES=39102
+MTS11_LEGACY_PROGRAMFILES=39101
+MTS11_LEGACY_PROGRAMFILES_REG=39101
+MTS11_LEGACY_PROGRAMFILES_TLB=39101
+MTS11_LEGACY_DIRECTORIES=39101
+COM_DSNS=39103
+COM_HLPS=18
+COM_CHMS=18
+MTS10_LEGACY=39101
+MTS20_LEGACY=39102
+COM_PERF_COUNTERS=11
+COMPLUS_MENU_ITEMS=39105
+DISCONTINUED_MENU_ITEMS=39105
+B2_LEGACY_MENU_ITEMS=39105
+TEXTMODECOPY_SYSTEM32_REG=11
+COM_SYSTEM32_COM_TLB=11,Com
+COM_COMPONENTS_INSTALL=11
+LEGACY_QC_FILES=11
+TEXTMODECOPY_SYSTEM32_REG_REMOVE=11
+DISCONTINUED_FILES=11
+DISCONTINUED_FILES_REG=11
+[COM_PERF_COUNTERS]
+[COM_REGKEYS]
+[EVENTSYSTEM_REGKEYS]
+HKLM,"SOFTWARE\Microsoft\EventSystem",,0x00000012
+HKLM,"SOFTWARE\Microsoft\EventSystem","Configured",0x00010003,0
+HKLM,"SYSTEM\CurrentControlSet\Services\EventSystem\Parameters","ServiceDll",0x00020002,"%11%\ES.dll"
+[WIRINGTABLES_REGKEYS]
+[COMPUTERLISTTABLE_REGKEYS]
+[LOCALCOMPUTERTABLE_REGKEYS]
+[CATSRVINDLLHOST_REGKEYS]
+[LEGACY_CATALOG_REGKEYS]
+HKLM,"SOFTWARE\Classes\AppID\{739172F8-1665-11D1-B22D-00C04FB9473F}"
+HKLM,"SOFTWARE\Classes\CLSID\{739172f8-1665-11d1-b22d-00c04fb9473f}"
+HKLM,"SOFTWARE\Microsoft\COM3","CatSrvEnabled"
+HKLM,"SOFTWARE\Microsoft\COM3\REGDB"
+HKLM,"SOFTWARE\Classes\AppID\{182c40f0-32e4-11d0-818b-00a0c9231c29}"
+HKLM,"SOFTWARE\Classes\CLSID\{182c40f0-32e4-11d0-818b-00a0c9231c29}"
+HKLM,"SOFTWARE\Microsoft\COM3","RegDBEnabled"
+[LEGACY_EVENTSYSTEM_REGKEYS]
+HKLM,"SOFTWARE\Classes\Interface\{F4A07D63-2E25-11D1-9964-00C04FBBB345}"
+[LEGACY_REGTRACKER_REGKEYS]
+HKCR,"Appid\{72516db1-be9a-11d1-861f-0080c729264d}"
+HKCR,"Clsid\{72516db0-be9a-11d1-861f-0080c729264d}"
+[LEGACY_IMDB_REGKEYS]
+HKCR, "ClsID\{1D0482E4-57E7-11d2-B10D-00805FC73204}"
+HKCR, "Interface\{46DB591E-4101-11D2-912C-0000F8758E8D}"
+HKCR, "Interface\{B97C237C-7D7E-11D2-BEA0-00805F0D8F97}"
+HKCR, "Interface\{6A8DEEA8-4101-11D2-912C-0000F8758E8D}"
+[LEGACY_SETUP_KEYS]
+HKLM,"SYSTEM\CurrentControlSet\Control\BackupRestore\FilesNotToBackup","ComPlus"
+[DANGEROUS_REGKEYS]
+[LEGACY_MTS_REGKEYS]
+HKLM,"SOFTWARE\Classes\CLSID\{182C40F0-32E4-11D0-818B-00A0C9231C29}\LocalServer32"
+[LEGACY_COM1X_BETA2_REGKEYS]
+HKCR,"Interface\{D81AB10D-2EE4-48db-9C90-54110998B105}"
+HKCR,"Interface\{8065b1c8-9702-46ab-99f5-9e5a53120ca9}"
+HKCR,"Interface\{3B027579-4606-46d7-8CA6-FF99EF510E08}"
+HKCR,"Interface\{c6a4e9ef-432e-4f32-9107-71d2b6fd2c33}"
+[COMPLUS_MENU_ITEMS]
+%COMPLUS_MENU_FOLDER%,%11%\comres.dll,661,662,%11%\Com\comexp.msc,,%11%\comres.dll,1
+[B2_LEGACY_MENU_ITEMS]
+%COMPLUS_MENU_FOLDER%,%COM_EXPLORER%,%11%\Com\comexp.msc
+%COMPLUS_MENU_FOLDER%,%VBBANK%,%11%\Com\vbbank.exe
+%COMPLUS_MENU_FOLDER%,%VCBANK%,%11%\Com\vcbank.exe
+[DISCONTINUED_MENU_ITEMS]
+%COMPLUS_MENU_FOLDER%,%COM_EXPLORER_LEGACY%,%11%\Com\comexp.msc
+[MTS11_LEGACY_MENU_ITEMS]
+[NTOP_LEGACY_MENU_ITEMS]
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_NTOP%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_IE%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_PWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_NTOP%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_IE%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_MSPWS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_NTOP%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_IE%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_ACCESSORIES%\%NTOP_MENU_INTERNET_TOOLS%\%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_MTS_EXPLORER%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_SETUP%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HELP%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_README%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_BANK_CLIENT%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_HOCKEY%
+%NTOP_MENU_IIS%\%NTOP_MENU_MTS%,%NTOP_MENU_TTT_CLIENT%
+[COM_SYSTEM32]
+mtxdm.dll,,,0x00000004
+mtxex.dll,,,0x00000004
+mtxlegih.dll,,,0x00000004
+dcomcnfg.exe,,,0x00000004
+[COM_SYSTEM32_REG]
+clbcatq.dll,,,0x00000004
+comsnap.dll,,,0x00000004
+comuid.dll,,,0x00000004
+comsvcs.dll,,,0x00000004
+catsrv.dll,,,0x00000004
+catsrvut.dll,,,0x00000004
+clbcatex.dll,,,0x00000004
+catsrvps.dll,,,0x00000004
+stclient.dll,,,0x00000004
+comrepl.dll,,,0x00000004
+comaddin.dll,,,0x00000004
+colbact.dll,,,0x00000004
+[COM_SYSTEM32_REG.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[LEGACY_QC_FILES]
+QCMk.dll,,,0x00000001
+MTxMQRec.dll,,,0x00000001
+QCRecPS.dll,,,0x00000001
+MtxMQply.dll,,,0x00000001
+QCPlyPS.dll,,,0x00000001
+QCListPS.dll,,,0x00000001
+MTxQListener.Dll,,,0x00000001
+QMover.Dll,,,0x00000001
+DtcCrm.dll,,,0x00000001
+ComQC.dll,,,0x00000001
+[COM_SYSTEM32_COM_REG]
+comadmin.dll,,,0x00000004
+[COM_SYSTEM32_COM_REG.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[COM_SYSTEM32_COM]
+comexp.msc,,,0x00000004
+comrepl.exe,,,0x00000004
+comempty.dat,,,0x00000004
+comrereg.exe,,,0x00000004
+migregdb.exe,,,0x00000004
+[COM_SYSTEM32_COM.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[COM_SYSTEM32_COM_TLB]
+mtsadmin.tlb,,,0x00000004
+[COM_SYSTEM32_COM_TLB.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[TEXTMODECOPY_SYSTEM32_REG]
+es.dll,,,0x00000004
+txflog.dll,,0x00000004
+[TEXTMODECOPY_SYSTEM32_REG.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[COM_DSNS]
+[COM_DSNS.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[COM_HLPS]
+comexp.hlp,,,0x00000004
+[COM_HLPS.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)"
+[COM_CHMS]
+comexp.chm,,,0x00000004
+[COM_CHMS.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)"
+[COM_SYSTEM32_REMOVE]
+mtxdm.dll,,,0x00000001
+mtxex.dll,,,0x00000001
+mfcsubs.dll,,,0x00000001
+mtxlegih.dll,,,0x00000001
+colbact.dll,,,0x00000001
+setup\comsetup.dll,,,0x00000001
+comsetup.dll,,,0x00000001
+comaddin.dll,,,0x00000001
+comclust.exe,,,0x00000001
+dcomcnfg.exe,,,0x00000001
+[COM_SYSTEM32_REG_REMOVE]
+clbcatq.dll,,,0x00000001
+comsnap.dll,,,0x00000001
+comuid.dll,,,0x00000001
+comsvcs.dll,,,0x00000001
+catsrv.dll,,,0x00000001
+catsrvut.dll,,,0x00000001
+clbcatex.dll,,,0x00000001
+catsrvps.dll,,,0x00000001
+stclient.dll,,,0x00000001
+comrepl.dll,,,0x00000001
+[TEXTMODECOPY_SYSTEM32_REG_REMOVE]
+es.dll,,,0x00000001
+[DISCONTINUED_FILES]
+com\QCApp.exe,,,0x00000001
+com\QCListen.exe,,,0x00000001
+com\QComp.exe,,,0x00000001
+comexpd.dll,,,0x00000001
+esshared.dll,,,0x00000001
+esenu.dll,,,0x00000001
+mtxjava.dll,,,0x00000001
+com\comempty_1776.dat,,,0x00000001
+com\QCApp.vbs,,,0x00000001
+com\QCListen.vbs,,,0x00000001
+com\QComp.vbs,,,0x00000001
+comlbsvc.exe,,,0x00000001
+imdbsrv.exe,,,0x00000001
+pcnfgmax.ini,,,0x00000001
+pcnfgmax.h,,,0x00000001
+pcnfgmin.ini,,,0x00000001
+pcnfgmin.h,,,0x00000001
+DComExt.dll,,,0x00000001
+comclust.exe,,,0x00000001
+[DISCONTINUED_FILES_REG]
+comexps.dll,,,0x00000001
+estier2.dll,,,0x00000001
+corteng.dll,,,0x00000001
+colbcfw.dll,,,0x00000001
+msimdbmg.dll,,,0x00000001
+msimdbpc.dll,,,0x00000001
+msimdbcr.dll,,,0x00000001
+msimdbpr.dll,,,0x00000001
+[B2_LEGACY_SYSTEM32]
+comrn.dll,,,0x00000001
+sdtfxdcb.dll,,,0x00000001
+sdtfxdrg.dll,,,0x00000001
+system.apl,,,0x00000001
+MQResDis.dll,,,0x00000001
+com\WiringTablesValues.reg,,,0x00000001
+com\ComputerListTableValue.reg,,,0x00000001
+com\LocalComputerTableValues.reg,,,0x00000001
+com\CatSrvInDllHost.reg,,,0x00000001
+com\RegTracker.reg,,,0x00000001
+com\vcbank.exe,,,0x00000001
+com\vbbank.exe,,,0x00000001
+com\compcnfg.exe,,,0x00000001
+com\comadmin.vbs,,,0x00000001
+com\mtstocom.exe,,,0x00000001
+com\comempty_1776.dat,,,0x00000001
+com\clbenbl.bat,,,0x00000001
+com\regenbl.bat,,,0x00000001
+com\comview.exe,,,0x00000001
+com\readme.txt,,,0x00000001
+com\infolvl.exe,,,0x00000001
+com\QCApp.exe,,,0x00000001
+com\QCListen.exe,,,0x00000001
+com\QComp.exe,,,0x00000001
+mtxjava.dll,,,0x00000001
+[B2_LEGACY_SYSTEM32_REG]
+sdtfxd.dll,,,0x00000001
+sltcoms.dll,,,0x00000001
+sdtreg.dll,,,0x00000001
+stdisp.dll,,,0x00000001
+sltshp.dll,,,0x00000001
+ltsec.dll,,,0x00000001
+daccom.dll,,,0x00000001
+sltapp.dll,,,0x00000001
+registrar.dll,,,0x00000001
+registrarps.dll,,,0x00000001
+sdtclb.dll,,,0x00000001
+sdtclb4ui.dll,,,0x00000001
+comexp.dll,,,0x00000001
+comexpps.dll,,,0x00000001
+comimp.dll,,,0x00000001
+comimpps.dll,,,0x00000001
+sdtmach.dll,,,0x00000001
+colbcat.dll,,,0x00000001
+QCAdminH.dll,,,0x00000001
+QCMk.dll,,,0x00000001
+MTxMQRec.dll,,,0x00000001
+QCRecPS.dll,,,0x00000001
+MtxMQply.dll,,,0x00000001
+QCPlyPS.dll,,,0x00000001
+QCListPS.dll,,,0x00000001
+MTxQListener.Dll,MTxQLstn.dll,,0x00000004
+QMover.Dll,,,0x00000004
+com\vcacct.dll,,,0x00000001
+com\vbacct.dll,,,0x00000001
+com\comclexp.dll,,,0x00000001
+com\vjacct.dll,,,0x00000001
+[B2_LEGACY_DSN]
+mtssamples.dsn,,,0x00000001
+[B2_LEGACY_DIRECTORIES]
+com
+[NTOP_LEGACY_SYSTEM32]
+mtxcat.dll,,,0x00000001
+mtx.exe,,,0x00000001
+mtxstop.exe,,,0x00000001
+mtxexpd.dll,,,0x00000001
+mtxjava.dll,,,0x00000001
+mtxlegih.dll,,,0x00000001
+mtxcatu.dll,,,0x00000001
+mtxoci.dll,,,0x00000001
+mtxrepl.exe,,,0x00000001
+mtxperf.dll,,,0x00000001
+mtxinfr1.dll,,,0x00000001
+mtxinfr2.dll,,,0x00000001
+mts\mtxclex\diantz.exe,,,0x00000001
+mts\mtxclex\iexpress.exe,,,0x00000001
+mts\mtxclex\template.cdf,,,0x00000001
+mts\mtxclex\template.inf,,,0x00000001
+mts\mtxclex\updfile.exe,,,0x00000001
+mts\mtxclex\w95inf16.dll,,,0x00000001
+mts\mtxclex\w95inf32.dll,,,0x00000001
+mts\mtxclex\wextract.exe,,,0x00000001
+mts\mtxclex\advpack.dll,,,0x00000001
+mts\mtxclex\setupapi.dll,,,0x00000001
+mts\mtxclex\cfgmgr32.dll,,,0x00000001
+mts\mtxexp.msc,,,0x00000001
+mts\enumtx.dll,,,0x00000001
+setup\mtssetup.dll,,,0x00000001
+setup\mtsiis.inf,,,0x00000001
+[NTOP_LEGACY_REG_NODEL]
+mtxex.dll,,,0x00000001
+[NTOP_LEGACY_SYSTEM32_REG]
+mts\mtxextps.dll,,,0x00000001
+mts\mtxtrkps.dll,,,0x00000001
+mts\txctxps.dll,,,0x00000001
+mts\mtxwcps.dll,,,0x00000001
+mts\mtxtsps.dll,,,0x00000001
+mts\mtxgrp.dll,,,0x00000001
+mts\mtxtish.dll,,,0x00000001
+mts\mtxrepl.dll,,,0x00000001
+mts\mtxexp.ocx,,,0x00000001
+mts\mtxsnap.dll,,,0x00000001
+mts\mtxclex.dll,,,0x00000001
+mts\mtxadmin.dll,,,0x00000001
+mts\txctx.dll,,,0x00000001
+mts\mtxspm.dll,,,0x00000001
+mts\mtxact.dll,,,0x00000001
+mts\mtxas.dll,,,0x00000001
+mts\mtxextrk.dll,,,0x00000001
+mts\mtxcatex.dll,,,0x00000001
+mtsevents.dll,,,0x00000001
+daccom.dll,,,0x00000001
+mtxtrk.dll,,,0x00000001
+mtxrn.dll,,,0x00000001
+[NTOP_LEGACY_DSNS]
+mtssamples.dsn,,,0x00000001
+[NTOP_LEGACY_HELP_FILES]
+mts\html\AdminNode.html,,,0x00000001
+mts\html\adminref.htm,,,0x00000001
+mts\html\adminref_1.htm,,,0x00000001
+mts\html\adminref_10.htm,,,0x00000001
+mts\html\adminref_100.htm,,,0x00000001
+mts\html\adminref_101.htm,,,0x00000001
+mts\html\adminref_102.htm,,,0x00000001
+mts\html\adminref_103.htm,,,0x00000001
+mts\html\adminref_104.htm,,,0x00000001
+mts\html\adminref_105.htm,,,0x00000001
+mts\html\adminref_106.htm,,,0x00000001
+mts\html\adminref_11.htm,,,0x00000001
+mts\html\adminref_12.htm,,,0x00000001
+mts\html\adminref_13.htm,,,0x00000001
+mts\html\adminref_14.htm,,,0x00000001
+mts\html\adminref_15.htm,,,0x00000001
+mts\html\adminref_16.htm,,,0x00000001
+mts\html\adminref_17.htm,,,0x00000001
+mts\html\adminref_18.htm,,,0x00000001
+mts\html\adminref_19.htm,,,0x00000001
+mts\html\adminref_2.htm,,,0x00000001
+mts\html\adminref_20.htm,,,0x00000001
+mts\html\adminref_21.htm,,,0x00000001
+mts\html\adminref_22.htm,,,0x00000001
+mts\html\adminref_23.htm,,,0x00000001
+mts\html\adminref_24.htm,,,0x00000001
+mts\html\adminref_25.htm,,,0x00000001
+mts\html\adminref_26.htm,,,0x00000001
+mts\html\adminref_27.htm,,,0x00000001
+mts\html\adminref_28.htm,,,0x00000001
+mts\html\adminref_29.htm,,,0x00000001
+mts\html\adminref_3.htm,,,0x00000001
+mts\html\adminref_30.htm,,,0x00000001
+mts\html\adminref_31.htm,,,0x00000001
+mts\html\adminref_32.htm,,,0x00000001
+mts\html\adminref_33.htm,,,0x00000001
+mts\html\adminref_34.htm,,,0x00000001
+mts\html\adminref_35.htm,,,0x00000001
+mts\html\adminref_36.htm,,,0x00000001
+mts\html\adminref_37.htm,,,0x00000001
+mts\html\adminref_38.htm,,,0x00000001
+mts\html\adminref_39.htm,,,0x00000001
+mts\html\adminref_4.htm,,,0x00000001
+mts\html\adminref_40.htm,,,0x00000001
+mts\html\adminref_41.htm,,,0x00000001
+mts\html\adminref_42.htm,,,0x00000001
+mts\html\adminref_43.htm,,,0x00000001
+mts\html\adminref_44.htm,,,0x00000001
+mts\html\adminref_45.htm,,,0x00000001
+mts\html\adminref_46.htm,,,0x00000001
+mts\html\adminref_47.htm,,,0x00000001
+mts\html\adminref_48.htm,,,0x00000001
+mts\html\adminref_49.htm,,,0x00000001
+mts\html\adminref_5.htm,,,0x00000001
+mts\html\adminref_50.htm,,,0x00000001
+mts\html\adminref_51.htm,,,0x00000001
+mts\html\adminref_52.htm,,,0x00000001
+mts\html\adminref_53.htm,,,0x00000001
+mts\html\adminref_54.htm,,,0x00000001
+mts\html\adminref_55.htm,,,0x00000001
+mts\html\adminref_56.htm,,,0x00000001
+mts\html\adminref_57.htm,,,0x00000001
+mts\html\adminref_58.htm,,,0x00000001
+mts\html\adminref_59.htm,,,0x00000001
+mts\html\adminref_6.htm,,,0x00000001
+mts\html\adminref_60.htm,,,0x00000001
+mts\html\adminref_61.htm,,,0x00000001
+mts\html\adminref_62.htm,,,0x00000001
+mts\html\adminref_63.htm,,,0x00000001
+mts\html\adminref_64.htm,,,0x00000001
+mts\html\adminref_65.htm,,,0x00000001
+mts\html\adminref_66.htm,,,0x00000001
+mts\html\adminref_67.htm,,,0x00000001
+mts\html\adminref_68.htm,,,0x00000001
+mts\html\adminref_69.htm,,,0x00000001
+mts\html\adminref_7.htm,,,0x00000001
+mts\html\adminref_70.htm,,,0x00000001
+mts\html\adminref_71.htm,,,0x00000001
+mts\html\adminref_72.htm,,,0x00000001
+mts\html\adminref_73.htm,,,0x00000001
+mts\html\adminref_74.htm,,,0x00000001
+mts\html\adminref_75.htm,,,0x00000001
+mts\html\adminref_76.htm,,,0x00000001
+mts\html\adminref_77.htm,,,0x00000001
+mts\html\adminref_78.htm,,,0x00000001
+mts\html\adminref_79.htm,,,0x00000001
+mts\html\adminref_8.htm,,,0x00000001
+mts\html\adminref_80.htm,,,0x00000001
+mts\html\adminref_81.htm,,,0x00000001
+mts\html\adminref_82.htm,,,0x00000001
+mts\html\adminref_83.htm,,,0x00000001
+mts\html\adminref_84.htm,,,0x00000001
+mts\html\adminref_85.htm,,,0x00000001
+mts\html\adminref_86.htm,,,0x00000001
+mts\html\adminref_87.htm,,,0x00000001
+mts\html\adminref_88.htm,,,0x00000001
+mts\html\adminref_89.htm,,,0x00000001
+mts\html\adminref_9.htm,,,0x00000001
+mts\html\adminref_90.htm,,,0x00000001
+mts\html\adminref_91.htm,,,0x00000001
+mts\html\adminref_92.htm,,,0x00000001
+mts\html\adminref_93.htm,,,0x00000001
+mts\html\adminref_94.htm,,,0x00000001
+mts\html\adminref_95.htm,,,0x00000001
+mts\html\adminref_96.htm,,,0x00000001
+mts\html\adminref_97.htm,,,0x00000001
+mts\html\adminref_98.htm,,,0x00000001
+mts\html\adminref_99.htm,,,0x00000001
+mts\html\arrow.gif,,,0x00000001
+mts\html\building.htm,,,0x00000001
+mts\html\building_1.htm,,,0x00000001
+mts\html\building_10.htm,,,0x00000001
+mts\html\building_11.htm,,,0x00000001
+mts\html\building_12.htm,,,0x00000001
+mts\html\building_13.htm,,,0x00000001
+mts\html\building_2.htm,,,0x00000001
+mts\html\building_3.htm,,,0x00000001
+mts\html\building_4.htm,,,0x00000001
+mts\html\building_5.htm,,,0x00000001
+mts\html\building_6.htm,,,0x00000001
+mts\html\building_7.htm,,,0x00000001
+mts\html\building_8.htm,,,0x00000001
+mts\html\building_9.htm,,,0x00000001
+mts\html\button.gif,,,0x00000001
+mts\html\create.htm,,,0x00000001
+mts\html\create_1.htm,,,0x00000001
+mts\html\create_10.htm,,,0x00000001
+mts\html\create_2.htm,,,0x00000001
+mts\html\create_3.htm,,,0x00000001
+mts\html\create_4.htm,,,0x00000001
+mts\html\create_5.htm,,,0x00000001
+mts\html\create_6.htm,,,0x00000001
+mts\html\create_7.htm,,,0x00000001
+mts\html\create_8.htm,,,0x00000001
+mts\html\create_9.htm,,,0x00000001
+mts\html\disamb01.htm,,,0x00000001
+mts\html\disamb01_1.htm,,,0x00000001
+mts\html\disamb01_10.htm,,,0x00000001
+mts\html\disamb01_11.htm,,,0x00000001
+mts\html\disamb01_12.htm,,,0x00000001
+mts\html\disamb01_13.htm,,,0x00000001
+mts\html\disamb01_14.htm,,,0x00000001
+mts\html\disamb01_15.htm,,,0x00000001
+mts\html\disamb01_16.htm,,,0x00000001
+mts\html\disamb01_17.htm,,,0x00000001
+mts\html\disamb01_18.htm,,,0x00000001
+mts\html\disamb01_19.htm,,,0x00000001
+mts\html\disamb01_2.htm,,,0x00000001
+mts\html\disamb01_20.htm,,,0x00000001
+mts\html\disamb01_21.htm,,,0x00000001
+mts\html\disamb01_22.htm,,,0x00000001
+mts\html\disamb01_23.htm,,,0x00000001
+mts\html\disamb01_24.htm,,,0x00000001
+mts\html\disamb01_25.htm,,,0x00000001
+mts\html\disamb01_26.htm,,,0x00000001
+mts\html\disamb01_27.htm,,,0x00000001
+mts\html\disamb01_28.htm,,,0x00000001
+mts\html\disamb01_29.htm,,,0x00000001
+mts\html\disamb01_3.htm,,,0x00000001
+mts\html\disamb01_30.htm,,,0x00000001
+mts\html\disamb01_31.htm,,,0x00000001
+mts\html\disamb01_32.htm,,,0x00000001
+mts\html\disamb01_33.htm,,,0x00000001
+mts\html\disamb01_34.htm,,,0x00000001
+mts\html\disamb01_35.htm,,,0x00000001
+mts\html\disamb01_36.htm,,,0x00000001
+mts\html\disamb01_37.htm,,,0x00000001
+mts\html\disamb01_4.htm,,,0x00000001
+mts\html\disamb01_5.htm,,,0x00000001
+mts\html\disamb01_6.htm,,,0x00000001
+mts\html\disamb01_7.htm,,,0x00000001
+mts\html\disamb01_8.htm,,,0x00000001
+mts\html\disamb01_9.htm,,,0x00000001
+mts\html\distribute.htm,,,0x00000001
+mts\html\distribute_1.htm,,,0x00000001
+mts\html\distribute_2.htm,,,0x00000001
+mts\html\distribute_3.htm,,,0x00000001
+mts\html\errorcodes.htm,,,0x00000001
+mts\html\errorcodes_1.htm,,,0x00000001
+mts\html\GetCtxtPropvc.htm,,,0x00000001
+mts\html\GetCtxtPropvc_1.htm,,,0x00000001
+mts\html\GetCtxtPropvc_2.htm,,,0x00000001
+mts\html\GetCtxtPropvc_3.htm,,,0x00000001
+mts\html\GetCtxtPropvc_4.htm,,,0x00000001
+mts\html\GetCtxtPropvj.htm,,,0x00000001
+mts\html\GetCtxtPropvj_1.htm,,,0x00000001
+mts\html\GetCtxtPropvj_2.htm,,,0x00000001
+mts\html\GetCtxtPropvj_3.htm,,,0x00000001
+mts\html\GetCtxtPropvj_4.htm,,,0x00000001
+mts\html\gettingstarted.htm,,,0x00000001
+mts\html\gettingstarted_1.htm,,,0x00000001
+mts\html\gettingstarted_2.htm,,,0x00000001
+mts\html\gettingstarted_3.htm,,,0x00000001
+mts\html\gettingstarted_4.htm,,,0x00000001
+mts\html\install.htm,,,0x00000001
+mts\html\install_1.htm,,,0x00000001
+mts\html\install_2.htm,,,0x00000001
+mts\html\install_3.htm,,,0x00000001
+mts\html\install_4.htm,,,0x00000001
+mts\html\install_5.htm,,,0x00000001
+mts\html\install_6.htm,,,0x00000001
+mts\html\install_7.htm,,,0x00000001
+mts\html\maintain.htm,,,0x00000001
+mts\html\maintain_1.htm,,,0x00000001
+mts\html\maintain_2.htm,,,0x00000001
+mts\html\maintain_3.htm,,,0x00000001
+mts\html\maintain_4.htm,,,0x00000001
+mts\html\menus2.htm,,,0x00000001
+mts\html\menus2_1.htm,,,0x00000001
+mts\html\menus2_2.htm,,,0x00000001
+mts\html\menus2_3.htm,,,0x00000001
+mts\html\menus2_4.htm,,,0x00000001
+mts\html\menus2_5.htm,,,0x00000001
+mts\html\menus2_6.htm,,,0x00000001
+mts\html\mts.gif,,,0x00000001
+mts\html\mtslegal.htm,,,0x00000001
+mts\html\mtslogo.gif,,,0x00000001
+mts\html\MTSWelcome.html,,,0x00000001
+mts\html\mtxpg03.htm,,,0x00000001
+mts\html\mtxpg03_1.htm,,,0x00000001
+mts\html\mtxpg03_2.htm,,,0x00000001
+mts\html\mtxpg03_3.htm,,,0x00000001
+mts\html\mtxpg03_4.htm,,,0x00000001
+mts\html\mtxpg03_5.htm,,,0x00000001
+mts\html\mtxpg03_6.htm,,,0x00000001
+mts\html\mtxpg03_7.htm,,,0x00000001
+mts\html\mtxpg04.htm,,,0x00000001
+mts\html\mtxpg04_1.htm,,,0x00000001
+mts\html\mtxpg04_10.htm,,,0x00000001
+mts\html\mtxpg04_11.htm,,,0x00000001
+mts\html\mtxpg04_12.htm,,,0x00000001
+mts\html\mtxpg04_13.htm,,,0x00000001
+mts\html\mtxpg04_14.htm,,,0x00000001
+mts\html\mtxpg04_15.htm,,,0x00000001
+mts\html\mtxpg04_16.htm,,,0x00000001
+mts\html\mtxpg04_17.htm,,,0x00000001
+mts\html\mtxpg04_18.htm,,,0x00000001
+mts\html\mtxpg04_19.htm,,,0x00000001
+mts\html\mtxpg04_2.htm,,,0x00000001
+mts\html\mtxpg04_20.htm,,,0x00000001
+mts\html\mtxpg04_21.htm,,,0x00000001
+mts\html\mtxpg04_3.htm,,,0x00000001
+mts\html\mtxpg04_4.htm,,,0x00000001
+mts\html\mtxpg04_5.htm,,,0x00000001
+mts\html\mtxpg04_6.htm,,,0x00000001
+mts\html\mtxpg04_7.htm,,,0x00000001
+mts\html\mtxpg04_8.htm,,,0x00000001
+mts\html\mtxpg04_9.htm,,,0x00000001
+mts\html\mtxpg05vb.htm,,,0x00000001
+mts\html\mtxpg05vb_1.htm,,,0x00000001
+mts\html\mtxpg05vb_2.htm,,,0x00000001
+mts\html\mtxpg05vb_3.htm,,,0x00000001
+mts\html\mtxpg05vb_4.htm,,,0x00000001
+mts\html\mtxpg05vb_5.htm,,,0x00000001
+mts\html\mtxpg05vb_6.htm,,,0x00000001
+mts\html\mtxpg05vb_7.htm,,,0x00000001
+mts\html\mtxpg06vb.htm,,,0x00000001
+mts\html\mtxpg06vb_1.htm,,,0x00000001
+mts\html\mtxpg06vb_2.htm,,,0x00000001
+mts\html\mtxpg06vb_3.htm,,,0x00000001
+mts\html\mtxpg07vb.htm,,,0x00000001
+mts\html\mtxpg07vb_1.htm,,,0x00000001
+mts\html\mtxpg07vb_2.htm,,,0x00000001
+mts\html\mtxpg07vb_3.htm,,,0x00000001
+mts\html\mtxpg07vb_4.htm,,,0x00000001
+mts\html\mtxpg08vb.htm,,,0x00000001
+mts\html\mtxpg08vb_1.htm,,,0x00000001
+mts\html\mtxpg08vb_2.htm,,,0x00000001
+mts\html\mtxpg08vb_3.htm,,,0x00000001
+mts\html\mtxpg09vb.htm,,,0x00000001
+mts\html\mtxpg09vb_1.htm,,,0x00000001
+mts\html\mtxpg09vb_2.htm,,,0x00000001
+mts\html\mtxpg09vb_3.htm,,,0x00000001
+mts\html\mtxpg10vb.htm,,,0x00000001
+mts\html\mtxpg10vb_1.htm,,,0x00000001
+mts\html\mtxpg10vb_2.htm,,,0x00000001
+mts\html\mtxpg10vb_3.htm,,,0x00000001
+mts\html\mtxpg11vb.htm,,,0x00000001
+mts\html\mtxpg11vb_1.htm,,,0x00000001
+mts\html\mtxpg11vb_2.htm,,,0x00000001
+mts\html\mtxpg11vb_3.htm,,,0x00000001
+mts\html\mtxstart.htm,,,0x00000001
+mts\html\objctrlvb.htm,,,0x00000001
+mts\html\objctrlvb_1.htm,,,0x00000001
+mts\html\objctrlvb_2.htm,,,0x00000001
+mts\html\objctrlvb_3.htm,,,0x00000001
+mts\html\objctrlvb_4.htm,,,0x00000001
+mts\html\objctrlvb_5.htm,,,0x00000001
+mts\html\objctrlvb_6.htm,,,0x00000001
+mts\html\objctrlvc.htm,,,0x00000001
+mts\html\objctrlvc_1.htm,,,0x00000001
+mts\html\objctrlvc_2.htm,,,0x00000001
+mts\html\objctrlvc_3.htm,,,0x00000001
+mts\html\objctrlvc_4.htm,,,0x00000001
+mts\html\objctrlvc_5.htm,,,0x00000001
+mts\html\objctrlvc_6.htm,,,0x00000001
+mts\html\objctrlvj.htm,,,0x00000001
+mts\html\objctrlvj_1.htm,,,0x00000001
+mts\html\objctrlvj_2.htm,,,0x00000001
+mts\html\objctrlvj_3.htm,,,0x00000001
+mts\html\objctrlvj_4.htm,,,0x00000001
+mts\html\objctrlvj_5.htm,,,0x00000001
+mts\html\objctrlvj_6.htm,,,0x00000001
+mts\html\ObjCtxActivity.htm,,,0x00000001
+mts\html\objctxActivity_1.htm,,,0x00000001
+mts\html\objctxActivity_2.htm,,,0x00000001
+mts\html\objctxvb.htm,,,0x00000001
+mts\html\objctxvb_1.htm,,,0x00000001
+mts\html\objctxvb_10.htm,,,0x00000001
+mts\html\objctxvb_11.htm,,,0x00000001
+mts\html\objctxvb_12.htm,,,0x00000001
+mts\html\objctxvb_13.htm,,,0x00000001
+mts\html\objctxvb_14.htm,,,0x00000001
+mts\html\objctxvb_15.htm,,,0x00000001
+mts\html\objctxvb_16.htm,,,0x00000001
+mts\html\objctxvb_17.htm,,,0x00000001
+mts\html\objctxvb_18.htm,,,0x00000001
+mts\html\objctxvb_19.htm,,,0x00000001
+mts\html\objctxvb_2.htm,,,0x00000001
+mts\html\objctxvb_20.htm,,,0x00000001
+mts\html\objctxvb_21.htm,,,0x00000001
+mts\html\objctxvb_22.htm,,,0x00000001
+mts\html\objctxvb_3.htm,,,0x00000001
+mts\html\objctxvb_4.htm,,,0x00000001
+mts\html\objctxvb_5.htm,,,0x00000001
+mts\html\objctxvb_6.htm,,,0x00000001
+mts\html\objctxvb_7.htm,,,0x00000001
+mts\html\objctxvb_8.htm,,,0x00000001
+mts\html\objctxvb_9.htm,,,0x00000001
+mts\html\objctxvc.htm,,,0x00000001
+mts\html\objctxvc_1.htm,,,0x00000001
+mts\html\objctxvc_10.htm,,,0x00000001
+mts\html\objctxvc_11.htm,,,0x00000001
+mts\html\objctxvc_12.htm,,,0x00000001
+mts\html\objctxvc_13.htm,,,0x00000001
+mts\html\objctxvc_14.htm,,,0x00000001
+mts\html\objctxvc_15.htm,,,0x00000001
+mts\html\objctxvc_16.htm,,,0x00000001
+mts\html\objctxvc_17.htm,,,0x00000001
+mts\html\objctxvc_2.htm,,,0x00000001
+mts\html\objctxvc_3.htm,,,0x00000001
+mts\html\objctxvc_4.htm,,,0x00000001
+mts\html\objctxvc_5.htm,,,0x00000001
+mts\html\objctxvc_6.htm,,,0x00000001
+mts\html\objctxvc_7.htm,,,0x00000001
+mts\html\objctxvc_8.htm,,,0x00000001
+mts\html\objctxvc_9.htm,,,0x00000001
+mts\html\objctxvj.htm,,,0x00000001
+mts\html\objctxvj_1.htm,,,0x00000001
+mts\html\objctxvj_10.htm,,,0x00000001
+mts\html\objctxvj_11.htm,,,0x00000001
+mts\html\objctxvj_12.htm,,,0x00000001
+mts\html\objctxvj_13.htm,,,0x00000001
+mts\html\objctxvj_14.htm,,,0x00000001
+mts\html\objctxvj_15.htm,,,0x00000001
+mts\html\objctxvj_16.htm,,,0x00000001
+mts\html\objctxvj_17.htm,,,0x00000001
+mts\html\objctxvj_2.htm,,,0x00000001
+mts\html\objctxvj_3.htm,,,0x00000001
+mts\html\objctxvj_4.htm,,,0x00000001
+mts\html\objctxvj_5.htm,,,0x00000001
+mts\html\objctxvj_6.htm,,,0x00000001
+mts\html\objctxvj_7.htm,,,0x00000001
+mts\html\objctxvj_8.htm,,,0x00000001
+mts\html\objctxvj_9.htm,,,0x00000001
+mts\html\parti.htm,,,0x00000001
+mts\html\partiii.htm,,,0x00000001
+mts\html\partiii_1.htm,,,0x00000001
+mts\html\partiii_10.htm,,,0x00000001
+mts\html\partiii_11.htm,,,0x00000001
+mts\html\partiii_12.htm,,,0x00000001
+mts\html\partiii_2.htm,,,0x00000001
+mts\html\partiii_3.htm,,,0x00000001
+mts\html\partiii_4.htm,,,0x00000001
+mts\html\partiii_5.htm,,,0x00000001
+mts\html\partiii_6.htm,,,0x00000001
+mts\html\partiii_7.htm,,,0x00000001
+mts\html\partiii_8.htm,,,0x00000001
+mts\html\partiii_9.htm,,,0x00000001
+mts\html\partiivb.htm,,,0x00000001
+mts\html\PRCARROW.gif,,,0x00000001
+mts\html\ProgNode.html,,,0x00000001
+mts\html\ProgSecRefvb.htm,,,0x00000001
+mts\html\ProgSecRefvb_1.htm,,,0x00000001
+mts\html\ProgSecRefvb_2.htm,,,0x00000001
+mts\html\ProgSecRefvb_3.htm,,,0x00000001
+mts\html\ProgSecRefvb_4.htm,,,0x00000001
+mts\html\ProgSecRefvb_5.htm,,,0x00000001
+mts\html\ProgSecRefvb_6.htm,,,0x00000001
+mts\html\ProgSecRefvb_7.htm,,,0x00000001
+mts\html\ProgSecRefvb_8.htm,,,0x00000001
+mts\html\ProgSecRefvc.htm,,,0x00000001
+mts\html\ProgSecRefvc_1.htm,,,0x00000001
+mts\html\ProgSecRefvc_2.htm,,,0x00000001
+mts\html\ProgSecRefvc_3.htm,,,0x00000001
+mts\html\ProgSecRefvc_4.htm,,,0x00000001
+mts\html\ProgSecRefvc_5.htm,,,0x00000001
+mts\html\ProgSecRefvc_6.htm,,,0x00000001
+mts\html\ProgSecRefvc_7.htm,,,0x00000001
+mts\html\ProgSecRefvc_8.htm,,,0x00000001
+mts\html\ProgSecRefvc_9.htm,,,0x00000001
+mts\html\quicktour.htm,,,0x00000001
+mts\html\quicktour_1.htm,,,0x00000001
+mts\html\quicktour_2.htm,,,0x00000001
+mts\html\quicktour_3.htm,,,0x00000001
+mts\html\quicktour_4.htm,,,0x00000001
+mts\html\quicktour_5.htm,,,0x00000001
+mts\html\roadmap.htm,,,0x00000001
+mts\html\roadmap_1.htm,,,0x00000001
+mts\html\roadmap_10.htm,,,0x00000001
+mts\html\roadmap_11.htm,,,0x00000001
+mts\html\roadmap_12.htm,,,0x00000001
+mts\html\roadmap_13.htm,,,0x00000001
+mts\html\roadmap_14.htm,,,0x00000001
+mts\html\roadmap_15.htm,,,0x00000001
+mts\html\roadmap_16.htm,,,0x00000001
+mts\html\roadmap_17.htm,,,0x00000001
+mts\html\roadmap_18.htm,,,0x00000001
+mts\html\roadmap_19.htm,,,0x00000001
+mts\html\roadmap_2.htm,,,0x00000001
+mts\html\roadmap_20.htm,,,0x00000001
+mts\html\roadmap_21.htm,,,0x00000001
+mts\html\roadmap_22.htm,,,0x00000001
+mts\html\roadmap_23.htm,,,0x00000001
+mts\html\roadmap_24.htm,,,0x00000001
+mts\html\roadmap_25.htm,,,0x00000001
+mts\html\roadmap_26.htm,,,0x00000001
+mts\html\roadmap_27.htm,,,0x00000001
+mts\html\roadmap_28.htm,,,0x00000001
+mts\html\roadmap_29.htm,,,0x00000001
+mts\html\roadmap_3.htm,,,0x00000001
+mts\html\roadmap_30.htm,,,0x00000001
+mts\html\roadmap_31.htm,,,0x00000001
+mts\html\roadmap_32.htm,,,0x00000001
+mts\html\roadmap_33.htm,,,0x00000001
+mts\html\roadmap_34.htm,,,0x00000001
+mts\html\roadmap_35.htm,,,0x00000001
+mts\html\roadmap_36.htm,,,0x00000001
+mts\html\roadmap_37.htm,,,0x00000001
+mts\html\roadmap_38.htm,,,0x00000001
+mts\html\roadmap_39.htm,,,0x00000001
+mts\html\roadmap_4.htm,,,0x00000001
+mts\html\roadmap_40.htm,,,0x00000001
+mts\html\roadmap_41.htm,,,0x00000001
+mts\html\roadmap_42.htm,,,0x00000001
+mts\html\roadmap_43.htm,,,0x00000001
+mts\html\roadmap_44.htm,,,0x00000001
+mts\html\roadmap_45.htm,,,0x00000001
+mts\html\roadmap_46.htm,,,0x00000001
+mts\html\roadmap_47.htm,,,0x00000001
+mts\html\roadmap_48.htm,,,0x00000001
+mts\html\roadmap_5.htm,,,0x00000001
+mts\html\roadmap_6.htm,,,0x00000001
+mts\html\roadmap_7.htm,,,0x00000001
+mts\html\roadmap_8.htm,,,0x00000001
+mts\html\roadmap_9.htm,,,0x00000001
+mts\html\sampcodevb.htm,,,0x00000001
+mts\html\sampcodevb_1.htm,,,0x00000001
+mts\html\sampcodevb_10.htm,,,0x00000001
+mts\html\sampcodevb_2.htm,,,0x00000001
+mts\html\sampcodevb_3.htm,,,0x00000001
+mts\html\sampcodevb_4.htm,,,0x00000001
+mts\html\sampcodevb_5.htm,,,0x00000001
+mts\html\sampcodevb_6.htm,,,0x00000001
+mts\html\sampcodevb_7.htm,,,0x00000001
+mts\html\sampcodevb_8.htm,,,0x00000001
+mts\html\sampcodevb_9.htm,,,0x00000001
+mts\html\scriptable.htm,,,0x00000001
+mts\html\scriptable_1.htm,,,0x00000001
+mts\html\scriptable_10.htm,,,0x00000001
+mts\html\scriptable_11.htm,,,0x00000001
+mts\html\scriptable_12.htm,,,0x00000001
+mts\html\scriptable_13.htm,,,0x00000001
+mts\html\scriptable_14.htm,,,0x00000001
+mts\html\scriptable_15.htm,,,0x00000001
+mts\html\scriptable_16.htm,,,0x00000001
+mts\html\scriptable_17.htm,,,0x00000001
+mts\html\scriptable_18.htm,,,0x00000001
+mts\html\scriptable_19.htm,,,0x00000001
+mts\html\scriptable_2.htm,,,0x00000001
+mts\html\scriptable_20.htm,,,0x00000001
+mts\html\scriptable_21.htm,,,0x00000001
+mts\html\scriptable_22.htm,,,0x00000001
+mts\html\scriptable_23.htm,,,0x00000001
+mts\html\scriptable_24.htm,,,0x00000001
+mts\html\scriptable_3.htm,,,0x00000001
+mts\html\scriptable_4.htm,,,0x00000001
+mts\html\scriptable_5.htm,,,0x00000001
+mts\html\scriptable_6.htm,,,0x00000001
+mts\html\scriptable_7.htm,,,0x00000001
+mts\html\scriptable_8.htm,,,0x00000001
+mts\html\scriptable_9.htm,,,0x00000001
+mts\html\settingup.htm,,,0x00000001
+mts\html\settingup_1.htm,,,0x00000001
+mts\html\settingup_2.htm,,,0x00000001
+mts\html\settingup_3.htm,,,0x00000001
+mts\html\settingup_4.htm,,,0x00000001
+mts\html\settingup_5.htm,,,0x00000001
+mts\html\settingup_6.htm,,,0x00000001
+mts\html\settingup_7.htm,,,0x00000001
+mts\html\settingup_8.htm,,,0x00000001
+mts\html\settingup_9.htm,,,0x00000001
+mts\html\SetupNode.html,,,0x00000001
+mts\html\spacer.gif,,,0x00000001
+mts\html\spamrefvb.htm,,,0x00000001
+mts\html\spamrefvb_1.htm,,,0x00000001
+mts\html\spamrefvb_10.htm,,,0x00000001
+mts\html\spamrefvb_11.htm,,,0x00000001
+mts\html\spamrefvb_12.htm,,,0x00000001
+mts\html\spamrefvb_13.htm,,,0x00000001
+mts\html\spamrefvb_2.htm,,,0x00000001
+mts\html\spamrefvb_3.htm,,,0x00000001
+mts\html\spamrefvb_4.htm,,,0x00000001
+mts\html\spamrefvb_5.htm,,,0x00000001
+mts\html\spamrefvb_6.htm,,,0x00000001
+mts\html\spamrefvb_7.htm,,,0x00000001
+mts\html\spamrefvb_8.htm,,,0x00000001
+mts\html\spamrefvb_9.htm,,,0x00000001
+mts\html\spamrefvc.htm,,,0x00000001
+mts\html\spamrefvc_1.htm,,,0x00000001
+mts\html\spamrefvc_10.htm,,,0x00000001
+mts\html\spamrefvc_11.htm,,,0x00000001
+mts\html\spamrefvc_12.htm,,,0x00000001
+mts\html\spamrefvc_13.htm,,,0x00000001
+mts\html\spamrefvc_14.htm,,,0x00000001
+mts\html\spamrefvc_15.htm,,,0x00000001
+mts\html\spamrefvc_16.htm,,,0x00000001
+mts\html\spamrefvc_2.htm,,,0x00000001
+mts\html\spamrefvc_3.htm,,,0x00000001
+mts\html\spamrefvc_4.htm,,,0x00000001
+mts\html\spamrefvc_5.htm,,,0x00000001
+mts\html\spamrefvc_6.htm,,,0x00000001
+mts\html\spamrefvc_7.htm,,,0x00000001
+mts\html\spamrefvc_8.htm,,,0x00000001
+mts\html\spamrefvc_9.htm,,,0x00000001
+mts\html\spamrefvj.htm,,,0x00000001
+mts\html\spamrefvj_1.htm,,,0x00000001
+mts\html\spamrefvj_10.htm,,,0x00000001
+mts\html\spamrefvj_11.htm,,,0x00000001
+mts\html\spamrefvj_12.htm,,,0x00000001
+mts\html\spamrefvj_13.htm,,,0x00000001
+mts\html\spamrefvj_14.htm,,,0x00000001
+mts\html\spamrefvj_15.htm,,,0x00000001
+mts\html\spamrefvj_16.htm,,,0x00000001
+mts\html\spamrefvj_2.htm,,,0x00000001
+mts\html\spamrefvj_3.htm,,,0x00000001
+mts\html\spamrefvj_4.htm,,,0x00000001
+mts\html\spamrefvj_5.htm,,,0x00000001
+mts\html\spamrefvj_6.htm,,,0x00000001
+mts\html\spamrefvj_7.htm,,,0x00000001
+mts\html\spamrefvj_8.htm,,,0x00000001
+mts\html\spamrefvj_9.htm,,,0x00000001
+mts\html\StartedNode.html,,,0x00000001
+mts\html\TourNode.html,,,0x00000001
+mts\html\transactions.htm,,,0x00000001
+mts\html\transactions_1.htm,,,0x00000001
+mts\html\transactions_2.htm,,,0x00000001
+mts\html\transactions_3.htm,,,0x00000001
+mts\html\transactions_4.htm,,,0x00000001
+mts\html\transactions_5.htm,,,0x00000001
+mts\html\transactions_6.htm,,,0x00000001
+mts\html\transctxvb.htm,,,0x00000001
+mts\html\transctxvb_1.htm,,,0x00000001
+mts\html\transctxvb_2.htm,,,0x00000001
+mts\html\transctxvb_3.htm,,,0x00000001
+mts\html\transctxvb_4.htm,,,0x00000001
+mts\html\transctxvb_5.htm,,,0x00000001
+mts\html\transctxvc.htm,,,0x00000001
+mts\html\transctxvc_1.htm,,,0x00000001
+mts\html\transctxvc_2.htm,,,0x00000001
+mts\html\transctxvc_3.htm,,,0x00000001
+mts\html\transctxvc_4.htm,,,0x00000001
+mts\html\transctxvc_5.htm,,,0x00000001
+mts\html\transctxvj.htm,,,0x00000001
+mts\html\transctxvj_1.htm,,,0x00000001
+mts\html\transctxvj_2.htm,,,0x00000001
+mts\html\transctxvj_3.htm,,,0x00000001
+mts\html\transctxvj_4.htm,,,0x00000001
+mts\html\transctxvj_5.htm,,,0x00000001
+mts\html\vintdev.JPG,,,0x00000001
+mts\html\vipdef01.htm,,,0x00000001
+mts\winhelp\mts20.cnt,,,0x00000001
+mts\winhelp\mts20.hlp,,,0x00000001
+mts\winhelp\readme.cnt,,,0x00000001
+mts\winhelp\readme.hlp,,,0x00000001
+mts\misc\mts20adm.hhc,,,0x00000001
+mts\misc\mts20pr.hhc,,,0x00000001
+mts\html\images\aborted.gif,,,0x00000001
+mts\html\images\aborting.gif,,,0x00000001
+mts\html\images\application.gif,,,0x00000001
+mts\html\images\call1.gif,,,0x00000001
+mts\html\images\chiclet.gif,,,0x00000001
+mts\html\images\comit.gif,,,0x00000001
+mts\html\images\context1.gif,,,0x00000001
+mts\html\images\context2.gif,,,0x00000001
+mts\html\images\context3.gif,,,0x00000001
+mts\html\images\datahei.gif,,,0x00000001
+mts\html\images\dtcintro01.gif,,,0x00000001
+mts\html\images\dtcintro02.gif,,,0x00000001
+mts\html\images\dtcintro12.gif,,,0x00000001
+mts\html\images\dtcintro15.gif,,,0x00000001
+mts\html\images\error.gif,,,0x00000001
+mts\html\images\errordialogue.gif,,,0x00000001
+mts\html\images\filenew.gif,,,0x00000001
+mts\html\images\forceab.gif,,,0x00000001
+mts\html\images\host.gif,,,0x00000001
+mts\html\images\indoubt.gif,,,0x00000001
+mts\html\images\info.gif,,,0x00000001
+mts\html\images\largeico.gif,,,0x00000001
+mts\html\images\list.gif,,,0x00000001
+mts\html\images\methhier.gif,,,0x00000001
+mts\html\images\mts_banr.gif,,,0x00000001
+mts\html\images\newrole.gif,,,0x00000001
+mts\html\images\newuser1.gif,,,0x00000001
+mts\html\images\notifyc.gif,,,0x00000001
+mts\html\images\objsp.gif,,,0x00000001
+mts\html\images\objspg.gif,,,0x00000001
+mts\html\images\objspgm.gif,,,0x00000001
+mts\html\images\onlyfail.gif,,,0x00000001
+mts\html\images\open.gif,,,0x00000001
+mts\html\images\param1.gif,,,0x00000001
+mts\html\images\parchild.gif,,,0x00000001
+mts\html\images\prcarrow.gif,,,0x00000001
+mts\html\images\prepard.gif,,,0x00000001
+mts\html\images\preprng.gif,,,0x00000001
+mts\html\images\property.gif,,,0x00000001
+mts\html\images\pulling.gif,,,0x00000001
+mts\html\images\pushing.gif,,,0x00000001
+mts\html\images\refresh.gif,,,0x00000001
+mts\html\images\smallico.gif,,,0x00000001
+mts\html\images\snapin.gif,,,0x00000001
+mts\html\images\snapin2.gif,,,0x00000001
+mts\html\images\space.gif,,,0x00000001
+mts\html\images\state1.gif,,,0x00000001
+mts\html\images\state2.gif,,,0x00000001
+mts\html\images\state3.gif,,,0x00000001
+mts\html\images\status.gif,,,0x00000001
+mts\html\images\trlist.gif,,,0x00000001
+mts\html\images\trstatus.gif,,,0x00000001
+mts\html\images\trtrace.gif,,,0x00000001
+mts\html\images\txforced.gif,,,0x00000001
+mts\html\images\vi0301.gif,,,0x00000001
+mts\html\images\vi0302.gif,,,0x00000001
+mts\html\images\vi0401.gif,,,0x00000001
+mts\html\images\vi0402.gif,,,0x00000001
+mts\html\images\vi0403.gif,,,0x00000001
+mts\html\images\vi0404.gif,,,0x00000001
+mts\html\images\vi0405.gif,,,0x00000001
+mts\html\images\vi0406.gif,,,0x00000001
+mts\html\images\vi0407.gif,,,0x00000001
+mts\html\images\vi0408.gif,,,0x00000001
+mts\html\images\vi0409.gif,,,0x00000001
+mts\html\images\vi0410.gif,,,0x00000001
+mts\html\images\vi0501.gif,,,0x00000001
+mts\html\images\vi0502.gif,,,0x00000001
+mts\html\images\vi0503.gif,,,0x00000001
+mts\html\images\vi0601.gif,,,0x00000001
+mts\html\images\vi0602.gif,,,0x00000001
+mts\html\images\vi0603.gif,,,0x00000001
+mts\html\images\vi0701.gif,,,0x00000001
+mts\html\images\vi0702.gif,,,0x00000001
+mts\html\images\vi0801.gif,,,0x00000001
+mts\html\images\vi0901.gif,,,0x00000001
+mts\html\images\vi0902.gif,,,0x00000001
+mts\html\images\vi1001.gif,,,0x00000001
+mts\html\images\vi1101.gif,,,0x00000001
+mts\html\images\vi1102.gif,,,0x00000001
+mts\html\images\viag0301.gif,,,0x00000001
+mts\html\images\viag0302.gif,,,0x00000001
+mts\html\images\viag0303.gif,,,0x00000001
+mts\html\images\viagaa03.gif,,,0x00000001
+mts\html\images\viagaa05.gif,,,0x00000001
+mts\html\images\viagaa06.gif,,,0x00000001
+mts\html\images\viagaa07.gif,,,0x00000001
+mts\html\images\viagaa08.gif,,,0x00000001
+mts\html\images\vigs01.gif,,,0x00000001
+mts\html\images\vigs04.gif,,,0x00000001
+mts\html\images\vigs05.gif,,,0x00000001
+mts\html\images\viic01.gif,,,0x00000001
+mts\html\images\viic02.gif,,,0x00000001
+mts\html\images\viic03.gif,,,0x00000001
+mts\html\images\viic04.gif,,,0x00000001
+mts\html\images\viic05.gif,,,0x00000001
+mts\html\images\viicno.gif,,,0x00000001
+mts\html\images\viicsc.gif,,,0x00000001
+mts\html\images\vipa01.gif,,,0x00000001
+mts\html\images\vipa02.gif,,,0x00000001
+mts\html\images\vips01.gif,,,0x00000001
+mts\html\images\vips02.gif,,,0x00000001
+mts\html\images\vips03.gif,,,0x00000001
+mts\html\images\vips04.gif,,,0x00000001
+mts\html\images\vips05.gif,,,0x00000001
+mts\html\images\vips06.gif,,,0x00000001
+mts\html\images\warning.gif,,,0x00000001
+[NTOP_LEGACY_SYSTEM32_DIRECTORIES]
+mts\mtsclex
+mts
+[NTOP_LEGACY_HELP_DIRECTORIES]
+mts\html\images
+mts\html
+mts\winhelp
+mts\misc
+mts
+[NTOP_LEGACY_SYSTEMROOT_FILES]
+mtslogs\msdtc.txt,,,0x00000001
+[NTOP_LEGACY_SYSTEMROOT_DIRECTORIES]
+mtslogs
+[NTOP_LEGACY_SYSTEM32_TLB]
+mts\mtxspm.dll,,,0x00000001
+mts\mtxas.dll,,,0x00000001
+mts\txctx.dll,,,0x00000001
+mts\mtxgrp.dll,,,0x00000001
+mts\mtxadmin.dll,,,0x00000001
+[SDK_LEGACY_FILES]
+vbbank.exe,,,0x00000001
+tclient.exe,,,0x00000001
+mtxrereg.exe,,,0x00000001
+mtxiidel.exe,,,0x00000001
+mtxaddin.dll,,,0x00000001
+javaguid.exe,,,0x00000001
+mtxjava.dll,,,0x00000001
+exegen.exe,,,0x00000001
+lib\xaswitch.lib,,,0x00000001
+lib\xolehlp.lib,,,0x00000001
+lib\mtx.lib,,,0x00000001
+lib\mtxih.lib,,,0x00000001
+lib\mtxguid.lib,,,0x00000001
+lib\mtxoci.lib,,,0x00000001
+lib\xaswitch.pdb,,,0x00000001
+lib\mtxih.pdb,,,0x00000001
+lib\mtxguid.pdb,,,0x00000001
+lib\adoid.lib,,,0x00000001
+include\mtxattr.h,,,0x00000001
+include\mtxspm.h,,,0x00000001
+include\mtx.h,,,0x00000001
+include\txctx.h,,,0x00000001
+include\javaattr.h,,,0x00000001
+include\oletx2xa.h,,,0x00000001
+include\adoint.h,,,0x00000001
+include\adoid.h,,,0x00000001
+samples\instpak.vbs,,,0x00000001
+samples\instdll.vbs,,,0x00000001
+samples\instpakcli.vbs,,,0x00000001
+samples\instdllcli.vbs,,,0x00000001
+samples\uninst.vbs,,,0x00000001
+samples\javasamp.txt,,,0x00000001
+samples\account.vb\account.vbp,,,0x00000001
+samples\account.vb\account.cls,,,0x00000001
+samples\account.vb\movemoney.cls,,,0x00000001
+samples\account.vb\receipt.cls,,,0x00000001
+samples\account.vb\receiptupd.cls,,,0x00000001
+samples\account.vb\createtable.cls,,,0x00000001
+samples\account.vb\step1\account.cls,,,0x00000001
+samples\account.vb\step1\account.vbp,,,0x00000001
+samples\account.vb\step2\account.cls,,,0x00000001
+samples\account.vb\step2\account.vbp,,,0x00000001
+samples\account.vb\step2\createtable.cls,,,0x00000001
+samples\account.vb\step3\account.cls,,,0x00000001
+samples\account.vb\step3\account.vbp,,,0x00000001
+samples\account.vb\step3\createtable.cls,,,0x00000001
+samples\account.vb\step4\account.cls,,,0x00000001
+samples\account.vb\step4\account.vbp,,,0x00000001
+samples\account.vb\step4\createtable.cls,,,0x00000001
+samples\account.vb\step4\movemoney.cls,,,0x00000001
+samples\account.vb\step5\account.cls,,,0x00000001
+samples\account.vb\step5\account.vbp,,,0x00000001
+samples\account.vb\step5\createtable.cls,,,0x00000001
+samples\account.vb\step5\movemoney.cls,,,0x00000001
+samples\account.vb\step5\receipt.cls,,,0x00000001
+samples\account.vb\step6\account.cls,,,0x00000001
+samples\account.vb\step6\account.vbp,,,0x00000001
+samples\account.vb\step6\createtable.cls,,,0x00000001
+samples\account.vb\step6\movemoney.cls,,,0x00000001
+samples\account.vb\step6\receipt.cls,,,0x00000001
+samples\account.vb\step7\account.cls,,,0x00000001
+samples\account.vb\step7\account.vbp,,,0x00000001
+samples\account.vb\step7\createtable.cls,,,0x00000001
+samples\account.vb\step7\movemoney.cls,,,0x00000001
+samples\account.vb\step7\receipt.cls,,,0x00000001
+samples\account.vb\step7\receiptupd.cls,,,0x00000001
+samples\account.vb\step8\account.cls,,,0x00000001
+samples\account.vb\step8\account.vbp,,,0x00000001
+samples\account.vb\step8\createtable.cls,,,0x00000001
+samples\account.vb\step8\movemoney.cls,,,0x00000001
+samples\account.vb\step8\receipt.cls,,,0x00000001
+samples\account.vb\step8\receiptupd.cls,,,0x00000001
+samples\account.vc\account.cpp,,,0x00000001
+samples\account.vc\account.def,,,0x00000001
+samples\account.vc\account.dsp,,,0x00000001
+samples\account.vc\account.idl,,,0x00000001
+samples\account.vc\account.mak,,,0x00000001
+samples\account.vc\account.rc,,,0x00000001
+samples\account.vc\accountps.def,,,0x00000001
+samples\account.vc\accountps.mak,,,0x00000001
+samples\account.vc\caccount.cpp,,,0x00000001
+samples\account.vc\caccount.h,,,0x00000001
+samples\account.vc\caccount.rgs,,,0x00000001
+samples\account.vc\getreceipt.cpp,,,0x00000001
+samples\account.vc\getreceipt.h,,,0x00000001
+samples\account.vc\getreceipt.rgs,,,0x00000001
+samples\account.vc\movemoney.cpp,,,0x00000001
+samples\account.vc\movemoney.h,,,0x00000001
+samples\account.vc\movemoney.rgs,,,0x00000001
+samples\account.vc\resource.h,,,0x00000001
+samples\account.vc\stdafx.cpp,,,0x00000001
+samples\account.vc\stdafx.h,,,0x00000001
+samples\account.vc\tlbcheck.dat,,,0x00000001
+samples\account.vc\updatere.bin,,,0x00000001
+samples\account.vc\updatereceipt.cpp,,,0x00000001
+samples\account.vc\updatereceipt.h,,,0x00000001
+samples\account.vc\updatereceipt.rgs,,,0x00000001
+samples\tclient\bigo.bmp,,,0x00000001
+samples\tclient\bigx.bmp,,,0x00000001
+samples\tclient\frmmain.frm,,,0x00000001
+samples\tclient\frmmain.frx,,,0x00000001
+samples\tclient\null.bmp,,,0x00000001
+samples\tclient\o.bmp,,,0x00000001
+samples\tclient\screen.bmp,,,0x00000001
+samples\tclient\tclient.vbp,,,0x00000001
+samples\tclient\x.bmp,,,0x00000001
+samples\tserver\computer.bin,,,0x00000001
+samples\tserver\computer.cpp,,,0x00000001
+samples\tserver\computer.h,,,0x00000001
+samples\tserver\computer.rgs,,,0x00000001
+samples\tserver\human.bin,,,0x00000001
+samples\tserver\human.cpp,,,0x00000001
+samples\tserver\human.h,,,0x00000001
+samples\tserver\human.rgs,,,0x00000001
+samples\tserver\resource.h,,,0x00000001
+samples\tserver\stdafx.cpp,,,0x00000001
+samples\tserver\stdafx.h,,,0x00000001
+samples\tserver\tserver.cpp,,,0x00000001
+samples\tserver\tserver.def,,,0x00000001
+samples\tserver\tserver.dsp,,,0x00000001
+samples\tserver\tserver.idl,,,0x00000001
+samples\tserver\tserver.mak,,,0x00000001
+samples\tserver\tserver.rc,,,0x00000001
+samples\tserver\tserverps.def,,,0x00000001
+samples\tserver\tserverps.mk,,,0x00000001
+samples\account.vj\setjavadev.bat,,,0x00000001
+samples\account.vj\mkdll.bat,,,0x00000001
+samples\account.vj\account.dsp,,,0x00000001
+samples\account.vj\account.dsw,,,0x00000001
+samples\account.vj\accountlib.idl,,,0x00000001
+samples\account.vj\account\account.java,,,0x00000001
+samples\account.vj\account\getreceipt.java,,,0x00000001
+samples\account.vj\account\movemoney.java,,,0x00000001
+samples\account.vj\account\updatereceipt.java,,,0x00000001
+samples\bank.vb\vbbank.frm,,,0x00000001
+samples\bank.vb\bank.vbp,,,0x00000001
+samples\packages\vcacct.dll,,,0x00000001
+samples\packages\tserver.dll,,,0x00000001
+samples\packages\vbacct.dll,,,0x00000001
+samples\packages\vjacct.dll,,,0x00000001
+samples\packages\sample bank.pak,,,0x00000001
+samples\packages\tic-tac-toe.pak,,,0x00000001
+samples\packages\clients\samplebank.exe,,,0x00000001
+samples\packages\clients\tic-tac-toe.exe,,,0x00000001
+samples\wsh\instpak.vbs,,,0x00000001
+samples\wsh\instdll.vbs,,,0x00000001
+samples\wsh\instpakcli.vbs,,,0x00000001
+samples\wsh\instdllcli.vbs,,,0x00000001
+samples\wsh\uninst.vbs,,,0x00000001
+[SDK_LEGACY_DIRECTORIES]
+lib
+include
+samples\account.vb\step1
+samples\account.vb\step2
+samples\account.vb\step3
+samples\account.vb\step4
+samples\account.vb\step5
+samples\account.vb\step6
+samples\account.vb\step7
+samples\account.vb\step8
+samples\account.vb
+samples\account.vc
+samples\tclient
+samples\tserver
+samples\account.vj\account
+samples\account.vj
+samples\bank.vb
+samples\packages\clients
+samples\packages
+samples\wsh
+samples
+mtxclex
+.
+[NTOP_LEGACY_PROGRAMFILES]
+instcat.sql,,,0x00000001
+testoraclexaconfig.exe,,,0x00000001
+sampdtcc.exe,,,0x00000001
+sampdtcs.exe,,,0x00000001
+sampdtcr.dll,,,0x00000001
+svr1.ini,,,0x00000001
+svr2.ini,,,0x00000001
+svr3.ini,,,0x00000001
+mtxexp.msc,,,0x00000001
+mtxclex\diantz.exe,,,0x00000001
+mtxclex\iexpress.exe,,,0x00000001
+mtxclex\template.cdf,,,0x00000001
+mtxclex\template.inf,,,0x00000001
+mtxclex\updfile.exe,,,0x00000001
+mtxclex\w95inf16.dll,,,0x00000001
+mtxclex\w95inf32.dll,,,0x00000001
+mtxclex\wextract.exe,,,0x00000001
+mtxclex\advpack.dll,,,0x00000001
+mtxclex\setupapi.dll,,,0x00000001
+mtxclex\cfgmgr32.dll,,,0x00000001
+[MTS11_LEGACY_PROGRAMFILES]
+mscreate.dir,,,0x00000001
+sampdtcr.dll,,,0x00000001
+sampdtcc.exe,,,0x00000001
+sampdtcs.exe,,,0x00000001
+svr1.ini,,,0x00000001
+svr2.ini,,,0x00000001
+svr3.ini,,,0x00000001
+regsvr32.exe,,,0x00000001
+mtx.exe,,,0x00000001
+fixidentity.exe,,,0x00000001
+mtxstop.exe,,,0x00000001
+mtxcat.dll,,,0x00000001
+mtxexpd.dll,,,0x00000001
+enumtx.dll,,,0x00000001
+mtxlegih.dll,,,0x00000001
+mtxjava.dll,,,0x00000001
+javaguid.exe,,,0x00000001
+jdbcdemo.dll,,,0x00000001
+mtxrereg.exe,,,0x00000001
+mtxiidel.exe,,,0x00000001
+mtxcatu.dll,,,0x00000001
+hlp95en.dll,,,0x00000001
+javareg.exe,,,0x00000001
+mtxclex.dll,,,0x00000001
+readme.txt,,,0x00000001
+mtxcatex.dll,,,0x00000001
+mtxexp.exe,,,0x00000001
+tpong32.exe,,,0x00000001
+vbbank.exe,,,0x00000001
+setup.lnk,,,0x00000001
+setup.stf,,,0x00000001
+msvcr40d.dll,,,0x00000001
+log\mscreate.dir,,,0x00000001
+log\msdtc.log,,,0x00000001
+mtxclex\mscreate.dir,,,0x00000001
+mtxclex\advpack.dll,,,0x00000001
+mtxclex\cfgmgr32.dll,,,0x00000001
+mtxclex\diantz.exe,,,0x00000001
+mtxclex\iexpress.exe,,,0x00000001
+mtxclex\setupapi.dll,,,0x00000001
+mtxclex\template.cdf,,,0x00000001
+mtxclex\template.inf,,,0x00000001
+mtxclex\updfile.exe,,,0x00000001
+mtxclex\w95inf16.dll,,,0x00000001
+mtxclex\w95inf32.dll,,,0x00000001
+mtxclex\wextract.exe,,,0x00000001
+include\mscreate.dir,,,0x00000001
+include\mtxattr.h,,,0x00000001
+include\mtx.h,,,0x00000001
+include\txctx.h,,,0x00000001
+include\mtxspm.h,,,0x00000001
+include\javaattr.h,,,0x00000001
+include\oletx2xa.h,,,0x00000001
+lib\mscreate.dir,,,0x00000001
+lib\mtxih.lib,,,0x00000001
+lib\mtx.lib,,,0x00000001
+lib\mtxguid.lib,,,0x00000001
+tools\mscreate.dir,,,0x00000001
+tools\exegen.exe,,,0x00000001
+tools\midl.exe,,,0x00000001
+tools\rpcndr.h,,,0x00000001
+tools\rpcproxy.h,,,0x00000001
+samples\mscreate.dir,,,0x00000001
+samples\bank.vb\mscreate.dir,,,0x00000001
+samples\bank.vb\vbbank.frm,,,0x00000001
+samples\bank.vb\bank.vbp,,,0x00000001
+samples\bank.vb\step1\mscreate.dir,,,0x00000001
+samples\bank.vb\step1\account.cls,,,0x00000001
+samples\bank.vb\step1\account.vbp,,,0x00000001
+samples\bank.vb\step2\mscreate.dir,,,0x00000001
+samples\bank.vb\step2\account.cls,,,0x00000001
+samples\bank.vb\step2\account.vbp,,,0x00000001
+samples\bank.vb\step2\createtable.cls,,,0x00000001
+samples\bank.vb\step3\mscreate.dir,,,0x00000001
+samples\bank.vb\step3\account.cls,,,0x00000001
+samples\bank.vb\step3\account.vbp,,,0x00000001
+samples\bank.vb\step3\createtable.cls,,,0x00000001
+samples\bank.vb\step4\mscreate.dir,,,0x00000001
+samples\bank.vb\step4\account.cls,,,0x00000001
+samples\bank.vb\step4\account.vbp,,,0x00000001
+samples\bank.vb\step4\createtable.cls,,,0x00000001
+samples\bank.vb\step4\movemoney.cls,,,0x00000001
+samples\bank.vb\step5\mscreate.dir,,,0x00000001
+samples\bank.vb\step5\account.cls,,,0x00000001
+samples\bank.vb\step5\account.vbp,,,0x00000001
+samples\bank.vb\step5\createtable.cls,,,0x00000001
+samples\bank.vb\step5\movemoney.cls,,,0x00000001
+samples\bank.vb\step5\receipt.cls,,,0x00000001
+samples\bank.vb\step6\mscreate.dir,,,0x00000001
+samples\bank.vb\step6\account.cls,,,0x00000001
+samples\bank.vb\step6\account.vbp,,,0x00000001
+samples\bank.vb\step6\createtable.cls,,,0x00000001
+samples\bank.vb\step6\movemoney.cls,,,0x00000001
+samples\bank.vb\step6\receipt.cls,,,0x00000001
+samples\bank.vb\step7\mscreate.dir,,,0x00000001
+samples\bank.vb\step7\account.cls,,,0x00000001
+samples\bank.vb\step7\account.vbp,,,0x00000001
+samples\bank.vb\step7\createtable.cls,,,0x00000001
+samples\bank.vb\step7\movemoney.cls,,,0x00000001
+samples\bank.vb\step7\receipt.cls,,,0x00000001
+samples\bank.vb\step7\receiptupd.cls,,,0x00000001
+samples\bank.vb\step8\mscreate.dir,,,0x00000001
+samples\bank.vb\step8\account.cls,,,0x00000001
+samples\bank.vb\step8\account.vbp,,,0x00000001
+samples\bank.vb\step8\createtable.cls,,,0x00000001
+samples\bank.vb\step8\movemoney.cls,,,0x00000001
+samples\bank.vb\step8\receipt.cls,,,0x00000001
+samples\bank.vb\step8\receiptupd.cls,,,0x00000001
+samples\account.vb\mscreate.dir,,,0x00000001
+samples\account.vb\account.vbp,,,0x00000001
+samples\account.vb\account.cls,,,0x00000001
+samples\account.vb\movemoney.cls,,,0x00000001
+samples\account.vb\receipt.cls,,,0x00000001
+samples\account.vb\receiptupd.cls,,,0x00000001
+samples\account.vb\createtable.cls,,,0x00000001
+samples\account.vc\mscreate.dir,,,0x00000001
+samples\account.vc\account.cpp,,,0x00000001
+samples\account.vc\account.def,,,0x00000001
+samples\account.vc\account.idl,,,0x00000001
+samples\account.vc\account.mak,,,0x00000001
+samples\account.vc\account.mdp,,,0x00000001
+samples\account.vc\account.rc,,,0x00000001
+samples\account.vc\accountps.def,,,0x00000001
+samples\account.vc\accountps.mak,,,0x00000001
+samples\account.vc\caccount.cpp,,,0x00000001
+samples\account.vc\caccount.h,,,0x00000001
+samples\account.vc\caccount.rgs,,,0x00000001
+samples\account.vc\dlldatax.h,,,0x00000001
+samples\account.vc\movemoney.cpp,,,0x00000001
+samples\account.vc\movemoney.h,,,0x00000001
+samples\account.vc\movemoney.rgs,,,0x00000001
+samples\account.vc\resource.h,,,0x00000001
+samples\account.vc\stdafx.cpp,,,0x00000001
+samples\account.vc\stdafx.h,,,0x00000001
+samples\account.vc\account.dsw,,,0x00000001
+samples\account.vc\account.dsp,,,0x00000001
+samples\packages\mscreate.dir,,,0x00000001
+samples\packages\vbacct.dll,,,0x00000001
+samples\packages\vcacct.dll,,,0x00000001
+samples\packages\vjacct.dll,,,0x00000001
+samples\packages\sample bank.pak,,,0x00000001
+samples\account.vj\mscreate.dir,,,0x00000001
+samples\account.vj\account.mak,,,0x00000001
+samples\account.vj\account.mdp,,,0x00000001
+samples\account.vj\account.tlb,,,0x00000001
+samples\account.vj\account.idl,,,0x00000001
+samples\account.vj\jdbcdemo.cpp,,,0x00000001
+samples\account.vj\jdbcdemo.mak,,,0x00000001
+samples\account.vj\jdbcdemo.mdp,,,0x00000001
+samples\account.vj\odbc_connection.h,,,0x00000001
+samples\account.vj\odbc_statement.h,,,0x00000001
+samples\account.vj\account\mscreate.dir,,,0x00000001
+samples\account.vj\account\accountobj.java,,,0x00000001
+samples\account.vj\account\movemoneyobj.java,,,0x00000001
+samples\account.vj\java\mscreate.dir,,,0x00000001
+samples\account.vj\java\sql\mscreate.dir,,,0x00000001
+samples\account.vj\java\sql\connection.java,,,0x00000001
+samples\account.vj\java\sql\drivermanager.java,,,0x00000001
+samples\account.vj\java\sql\resultset.java,,,0x00000001
+samples\account.vj\java\sql\sqlexception.java,,,0x00000001
+samples\account.vj\java\sql\statement.java,,,0x00000001
+samples\account.vj\odbc\mscreate.dir,,,0x00000001
+samples\account.vj\odbc\connection.java,,,0x00000001
+samples\account.vj\odbc\statement.java,,,0x00000001
+help\mscreate.dir,,,0x00000001
+help\mtx10.hlp,,,0x00000001
+help\mtx10.cnt,,,0x00000001
+help\mtx10pss.hlp,,,0x00000001
+help\mtx10pss.cnt,,,0x00000001
+help\readme.hlp,,,0x00000001
+help\readme.cnt,,,0x00000001
+setup\mscreate.dir,,,0x00000001
+setup\acmsetup.exe,,,0x00000001
+setup\setup.exe,,,0x00000001
+setup\setup.lst,,,0x00000001
+setup\acmsetup.hlp,,,0x00000001
+setup\mssetup.dll,,,0x00000001
+setup\vipset.dll,,,0x00000001
+setup\viphook.dll,,,0x00000001
+setup\wwsetup.ttf,,,0x00000001
+setup\odbcstf.dll,,,0x00000001
+setup\odbckey.inf,,,0x00000001
+setup\viprel.inf,,,0x00000001
+setup\msvcrtd.dll,,,0x00000001
+packages\mscreate.dir,,,0x00000001
+remote\mscreate.dir,,,0x00000001
+[MTS11_LEGACY_DIRECTORIES]
+log
+mtxclex
+include
+lib
+tools
+remote
+samples\bank.vb\step1
+samples\bank.vb\step2
+samples\bank.vb\step3
+samples\bank.vb\step4
+samples\bank.vb\step5
+samples\bank.vb\step6
+samples\bank.vb\step7
+samples\bank.vb\step8
+samples\bank.vb
+samples\account.vb
+samples\account.vc
+samples\account.vj\java\sql
+samples\account.vj\java
+samples\account.vj\odbc\sql
+samples\account.vj\odbc
+samples\account.vj\account
+samples\account.vj
+samples\packages
+samples
+help
+setup
+packages
+.
+[MTS11_LEGACY_PROGRAMFILES_REG]
+mtxtrkps.dll,,,0x00000001
+mtxwcps.dll,,,0x00000001
+mtxextps.dll,,,0x00000001
+mtxtsps.dll,,,0x00000001
+txctxps.dll,,,0x00000001
+hockps.dll,,,0x00000001
+mtxextrk.dll,,,0x00000001
+mtxas.dll,,,0x00000001
+mtxact.dll,,,0x00000001
+mtxspm.dll,,,0x00000001
+txctx.dll,,,0x00000001
+mtxaddin.dll,,,0x00000001
+mtxadmin.dll,,,0x00000001
+hocksvr.dll,,,0x00000001
+daccom.dll,,,0x00000001
+mtxtrk.dll,,,0x00000001
+mtxrn.dll,,,0x00000001
+mtxex.dll,,,0x00000001
+[MTS11_LEGACY_PROGRAMFILES_TLB]
+mtxas.dll,,,0x00000001
+mtxspm.dll,,,0x00000001
+txctx.dll,,,0x00000001
+[DSSchemaContainers]
+1,cn=System,defaultNamingContext,cn=ComPartitionSets,3,1,objectClass=container,4,showInAdvancedViewOnly=1,3,systemFlags=2348810240,
+1,cn=System,defaultNamingContext,cn=ComPartitions,3,1,objectClass=container,4,showInAdvancedViewOnly=1,3,systemFlags=2348810240,

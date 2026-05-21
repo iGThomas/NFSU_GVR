@@ -1,0 +1,28 @@
+[Version]
+Signature="$Windows NT$"
+Class=Exception Package
+ClassGuid={F5776D81-AE53-4935-8E84-B0B283D8BCEF}
+Provider=Microsoft
+CatalogFile=Q328797_WinNTx.cat
+ComponentId={A5D3B6B7-3B45-45B2-B6FC-B5882F436A76}
+DriverVer=10-1-2002
+FriendlyName=WebData Hotfix Package
+
+[SourceDisksNames]
+55="Hotfix Package","",0
+
+[SourceDisksFiles]
+oledb32.dll=55
+
+[DefaultInstall]
+Copyfiles=Copy.Files
+
+[DefaultInstall.NT]
+Copyfiles=Copy.Files
+
+[DestinationDirs]
+;On Win2k, 16427 is the directory id for the \Program Files\Common Files directory
+Copy.Files=16427,"System\ole db"
+
+[Copy.Files]
+oledb32.dll

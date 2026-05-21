@@ -1,0 +1,133 @@
+[Version]
+Signature="$Windows NT$"
+SetupClass=BASE
+LayoutFile=layout.inf
+[Component Version]
+Build=2001,12,4414,42
+Master=nt5wks
+[Custom Icons]
+[Default Flags]
+dtc_sst=0x00000001 | 0x00000002
+dtc_core_sst=0x00000001 | 0x00000002
+dtc_install_fileop=0x0004000
+dtc_core_install_fileop=0x0004000
+dtc_uninstall_fileop=0x0004000
+dtc_core_uninstall_fileop=0x0004000
+[Strings]
+DTC_DESC="Distributed Transaction Coordinator"
+DTC_TIP="Coordinates distributed transactions betweeen multiple clients, servers, and resource managers"
+[Optional Components]
+dtc
+[dtc]
+OptionDesc=%DTC_DESC%
+Needs=
+Tip=%DTC_TIP%
+IconIndex=17
+Modes=0,1,2,3
+InstallTickCount=15
+UninstallTickCount=10
+SizeApproximation=7340032
+[dtc_install]
+CopyFiles=DTC_SYSTEM32                    \\          
+,DTC_SYSTEM32_REG, DTC_TRACE_FILES
+DllReg=DTC_SYSTEM32_REG
+DelFiles=DTC_LEGACY_FILES               
+KillProcess=KILL_PROC_ON_DTC_INSTALL
+StopService=STOP_SRV_ON_DTC_INSTALL
+DelReg=REG_CLEANUP
+AddPerfCtr=DTC_PERF_COUNTERS
+[dtc_uninstall]
+DelFiles=DTC_SYSTEM32_REMOVE               \\          
+,DTC_SYSTEM32_REG_REMOVE
+DllUnReg=DTC_SYSTEM32_REG_REMOVE  
+KillProcess=KILL_PROC_ON_DTC_UNINSTALL
+StopService=STOP_SRV_ON_DTC_UNINSTALL
+DelPerfCtr=DTC_PERF_COUNTERS
+[REG_CLEANUP]
+HKLM,"SOFTWARE\Microsoft\Rpc\Internet"
+[KILL_PROC_ON_DTC_INSTALL]
+msdtcmgr.exe
+[STOP_SRV_ON_DTC_INSTALL]
+MSDTC
+MSSQLServer
+[KILL_PROC_ON_DTC_UNINSTALL]
+msdtcmgr.exe
+[STOP_SRV_ON_DTC_UNINSTALL]
+MSDTC
+MSSQLServer
+[DestinationDirs]
+DTC_SYSTEM32=11
+DTC_SYSTEM32_REG=11
+DTC_SYSTEM32_REMOVE=11
+DTC_SYSTEM32_REG_REMOVE=11
+DTC_LEGACY_FILES=11
+DTC_PERF_COUNTERS=11
+DTC_TRACE_FILES=11,MsDtc\Trace
+[DTC_PERF_COUNTERS]
+MSDTC,msdtcprf.ini
+[DTC_SYSTEM32]
+msdtc.exe,,,536870944
+msdtclog.dll,,,536870944
+msdtcprf.h,,,536870944
+msdtcprf.ini,,,536870944
+xolehlp.dll,,,536870944
+[DTC_SYSTEM32.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[DTC_SYSTEM32_REMOVE]
+dtccfg.cpl,,,1
+msdtc.exe,,,1
+msdtclog.dll,,,1
+msdtcprf.h,,,1
+msdtcprf.ini,,,1
+msdtcw.exe,,,1
+xolehlp.dll,,,1
+mtxclu.dll,,,1
+setup\msdtcstp.dll,,,1
+msdtcstp.dll,,,1
+[DTC_SYSTEM32_REG]
+msdtctm.dll,,,536870944
+msdtcprx.dll,,,536870944
+mtxoci.dll,,,536870944
+msdtcuiu.dll,,,536870944
+[DTC_SYSTEM32_REG.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[DTC_SYSTEM32_REG_REMOVE]
+msdtcuiu.dll,,,1
+msdtctm.dll,,,1
+msdtcprx.dll,,,1
+mtxoci.dll,,,1
+[DTC_SYSWOW64]
+xolehlp.dll,wxolehlp.dll,,536870944
+mtxclu.dll,wmtxclu.dll,,536870944
+comres.dll,wcomres.dll,,536870944
+[DTC_SYSWOW64.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[DTC_SYSWOW64_REG]
+msdtcprx.dll,wmsdtcprx.dll,,536870944
+msdtcuiu.dll,wmsdtcuiu.dll,,536870944
+mtxoci.dll,wmtxoci.dll,,536870944
+[DTC_SYSWOW64_REG.Security]
+"D:P(A;;GRGX;;;BU)(A;;GA;;;BA)(A;;GA;;;SY)(A;;GRGX;;;WD)"
+[DTC_TRACE_FILES]
+msdtctr.mof,,,536870944
+msdtcvtr.bat,,,536870944
+[DTC_LEGACY_FILES]
+comasc.dll,,,1
+daccom.dll,,,1
+dtcadmc.dll,,,1
+dtccfg.cpl,,,1
+dtcmgwtx.dll,,,1
+dtcmtx.dll,,,1
+dtcpsym.h,,,1
+dtcsetup.exe,,,1
+dtctcpcm.dll,,,1
+dtctipcm.dll,,,1
+dtctipin.dll,,,1
+dtctipsm.dll,,,1
+dtcuis.dll,,,1
+dtcxatm.dll,,,1
+komdll.dll,,,1
+msdtc.dll,,,1
+msdtcw.exe,,,1
+svcsrvl.dll,,,1
+dac.exe,,,1

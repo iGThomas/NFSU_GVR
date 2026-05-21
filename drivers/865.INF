@@ -1,0 +1,124 @@
+; ****************************************************************************
+; ****************************************************************************
+; **    Filename:  865.INF (82865G\PE\P & 82875P Chipset)                                               
+; **    Abstract:  Windows* XP INF File for 82865G\PE\P and 82875P Memory
+; ** 		   Controller Hub
+; **    Last Update:  January 15, 2003 
+; ****************************************************************************
+; ****************************************************************************
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%INTEL%
+CatalogFile=865.cat
+DriverVer=01/15/2003, 5.00.1006
+
+[sourcedisksnames] 
+
+[sourcedisksfiles] 
+
+[ControlFlags]
+CopyFilesOnly=PCI\VEN_8086&DEV_2571
+ExcludeFromSelect=*
+
+[Manufacturer]
+%INTEL%=INTEL_SYS
+
+[INTEL_SYS]
+%PCI\VEN_8086&DEV_2570.DeviceDesc%=NO_DRV,PCI\VEN_8086&DEV_2570
+%PCI\VEN_8086&DEV_2571.DeviceDesc%=AGP440_Install,PCI\VEN_8086&DEV_2571
+%PCI\VEN_8086&DEV_2573.DeviceDesc%=INTEL_PCI,PCI\VEN_8086&DEV_2573
+%PCI\VEN_8086&DEV_2576.DeviceDesc%=NO_DRV,PCI\VEN_8086&DEV_2576
+%PCI\VEN_8086&DEV_2578.DeviceDesc%=NO_DRV,PCI\VEN_8086&DEV_2578
+%PCI\VEN_8086&DEV_2579.DeviceDesc%=AGP440_Install,PCI\VEN_8086&DEV_2579
+%PCI\VEN_8086&DEV_257B.DeviceDesc%=INTEL_PCI,PCI\VEN_8086&DEV_257B
+%PCI\VEN_8086&DEV_257E.DeviceDesc%=NO_DRV,PCI\VEN_8086&DEV_257E
+
+[INTEL_PCI]
+AddReg=INF_VER
+Include=machine.inf
+Needs=PCI_DRV
+
+[INTEL_PCI.Services]
+Include=machine.inf
+Needs=PCI_DRV.Services
+
+[INTEL_PCI.HW]
+Include=machine.inf
+Needs=PCI_DRV.HW
+
+;**************************************************************************
+; AGP filters that sit on top of PCI
+
+[AGP440_Install]
+AddReg=INF_VER
+Include=machine.inf
+Needs=AGP440_Install
+
+[AGP440_Install.HW]
+Include=machine.inf
+Needs=AGP440_Install.HW
+
+[AGP440_Install.Services]
+Include=machine.inf
+Needs=AGP440_Install.Services
+
+;**************************************************************************
+; Do-nothing section used to avoid "Unknown hardware" installation prompts.
+
+[NO_DRV]
+AddReg=INF_VER
+Include=machine.inf
+Needs=NO_DRV
+
+[NO_DRV.Services]
+Include=machine.inf
+Needs=NO_DRV.Services
+
+[INF_VER]
+HKLM,Software\Intel\InfInst,Infver,,"5.00"
+
+[Strings]
+INTEL="Intel"
+PCI\VEN_8086&DEV_2570.DeviceDesc="Intel(R) 82865G\PE\P Processor to I/O Controller - 2570"
+PCI\VEN_8086&DEV_2571.DeviceDesc="Intel(R) 82865G\PE\P Processor to AGP Controller - 2571"
+PCI\VEN_8086&DEV_2573.DeviceDesc="Intel(R) 82865G\PE\P Processor to PCI to CSA bridge - 2573"
+PCI\VEN_8086&DEV_2576.DeviceDesc="Intel(R) 82865G\PE\P Processor to I/O Memory Interface - 2576"
+PCI\VEN_8086&DEV_2578.DeviceDesc="Intel(R) 82875P Memory Controller Hub - 2578"
+PCI\VEN_8086&DEV_2579.DeviceDesc="Intel(R) 82875P Processor to AGP Controller - 2579"
+PCI\VEN_8086&DEV_257B.DeviceDesc="Intel(R) 82875P Processor to PCI to CSA bridge - 257B"
+PCI\VEN_8086&DEV_257E.DeviceDesc="Intel(R) 82875P Processor to I/O Memory Interface - 257E"
+
+; Copyright (c) 2003 Intel Corporation
+
+; ************************************************************
+; Intel is making no claims of usability, efficacy or 
+; warranty.  
+; ************************************************************
+; Information in this document is provided in connection with 
+; Intel products.  No license, express or implied, by estoppel 
+; or otherwise, to any intellectual property rights is granted 
+; by this document.  Intel assumes no liability whatsoever, 
+; and Intel disclaims any express or implied warranty, 
+; relating to sale and/or use of Intel products including 
+; liability or warranties relating to fitness for a particular 
+; purpose, merchantability, or infringement of any patent, 
+; copyright or other intellectual property right.  Intel 
+; products are not intended for use in medical, life saving, 
+; or life sustaining applications.
+
+; ************************************************************
+; Intel Corporation disclaims all warranties and liabilities 
+; for the use of this document and the information contained 
+; herein, and assumes no responsibility for any errors which 
+; may appear in this document, nor does Intel make a 
+; commitment to update the information contained herein. Intel 
+; reserves the right to make changes to this document at any 
+; time, without notice.
+; ************************************************************
+; ************************************************************
+
+; * Third-party brands and names are the property of their 
+; respective owners.

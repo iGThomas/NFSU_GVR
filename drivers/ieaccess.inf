@@ -1,0 +1,73 @@
+[Version]
+Signature= "$Windows NT$"
+DriverVer=07/01/2001,5.1.2600.1106
+
+[Optional Components]
+IEAccess
+
+[IEAccess]
+OptionDesc   = "%IEAccess_DESC%"
+Tip          = "%IEAccess_Tip%"
+
+IconIndex    = *, ..\xpsp1res.dll, 200
+
+InstallType  = 10    ; Typical, Custom
+Modes        = 0,1,2,3
+Uninstall    = UninstallIE
+Run          = ShowIE
+
+[ShowIE]
+Commandline="%11%\shmgrate.exe OCInstallShowIE"
+TickCount=500
+
+[HideIE]
+Commandline="%11%\shmgrate.exe OCInstallHideIE"
+TickCount=500
+
+[UninstallIE]
+DelFiles=DelNone
+Run=HideIE
+
+[DelNone]
+
+[DestinationDirs]
+DefaultDestination=11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Strings]
+
+IEAccess_DESC="Internet Explorer"
+IEAccess_Tip="Adds or removes access to Internet Explorer from the Start menu and Desktop"
+
+

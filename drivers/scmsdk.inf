@@ -1,0 +1,125 @@
+; scmsdk.INF  -- Single Interface .inf file for STC II SDK Device
+
+[Version]
+Signature="$Windows NT$"
+Class=SmartCardReader
+ClassGuid={50DD5230-BA8A-11D1-BF5D-0000F805F530}
+Provider=%SCM%
+catalogfile=scmsdk.cat
+DriverVer=08/10/2004,1.08.04.00
+
+; ================= Class section =====================
+[ClassInstall32]
+Addreg=SmartCardReaderClassReg     
+
+;[ClassInstall]
+;Addreg=SmartCardReaderClassReg
+
+[SmartCardReaderClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-25
+HKR,,NoInstallClass,,1
+HKLM,"\Software\Microsoft\Cryptography\Calais\Readers",,,
+
+; ================== File Info ========================
+[SourceDisksFiles]
+scmsdk.sys=1
+
+[SourceDisksNames]
+1=%INSTDISK%,,,
+
+[DestinationDirs]
+SCMUSB.Install.CopyFiles.NT=10,System32\Drivers
+StcUsb.CopyFiles=10,System32\Drivers
+
+; ================== Manufacturer ========================
+[Manufacturer]
+%SCM%=SCM
+
+; ================= STC II Reader =====================
+[SCM]
+; DisplayName       	Section          DeviceId
+; -----------       	-------          --------
+%SCMUSB.DeviceDesc%  =  SCMUSB.Install,  USB\VID_04e6&PID_0088
+%SCMUSB.DeviceDesc%  =  SCMUSB.Install,  USB\VID_04e6&PID_0081
+
+; =================Begin of Windows 2000 ==============================
+[SCMUSB.Install.NT]
+AddReg          = Reader.Install.AddReg
+CopyFiles	= SCMUSB.Install.CopyFiles.NT
+
+[SCMUSB.Install.NT.HW]
+AddReg          = SCMUSB.Install.AddReg.HW
+
+[SCMUSB.Install.AddReg.HW]
+HKR,,"VendorName",,%SCM%
+HKR,,"IfdType",,%SCMUSB.DeviceDesc%
+
+[SCMUSB.Install.CopyFiles.NT]
+scmsdk.sys,,,2
+
+[SCMUSB.Install.NT.Services]
+AddService = SCMSDKUSBI, 2, SCMSTCIIUSB.Service, SCMSTCIIUSB.EventLog
+
+[SCMSTCIIUSB.Service]
+DisplayName     = %SCMUSB.DeviceDesc%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_AUTO_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %12%\scmsdk.sys
+
+[SCMSTCIIUSB.EventLog]
+AddReg = SCMSTCIIUSB.AddEventLog.reg
+
+[SCMSTCIIUSB.AddEventLog.reg]
+HKR,, EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\drivers\scmsdk.sys"
+HKR,, TypesSupported,   0x00010001, 7
+
+[Reader.Install.AddReg]
+HKLM, Software\Microsoft\Cryptography\Calais\Readers,,,
+HKLM, System\CurrentControlSet\Services\SCardSvr,Start,0x00010001,2
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,DLLName,0,wlnotify.dll
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Logon,0,SCardStartCertProp
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Logoff,0,SCardStopCertProp
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Lock,0,SCardSuspendCertProp
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Unlock,0,SCardResumeCertProp
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Enabled,0x00010001,1
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Impersonate,0x00010001,1
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\ScCertProp,Asynchronous,0x00010001,1
+;HKR,,DevMode,0x00010001,0
+
+; =================End of Windows 2000 ===================================
+
+; =================Begin of Windows 98 ==================================== 
+[SCMUSB.Install]
+CopyFiles=StcUsb.CopyFiles
+;,ScrUsbdll.CopyFiles
+AddReg=SCM.AddReg
+
+[SCM.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,scmsdk.sys
+HKR,, VendorName ,0x00020000,%SCM%
+HKR,, IfdType ,0x00020000,%SCMUSB.DeviceDesc%
+HKLM,"\Software\SCM Microsystems\scmsdk",, SingleName,,""
+
+;lines below added to test property page for driver
+;HKR,,EnumPropPages,,"scprop16.dll"
+;HKR,,DevMode,0x00010001,0
+
+[StcUsb.CopyFiles]
+scmsdk.sys
+
+;[ScrUsbdll.CopyFiles]
+;scprop16.dll
+;Ioctldll.dll
+
+; =================End of Windows 98 ==================================== 
+
+
+; ================= Strings =====================
+[Strings]
+SCM="OEM"
+SCMUSB.DeviceDesc="SDK USB Device"
+ClassName="Smart card readers"
+INSTDISK="Installation Disc for SDK USB Device"

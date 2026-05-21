@@ -1,0 +1,266 @@
+; Copyright 1999-2003, C-Media Inc.
+
+[Version]
+Signature="$CHICAGO$"
+Class=MEDIA
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+provider=%ProviderName%
+LayoutFile=layout.inf, layout1.inf, layout2.inf
+DriverVer=04/28/2003,5.12.01.0031
+CatalogFile=cmnvda.cat
+
+[SourceDisksNames]
+222=%DiskDescription%,,,
+
+[SourceDisksFiles]
+cmuda.sys=222
+udaprop.dll=222
+cmids3d.dll=222
+Audio3D.dll=222
+cmiwcnfg.dll=222
+cmicnfg.cpl=222
+cmuda.dll=222
+cmirmdrv.exe=222
+cmirmdrv.dll=222
+
+[Manufacturer]
+%MfgName%=C-Media
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[C-Media]
+;;; nVIDIA
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&CC_0401
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_414410DE
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_300015BD
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_300115BD
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_10011695
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_10031695
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_19751865
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_757E270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F442270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F444270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F464270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F466270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F467270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F468270F
+%CMI9738.DeviceDesc%=AC97,      PCI\VEN_10DE&DEV_006A&SUBSYS_F640270F
+
+
+;;;; DDInstall for C-Media 9738 AC/97 Codec
+[AC97]
+AlsoInstall=ks.registration(ks.inf),wdmaudio.registration(wdmaudio.inf)
+CopyFiles=CMUDA.CopyList, CMUDAProp.CopyList, C3D.CopyList, Audio3D.CopyList
+AddReg=CMUDA.AddReg, CMUDAProp.AddReg, Mixer.AddReg, Audio3D.AddReg, UDA_NAMES.AddReg
+
+[AC97.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,UDA.Interface.Wave
+AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,UDA.Interface.Wave
+AddInterface=%KSCATEGORY_CAPTURE%,%KSNAME_Wave%,UDA.Interface.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,UDA.Interface.Topology
+
+[UDA.Interface.Wave]
+AddReg=UDA.I.Wave.AddReg
+
+[UDA.I.Wave.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%CMUDA.Wave.szPname%
+
+[UDA.Interface.Topology]
+AddReg=UDA.I.Topo.AddReg
+
+[UDA.I.Topo.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%CMUDA.Topology.szPname%
+
+[CMUDA.AddReg]
+HKR,,AssociatedFilters,,"wdmaud,swmidi,redbook"
+HKR,,Driver,,cmuda.sys
+HKR,,NTMPDriver,,"cmuda.sys,sbemul.sys"
+HKR,Drivers,SubClasses,,"wave,midi,mixer"
+HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\midi\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\wave\wdmaud.drv,Description,,%CMUDA.DeviceDesc%
+HKR,Drivers\midi\wdmaud.drv, Description,,%CMUDA.DeviceDesc%
+HKR,Drivers\mixer\wdmaud.drv,Description,,%CMUDA.DeviceDesc%
+
+[CMUDAProp.AddReg]
+HKCR,CLSID\%CMAudioProperty_CLSID%,,0,%CMAudioProperty_FriendlyName%
+HKCR,CLSID\%CMAudioProperty_CLSID%\InProcServer32,,0,"%10%\System32\udaprop.dll"
+HKCR,CLSID\%CMAudioProperty_CLSID%\ProgID,,0,%CMAudioProperty_ProgID%
+HKCR,CLSID\%CMAudioProperty_CLSID%\VersionIndependentProgID,,0,%CMAudioProperty_VersionIndependentProgID%
+HKCR,CMAudioProperty,,0,%CMAudioProperty_FriendlyName%
+HKCR,CMAudioProperty\CLSID,,0,%CMAudioProperty_CLSID%
+HKCR,CMAudioProperty\CurVer,,0,%CMAudioProperty_ProgID%
+HKCR,CMAudioProperty.7,,0,%CMAudioProperty_FriendlyName%
+HKCR,CMAudioProperty.7\CLSID,,0,%CMAudioProperty_CLSID%
+;HKR,,EnumPropPages32,,"udaprop.dll, CMAudioPropPageProvider"
+HKLM,"Software\Microsoft\Windows\CurrentVersion\Control Panel\Cpls",Cmcpls,,"%10%\System\cmicnfg.cpl"
+HKLM,"Software\Microsoft\Windows\CurrentVersion\Run",Cmaudio,,"RunDll32 cmicnfg.cpl,CMICtrlWnd"
+HKLM,%UninstallPath%,DisplayName,,%DiskDescription%
+HKLM,%UninstallPath%,UninstallString,,"%10%\system32\cmirmdrv.exe"
+
+[Mixer.AddReg]
+HKR,"Settings","EnableLegacy",    0x00010001,0x02,0,0,0
+HKR,"Settings","JackConfig",      0x00010001,0x05,0,0,0
+HKR,"Settings","SpeakerConfig",   0x00010001,0x04,0,0,0
+HKR,"Settings","MasterVolumeL",   0x00010001,0xc9,0xfa,0xf9,0xff
+HKR,"Settings","MasterVolumeR",   0x00010001,0xc9,0xfa,0xf9,0xff
+HKR,"Settings","AUXVolL",         0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","AUXVolR",         0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","CDVolL",          0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","CDVolR",          0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","LineInVolL",      0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","LineInVolR",      0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","MicVol",          0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","BeepVol",         0x00010001,0x20,0xfa,0x05,0x00
+HKR,"Settings","InputCDVolL",     0x00010001,0x54,0x85,0x08,0x00
+HKR,"Settings","InputCDVolR",     0x00010001,0x54,0x85,0x08,0x00
+
+[Audio3D.AddReg]
+HKCR,Audio3D,,0,Audio3DObject
+HKCR,Audio3D\CLSID,,0,%Audio3D_CLSID%
+HKCR,CLSID\%Audio3D_CLSID%,,0,Audio3DObject
+HKCR,CLSID\%Audio3D_CLSID%\InProcServer32,,0,Audio3D.dll
+HKCR,CLSID\%Audio3D_CLSID%\InProcServer32,ThreadingModel,0,Apartment
+HKCU,"Software\Sensaura\Audio3D\Settings","SplashScreen",65537,0,0,0,0
+
+[UDA_NAMES.AddReg]
+HKLM,%MediaCategories%\%UDAGUID.PhoneVolume%,Name,,%UDANode.PhoneVolume%
+HKLM,%MediaCategories%\%UDAGUID.PhoneVolume%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.PhoneMute%,Name,,%UDANode.PhoneMute%
+HKLM,%MediaCategories%\%UDAGUID.PhoneMute%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.MonoOutSelect%,Name,,%UDANode.MonoOutSelect%
+HKLM,%MediaCategories%\%UDAGUID.MonoOutSelect%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.Spdif%,Name,,%UDANode.Spdif%
+HKLM,%MediaCategories%\%UDAGUID.Spdif%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.Video%,Name,,%UDANode.Video%
+HKLM,%MediaCategories%\%UDAGUID.Video%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.StereoMix%,Name,,%UDANode.StereoMix%
+HKLM,%MediaCategories%\%UDAGUID.StereoMix%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.Aux%,Name,,%UDANode.Aux%
+HKLM,%MediaCategories%\%UDAGUID.Aux%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.AuxPhone%,Name,,%UDANode.AuxPhone%
+HKLM,%MediaCategories%\%UDAGUID.AuxPhone%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.MonoIn%,Name,,%UDANode.MonoIn%
+HKLM,%MediaCategories%\%UDAGUID.MonoIn%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.PcBeep%,Name,,%UDANode.PcBeep%
+HKLM,%MediaCategories%\%UDAGUID.PcBeep%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.SpdifValid%,Name,,%UDANode.SpdifValid%
+HKLM,%MediaCategories%\%UDAGUID.SpdifValid%,Display,1,00,00,00,00
+HKLM,%MediaCategories%\%UDAGUID.WaveRecord%,Name,,%UDANode.WaveRecord%
+HKLM,%MediaCategories%\%UDAGUID.WaveRecord%,Display,1,00,00,00,00
+
+[DestinationDirs]
+CMUDA.CopyList     = 10,system32\drivers
+CMUDAProp.CopyList = 10,system32
+C3D.CopyList       = 10,system
+Audio3D.CopyList   = 11
+DefaultDestDir     = 11
+
+[CMUDA.CopyList]
+cmuda.sys
+
+[CMUDAprop.CopyList]
+udaprop.dll
+cmiwcnfg.dll
+cmuda.dll
+cmirmdrv.dll
+cmirmdrv.exe
+
+[C3D.CopyList]
+cmids3d.dll
+cmicnfg.cpl
+
+[Audio3D.CopyList]
+a3d.dll,Audio3D.dll,,4
+Audio3D.dll
+
+;;================= Windows 2000 ====================
+
+;;============================================================================
+;; AC97 Codec
+;;============================================================================
+[AC97.NTX86]
+Include=ks.inf,wdmaudio.inf
+Needs=KS.Registration,WDMAUDIO.Registration
+CopyFiles=CMUDA.CopyList, CMUDAProp.CopyList, C3D.CopyList, Audio3D.CopyList
+AddReg=CMUDA.AddReg, CMUDAProp.AddReg, Mixer.AddReg, Audio3D.AddReg, UDA_NAMES.AddReg
+
+[AC97.NTX86.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,UDA.Interface.Wave
+AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,UDA.Interface.Wave
+AddInterface=%KSCATEGORY_CAPTURE%,%KSNAME_Wave%,UDA.Interface.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,UDA.Interface.Topology
+
+[AC97.NTX86.Services]
+AddService = cmuda, 0x00000002, CMUDA_Service_Inst
+
+[CMUDA_Service_Inst]
+DisplayName   = %CMUDA.SvcDesc%
+ServiceType   = 1                  ; SERVICE_KERNEL_DRIVER
+StartType     = 3                  ; SERVICE_DEMAND_START
+ErrorControl  = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary = %10%\system32\drivers\cmuda.sys
+
+[Strings]
+ProviderName="C-Media Inc."
+MfgName="C-Media"
+DiskDescription="C-Media WDM Audio Driver"
+CMUDA.DeviceDesc="C-Media WDM Audio Device"
+CMUDA.Wave.szPname="C-Media Wave Device"
+CMUDA.Topology.szPname="C-Media Mixer Device"
+CMUDA.SvcDesc = "C-Media WDM Audio Interface"
+
+CMI9738.DeviceDesc="C-Media AC97 Audio Device"
+CMI8738.DeviceDesc="CMI8738/C3DX PCI Audio Device"
+
+MediaCategories="SYSTEM\CurrentControlSet\Control\MediaCategories"
+UninstallPath="Software\Microsoft\Windows\CurrentVersion\Uninstall\C-Media Audio Driver"
+
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_AUDIO="{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_RENDER="{65E8773E-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_TOPOLOGY="{DDA54A40-1E4C-11D1-A050-405705C10000}"
+KSNAME_Wave="Wave"
+KSNAME_Topology="Topology"
+
+CMAudioProperty_CLSID="{201FEC6C-E94E-450c-8ECB-5297957441A6}"
+CMAudioProperty_FriendlyName="CMAudio WDM Property Component"
+CMAudioProperty_ProgID="CMAudioPropertyCOM.7"
+CMAudioProperty_VersionIndependentProgID="CMAudioPropertyCOM"
+
+;; Nodes (non-localizeable)
+UDAGUID.PhoneVolume     ="{0A8C1A87-42B0-11D2-95D2-00C04FB925D3}"
+UDAGUID.PhoneMute       ="{0A8C1A88-42B0-11D2-95D2-00C04FB925D3}"
+UDAGUID.MonoOutSelect   ="{0A8C1AA9-42B0-11D2-95D2-00C04FB925D3}"
+UDAGUID.Spdif           ="{5AEA5794-AA8A-4aaf-AB8B-4854C97B5D90}"
+UDAGUID.Video           ="{32E06BEE-BD20-48b8-9552-E5240EAF05BC}"
+UDAGUID.StereoMix       ="{3EC8502B-5D89-4d2d-A78A-FF45CA18A3B7}"
+UDAGUID.Aux             ="{AF24C5CC-A32D-479f-9FFB-BFD00E135BA9}"
+UDAGUID.AuxPhone        ="{1A607E05-8C29-43B0-8E60-FB24D266EAE8}"
+UDAGUID.MonoIn          ="{51C53816-3407-4BA0-8B4D-B4FCADC65A54}"
+UDAGUID.PcBeep          ="{697e35a2-97c8-42d1-a138-2de6a64a8bc3}"
+UDAGUID.SpdifValid      ="{D0DF1519-7207-4135-9EFD-934061113FFA}"
+UDAGUID.WaveRecord      ="{209A9FAC-0A88-4ec9-AEF4-84C01BD5477F}"
+
+;; Nodes (localizeable)
+UDANode.PhoneVolume     ="Phone Volume"
+UDANode.PhoneMute       ="Phone Mute"
+UDANode.MonoOutSelect   ="Mono Out Select"
+UDANode.Spdif           ="SPDIF In"
+UDANode.Video           ="TV Tuner Audio"
+UDANode.StereoMix       ="Stereo Mix"
+UDANode.Aux             ="Aux"
+UDANode.AuxPhone        ="Aux/Phone"
+UDANode.MonoIn          ="Mono In"
+UDANode.PcBeep          ="PC Beep"
+UDANode.SpdifValid      ="Validity Check"
+UDANode.WaveRecord      ="Wave"
+
+Audio3D_CLSID="{D8F1EEE0-F634-11CF-8700-00A0245D918B}"
+

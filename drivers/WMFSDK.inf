@@ -1,0 +1,306 @@
+
+
+
+
+
+
+
+
+
+
+
+
+[Version]
+Signature="$Chicago$"
+AdvancedINF=2.5, "You need a newer version of Advpack.dll."
+
+[DefaultInstall] 
+RequiredEngine=setupapi
+
+
+
+
+UnRegisterOCXs=WM8.UnReg
+CopyFiles   =WMPCopy.System, WMCopy.WinDir, CopyINF, WMPCopy.System.Downlevel
+DelFiles=Del.OldCodecs
+
+DelReg=DelReg.Uninst
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CatalogFile=%PACKAGE_NAME%.cat
+RegisterOCXs=WMPOCX.Register,WMPOCX.RegWMV
+AddReg=Reg.Codecs
+RunPostSetupCommands=RunPost
+
+[DefaultInstall.NT]
+CopyFiles   =WMPCopy.System, WMCopy.WinDir, CopyINF, WMPCopy.System.Downlevel
+CatalogFile=%PACKAGE_NAME%.cat
+UnRegisterOCXs=WM8.UnReg
+RegisterOCXs=WMPOCX.Register,WMPOCX.RegWMV
+AddReg=Reg.Codecs
+RunPostSetupCommands=RunPost
+DelReg=DelReg.Uninst
+DelFiles=Del.OldCodecs
+
+
+[DefaultInstall.NT5.1]
+CopyFiles   =WMPCopy.System, WMCopy.WinDir, CopyINF
+CatalogFile=%PACKAGE_NAME%.cat
+UnRegisterOCXs=WM8.UnReg
+RegisterOCXs=WMPOCX.Register,WMPOCX.RegWMV
+AddReg=Reg.Codecs
+RunPostSetupCommands=RunPost
+DelReg=DelReg.Uninst
+DelFiles=Del.OldCodecs
+
+
+[Uninstall]
+RequiredEngine=setupapi
+RunPreSetupCommands=HelperUtility.PreUninstall
+DelFiles   =WMPCopy.System, WMCopy.WinDir
+UnRegisterOCXs=WMPOCX.Register
+
+
+
+
+[DelReg.Uninst]
+
+HKCR, "Software\Microsoft\Multimedia\Components\Installed\playback_wmfsdk\Uninstall"
+
+
+HKCR,"windows media\WMSDK\AudioDecode\10" 
+HKCR, Windows Media\WMSDK\AudioDecode\352
+HKCR, Windows Media\WMSDK\AudioDecode\353
+HKCR,"windows media\WMSDK\AudioDecode\354" 
+HKCR,"windows media\WMSDK\AudioDecode\355" 
+
+HKCR, Windows Media\WMSDK\VideoDecode\MSS1
+HKCR,"windows media\WMSDK\VideoDecode\MSS2" 
+HKCR,"windows media\WMSDK\VideoDecode\WMV1" 
+HKCR,"windows media\WMSDK\VideoDecode\WMV2" 
+HKCR,"windows media\WMSDK\VideoDecode\WMV3" 
+HKCR,"windows media\WMSDK\VideoDecode\WMVP" 
+HKCR,"windows media\WMSDK\VideoDecode\MP4S" 
+HKCR,"windows media\WMSDK\VideoDecode\M4S2" 
+
+HKLM, "SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc", "wma9dmod.dll" 
+HKLM, "SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc", "wms9dmod.dll" 
+HKLM, "SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc", "wmspdmod.dll" 
+HKLM, "SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc", "wmv9dmod.dll" 
+HKLM, "SOFTWARE\Microsoft\Windows NT\CurrentVersion\drivers.desc", "mp4sdmod.dll" 
+
+HKCR,%KEY_DMO1%\73646976-0000-0010-8000-00aa00389b71\3334504d-0000-0010-8000-00aa00389b71
+HKCR,%KEY_DMO1%\73646976-0000-0010-8000-00aa00389b71\3334706d-0000-0010-8000-00aa00389b71
+HKCR,%KEY_DMO1%\73646976-0000-0010-8000-00aa00389b71\5334504d-0000-0010-8000-00aa00389b71
+HKCR,%KEY_DMO1%\73646976-0000-0010-8000-00aa00389b71\7334706d-0000-0010-8000-00aa00389b71
+
+HKCR,%KEY_DMO%\73646976-0000-0010-8000-00aa00389b71\Subtypes\3334504d-0000-0010-8000-00aa00389b71
+HKCR,%KEY_DMO%\73646976-0000-0010-8000-00aa00389b71\Subtypes\3334706d-0000-0010-8000-00aa00389b71
+HKCR,%KEY_DMO%\73646976-0000-0010-8000-00aa00389b71\Subtypes\5334504d-0000-0010-8000-00aa00389b71
+HKCR,%KEY_DMO%\73646976-0000-0010-8000-00aa00389b71\Subtypes\7334706d-0000-0010-8000-00aa00389b71
+
+[Reg.Codecs]
+
+
+HKCR, "Windows Media\%REGKEY_WMSDK%\AudioEncode", "10",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\AudioEncode", "354",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\AudioEncode", "355",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "MSS2",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "WMV3",,""
+
+HKCR, "Windows Media\%REGKEY_WMSDK%\AudioEncode", "304",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\AudioEncode", "353",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "MP4S",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "WMV1",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "WMV2",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "WMVP",,""
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoEncode", "MSS1",,""
+
+
+HKCR, "Windows Media\%REGKEY_WMSDK%\AudioDecode",,,
+HKCR, "Windows Media\%REGKEY_WMSDK%\VideoDecode",,,
+
+HKCU, "Software\Microsoft\Windows Media\%REGKEY_WMSDK%",,,
+HKCU, "Software\Microsoft\Windows Media\%REGKEY_WMSDK%\General",,,
+HKCU, "Software\Microsoft\Windows Media\%REGKEY_WMSDK%\Local",,,
+HKCU, "Software\Microsoft\Windows Media\%REGKEY_WMSDK%\Remote",,,
+HKCU, "Software\Microsoft\Windows Media\%REGKEY_WMSDK%\AudioDecode",,,
+HKCU, "Software\Microsoft\Windows Media\%REGKEY_WMSDK%\VideoDecode",,,
+
+[DestinationDirs]
+WMPCopy.System=11
+WMPCopy.System.Downlevel=11
+WMCopy.WinDir = 25
+CopyINF=17
+Del.OldCodecs=11
+
+[RunPost]
+
+
+"""%11%\logagent.exe""" /RegServer
+
+
+
+[HelperUtility.PreUninstall]
+
+"""%11%\logagent""" /UnregServer
+
+
+
+[SourceDisksNames]
+4659 = "Windows Media Format Support Install",,0
+
+[SourceDisksFiles]
+logagent.exe=4659
+laprxy.dll=4659
+wmvcore.dll=4659
+wmidx.dll=4659
+wmasf.dll=4659
+wmnetmgr.dll=4659
+wmfsdk.inf=4659
+msdmo.dll=4659
+wmvdmod.dll=4659
+wmadmod.dll=4659
+wmsdmod.dll=4659
+mp4sdmod.dll=4659
+mpg4dmod.dll=4659
+mp43dmod.dll=4659
+
+wmadmoe.dll=4659
+wmsdmoe2.dll=4659
+wmspdmoe.dll=4659
+wmspdmod.dll=4659
+wmvdmoe2.dll=4659
+
+qasf.dll=4659
+
+[WMPOCX.Register]
+
+"%11%\wmnetmgr.dll"
+
+"%11%\wmadmod.dll"
+"%11%\wmsdmod.dll"
+"%11%\mp4sdmod.dll"
+"%11%\mp43dmod.dll"
+"%11%\wmvdmod.dll"
+"%11%\mpg4dmod.dll"
+"%11%\wmspdmod.dll"
+
+"%11%\laprxy.dll"
+"%11%\wmadmoe.dll"
+"%11%\wmsdmoe2.dll"
+"%11%\wmspdmoe.dll"
+"%11%\wmvdmoe2.dll"
+"%11%\qasf.dll"
+
+
+[WM8.UnReg]
+"%11%\wmv8dmod.dll"
+"%11%\wmv9dmod.dll"
+"%11%\wma9dmod.dll"
+"%11%\wms9dmod.dll"
+
+"%11%\wmadmoe.dll"
+"%11%\wmadmod.dll"
+"%11%\wmvdmod.dll"
+"%11%\wmsdmod.dll"
+"%11%\wmsdmoe2.dll"
+"%11%\wmvdmoe2.dll"
+"%11%\mp4sdmod.dll"
+"%11%\mp43dmod.dll"
+"%11%\wmspdmoe.dll"
+"%11%\wmspdmod.dll"
+
+[Del.OldCodecs]
+wmv9dmod.dll
+wma9dmod.dll
+wms9dmod.dll
+
+
+[WMPOCX.RegWMV]
+
+"%11%\wmvcore.dll"
+
+
+
+
+[CopyINF]
+%PACKAGE_NAME%.inf
+
+[WMCopy.WinDir]
+
+[WMPCopy.System.Downlevel]
+
+msdmo.dll,,,97
+
+
+[WMPCopy.System]
+
+wmasf.dll,,,97
+wmvcore.dll,,,97
+wmidx.dll,,,97
+wmnetmgr.dll,,,97
+
+logagent.exe,,,97
+laprxy.dll,,,97
+
+qasf.dll,,,97
+
+
+
+
+
+wmadmoe.dll,,,97
+
+wmsdmoe2.dll,,,97
+wmspdmoe.dll,,,97
+wmvdmoe2.dll,,,97
+
+
+wmadmod.dll,,,97
+wmsdmod.dll,,,97
+wmspdmod.dll,,,97
+wmvdmod.dll,,,97
+mpg4dmod.dll,,,97
+mp4sdmod.dll,,,97
+mp43dmod.dll,,,97
+
+[Strings]
+KEY_NETSHOW =  "Software\Microsoft\NetShow\Player"
+REGKEY_WMSDK="WMSDK"
+PACKAGE_NAME="WMFSDK"
+KEY_DMO1 = "DirectShow\MediaObjects\82d353df-90bd-4382-8bc2-3f6192b76e34\InputTypes"
+KEY_DMO="DirectShow\MediaObjects\Categories\4a69b442-28be-4991-969c-b500adf5d8a8\InputTypes"
+;;;;;;;--------------------------------------------
+;-- Only localize strings below this line
+;;;;;;--------------------------------------------
+LANGUAGE="EN"
+;Error Messages

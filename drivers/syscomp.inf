@@ -1,0 +1,46 @@
+; (c) Microsoft Corporation 1997-2000
+
+[version]
+signature="$CHICAGO$"
+revision=1
+DriverVer=07/01/2001,5.1.2600.0
+
+[File Security]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Strings]
+
+SCESysCompProfileDescription = "Settings for Optional Component Files. Many files may not exist on a given machine."
+ProgramFiles = %ProgramFiles%
+commonprogramfiles = %CommonProgramFiles%

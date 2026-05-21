@@ -1,0 +1,292 @@
+[Version]
+Signature = "$Windows NT$"
+AdvancedINF = 2.0
+Provider = %Msft%
+Class = %ExceptionClassDesc%
+ClassGUID = {F5776D81-AE53-4935-8E84-B0B283D8BCEF}
+CatalogFile = dx9bda.cat
+ComponentId = {AA936DF4-2B08-4B1F-B071-72192E287704}
+DriverVer = 07-09-2004, 5.3.0000001.0904
+
+[SourceDisksNames]
+1 = %DiskName%,BDANT.CAB,0
+
+[SourceDisksFiles]
+bda.inf=1
+bdaplgin.ax=1
+dxbda.inf=1
+bdasup.sys=1
+msdv.sys=1
+msdv98se.sys=1
+msdvbnp.ax=1
+psisdecd.dll=1
+psisrndr.ax=1
+ipsink.ax=1
+mpe.inf=1
+mpe.sys=1
+streamip.inf=1
+streamip.sys=1
+ndisip.inf=1
+ndisip.sys=1
+msvidctl.dll=1
+msvidctl.w2k=1
+slip.inf=1
+slip.sys=1
+nabtsfec.inf=1
+nabtsfec.sys=1
+ccdecode.inf=1
+ccdecode.sys=1
+vbisurf.ax=1
+msyuv.dll=1
+kstvtune.ax=1
+ksxbar.ax=1
+kswdmcap.ax=1
+wstcodec.inf=1
+wstcodec.sys=1
+wstdecod.dll=1
+wst_czec.fon=1
+wst_engl.fon=1
+wst_fren.fon=1
+wst_germ.fon=1
+wst_ital.fon=1
+wst_span.fon=1
+wst_swed.fon=1
+mpeg2data.ax=1
+
+[DestinationDirs]
+BDA_System=11
+BDA_Driver=10,system32\drivers
+BDA_DriverCache=10,"Driver Cache\i386"
+BDA_DriverCache_WinXP=10,"Driver Cache\i386"
+BDA_DLLCache=11,DLLCache
+BDA_Font=20
+BDA_Inf=17
+MSDV_Driver=10,system32\drivers
+MSDV_Driver_Win98SE=10,system32\drivers
+MSDV_DriverCache=10,"Driver Cache\i386"
+BDA_Migrate=11,DirectX\Migrate
+Win9X_BDA_LFN=11
+
+[WIN2K_INSTALL]
+CopyFiles=BDA_System_Win2K,BDA_System_Win2K_ren,BDA_Driver,BDA_DriverCache,MSDV_Driver,MSDV_DriverCache,BDA_Font,BDA_Inf
+AddReg=BDA_InstallDevices,Win2K_Drivers32
+
+[WINXP_INSTALL]
+CopyFiles=BDA_System,BDA_Driver,BDA_DriverCache_WinXP,BDA_DLLCache,MSDV_Driver,MSDV_DriverCache,BDA_Inf
+
+[NETSRV_INSTALL]
+CopyFiles=BDA_System,BDA_Driver,BDA_DriverCache_WinXP,BDA_DLLCache,BDA_Inf
+
+[DefaultInstall]
+CopyFiles=BDA_System,BDA_Driver,BDA_DriverCache_WinXP,BDA_DLLCache,BDA_Inf
+
+[WIN98_INSTALL]
+CopyFiles=BDA_System,BDA_Driver,BDA_Font,BDA_Inf,BDA_Migrate
+AddReg=BDA_InstallDevices
+UpdateInis=Win9x_SystemIni
+
+[WIN98SE_INSTALL]
+CopyFiles=BDA_System,BDA_Driver,MSDV_Driver_Win98SE,BDA_Font,BDA_Inf,BDA_Migrate
+AddReg=BDA_InstallDevices
+UpdateInis=Win9x_SystemIni
+
+[WINME_INSTALL]
+CopyFiles=BDA_System,BDA_Driver,MSDV_Driver,BDA_Font,BDA_Inf,BDA_Migrate
+AddReg=BDA_InstallDevices
+UpdateInis=Win9x_SystemIni
+
+[DelLFNs]
+DelFiles=Win9X_BDA_LFN
+
+[DRVCACHE_UNINSTALL]
+DelFiles=BDA_DriverCache_WinXP,MSDV_DriverCache
+
+[BDADllRegister]
+RegisterOCXs=BDA_RegisterDll
+
+[BDADllUnRegister]
+UnregisterOCXs=BDA_RegisterDll
+
+[BDA_System]
+bdaplgin.ax
+msdvbnp.ax
+psisdecd.dll
+psisrndr.ax
+ipsink.ax
+msvidctl.dll
+vbisurf.ax
+msyuv.dll
+kstvtune.ax
+ksxbar.ax
+kswdmcap.ax
+wstdecod.dll
+mpeg2data.ax
+
+[BDA_System_Win2K]
+bdaplgin.ax
+msdvbnp.ax
+psisdecd.dll
+psisrndr.ax
+ipsink.ax
+vbisurf.ax
+msyuv.dll
+kstvtune.ax
+ksxbar.ax
+kswdmcap.ax
+wstdecod.dll
+mpeg2data.ax
+
+[BDA_System_Win2K_ren]
+msvidctl.dll,msvidctl.w2k
+
+[BDA_Driver]
+bdasup.sys
+mpe.sys
+streamip.sys
+ndisip.sys
+slip.sys
+nabtsfec.sys
+ccdecode.sys
+wstcodec.sys
+
+[MSDV_Driver]
+msdv.sys
+
+[MSDV_Driver_Win98SE]
+msdv.sys,msdv98se.sys
+
+[BDA_Font]
+wst_czec.fon
+wst_engl.fon
+wst_fren.fon
+wst_germ.fon
+wst_ital.fon
+wst_span.fon
+wst_swed.fon
+
+[BDA_Inf]
+bda.inf
+mpe.inf
+streamip.inf
+ndisip.inf
+slip.inf
+nabtsfec.inf
+ccdecode.inf
+wstcodec.inf
+dxbda.inf
+
+[BDA_DriverCache]
+ccdecode.sys
+msyuv.dll
+kstvtune.ax
+kswdmcap.ax
+ksxbar.ax
+
+[BDA_DriverCache_WinXP]
+bdaplgin.ax
+bdasup.sys
+msdvbnp.ax
+psisdecd.dll
+psisrndr.ax
+ipsink.ax
+mpe.sys
+streamip.sys
+ndisip.sys
+slip.sys
+nabtsfec.sys
+ccdecode.sys
+msyuv.dll
+kstvtune.ax
+ksxbar.ax
+kswdmcap.ax
+wstcodec.sys
+
+[BDA_DLLCache]
+msvidctl.dll
+wstdecod.dll
+
+[MSDV_DriverCache]
+msdv.sys
+
+[BDA_Migrate]
+msdv.sys
+msdv98se.sys
+nabtsfec.inf
+ccdecode.inf
+wstcodec.inf
+
+[Win9X_BDA_LFN]
+mpeg2data.ax
+
+[BDA_RegisterDll]
+%11%\bdaplgin.ax
+%11%\msdvbnp.ax
+%11%\psisrndr.ax
+%11%\vbisurf.ax
+%11%\mpg2splt.ax
+%11%\mpeg2data.ax
+%11%\msvidctl.dll
+%11%\psisdecd.dll
+%11%\wstdecod.dll
+;%11%\ipsink.ax ; it does not have DllRegisterServer()
+%11%\mshtml.dll
+
+[BDA_InstallDevices]
+;   Add SWEnum Devices
+;
+HKLM,%RunOnce%,"MPE0",,"rundll32.exe streamci,StreamingDeviceSetup %MPE.DeviceId%,GLOBAL,%GUID.BdaComponent%,%17%\mpe.inf,BDAcodec"
+HKLM,%RunOnce%,"STREAMIP0",,"rundll32.exe streamci,StreamingDeviceSetup %StreamIP.DeviceId%,GLOBAL,%GUID.BdaRenderer%,%17%\streamip.inf,BDAcodec"
+HKLM,%RunOnce%,"SLIP0",,"rundll32.exe streamci,StreamingDeviceSetup %Slip.DeviceId%,GLOBAL,%GUID.BdaComponent%,%17%\slip.inf,VBIcodec"
+HKLM,%RunOnce%,"CCDECODE0",,"rundll32.exe streamci,StreamingDeviceSetup %CCDecode.DeviceId%,GLOBAL,%VBIcatID%,%17%\CCDECODE.inf,CCDECODE.Interface.Install"
+HKLM,%RunOnce%,"NABTSFEC0",,"rundll32.exe streamci,StreamingDeviceSetup %NabtsFEC.DeviceID%,GLOBAL,%VBIcatID%,%17%\NABTSFEC.inf,NABTSFEC.Interface.Install"
+HKLM,%RunOnce%,"WSTCODEC0",,"rundll32.exe streamci,StreamingDeviceSetup %WSTCodec.DeviceId%,GLOBAL,%VBIcatID%,%17%\WSTCODEC.inf,WSTCODEC.Interface.Install"
+
+[BDA_InstallNdisIP.98]
+;   Add SWEnum Devices
+;
+HKLM,Enum\Root\NDISIP\0000,HardwareID,,"NDISIP"
+
+[BDA_InstallNdisIP.NT]
+;   Add SWEnum Devices
+;
+HKLM,%RunOnce%,"NDISIP0",,"rundll32.exe streamci,StreamingDeviceSetup %NdisIP.DeviceId%,NDISIP,%NdisIP.GUID.BDANetInterface%,%17%\ndisip.inf,NdisIP.Reg"
+
+
+[Win9x_SystemIni]
+system.ini, drivers32,,"VIDC.YUY2=msyuv.dll"
+system.ini, drivers32,,"VIDC.UYVY=msyuv.dll"
+system.ini, drivers32,,"VIDC.YVYU=msyuv.dll"
+
+[Win2K_Drivers32]
+HKLM,%Drivers32%,"VIDC.UYVY",,"msyuv.dll"
+HKLM,%Drivers32%,"VIDC.YUY2",,"msyuv.dll"
+HKLM,%Drivers32%,"VIDC.YVYU",,"msyuv.dll"
+
+[Strings]
+Msft                 = "Microsoft"
+ExceptionClassDesc   = "DirectX BDA for Windows 2000"
+DiskName             = "BDA"
+
+;   Registry Paths
+;
+RunOnce="SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
+Drivers32="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Drivers32"
+
+;   Category and Interface GUIDs
+;   Note that some category GUIDs are defined in ks.inf
+;
+VBIcatID="{07DAD660-22F1-11d1-A9F4-00C04FBBDE8F}"
+GUID.BdaComponent="{FD0A5AF4-B41D-11d2-9C95-00C04F7971E0}"
+GUID.BdaRenderer= "{71985F4A-1CA1-11d3-9CC8-00C04F7971E0}"
+NdisIP.GUID.BDANetInterface = "{9aa4a2cc-81e0-4cfd-802f-0f74526d2bd3}"
+
+;   SWEnum Device GUIDs
+;
+MPE.DeviceId="{8E60217D-A2EE-47f8-B0C5-0F44C55F66DC}"
+Slip.DeviceID="{03884CB6-E89A-4deb-B69E-8DC621686E6A}"
+StreamIP.DeviceId="{D84D449B-62FB-4ebb-B969-5183ED3DFB51}"
+NdisIP.DeviceID="{48926476-2cae-4ded-a86e-73ddebed6779}"
+CCDecode.DeviceId="{562370a8-f8dd-11d2-bc64-00a0c95ec22e}"
+NabtsFEC.DeviceID="{07DAD662-22F1-11d1-A9F4-00C04FBBDE8F}"
+WSTCodec.DeviceId="{70BC06E0-5666-11d3-A184-00105AEF9F33}"
+

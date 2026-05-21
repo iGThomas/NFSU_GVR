@@ -1,0 +1,70 @@
+[Version]
+Signature= "$Windows NT$"
+DriverVer=07/01/2001,5.1.2600.1106
+
+[Optional Components]
+OEAccess
+
+[OEAccess]
+OptionDesc   = "%OE_NAME%"
+Tip          = "%OE_TIP%"
+
+IconIndex    = *, ..\xpsp1res.dll, 201
+
+InstallType  = 10    ; Typical, Custom
+Modes        = 0,1,2,3
+Uninstall    = UninstallOE
+Run          = ShowOE
+
+[ShowOE]
+Commandline="%11%\shmgrate.exe OCInstallShowOE"
+TickCount=500
+
+[HideOE]
+Commandline="%11%\shmgrate.exe OCInstallHideOE"
+TickCount=500
+
+[UninstallOE]
+DelFiles=DelNone
+Run=HideOE
+
+[DelNone]
+
+[DestinationDirs]
+DefaultDestination=11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Strings]
+OE_NAME="Outlook Express"
+OE_TIP = "Adds or removes access to Outlook Express from the Start menu"

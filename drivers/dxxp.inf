@@ -1,0 +1,263 @@
+[Version]
+Signature = "$Windows NT$"
+AdvancedINF = 2.0
+Provider = %Msft%
+Class = %ExceptionClassDesc%
+ClassGUID = {F5776D81-AE53-4935-8E84-B0B283D8BCEF}
+CatalogFile = dxxp.cat
+ComponentId = {44BBA855-CC51-11CF-AAFA-00AA00B6015C}
+DriverVer = 07-09-2004, 5.3.0000001.0904
+
+[SourceDisksNames]
+1 = %DiskName%,DXXP,0
+
+[SourceDisksFiles]
+d3dim700.dll=1
+ddraw.dll=1
+ddrawex.dll=1
+dinput.xpg=1
+dplaysvr.exe=1
+dplayx.dll=1
+dpmodemx.dll=1
+dpwsockx.dll=1
+dsound.dll=1
+dsound3d.dll=1
+dx7vb.dll=1
+gcdef.xpg=1
+d3d8thk.dll=1
+dx8vb.dll=1
+dpnaddr.dll=1
+dpnet.dll=1
+dpnhpast.dll=1
+dpnhupnp.dll=1
+dpnlobby.dll=1
+dpnsvr.exe=1
+dimap.xpg=1
+diactfrm.xpg=1
+dpvacm.dll=1
+dpvoice.dll=1
+dpvsetup.exe=1
+dpvvox.dll=1
+dsdmo.dll=1
+dsdmoprp.dll=1
+d3dim.xpg=1
+d3dpmesh.xpg=1
+d3dramp.xpg=1
+d3drm.xpg=1
+d3dxof.xpg=1
+dxdiag.exe=1
+dxapi.xpg=1
+gameenum.sys=1
+d3d8.dll=1
+dinput8.xpg=1
+dmscript.dll=1
+dswave.dll=1
+dmband.dll=1
+dmcompos.dll=1
+dmime.dll=1
+dmloader.dll=1
+dmstyle.dll=1
+dmsynth.dll=1
+dmusic.dll=1
+amstream.dll=1
+devenum.dll=1
+encapi.dll=1
+mciqtz32.dll=1
+mpg2splt.ax=1
+qcap.dll=1
+qdv.dll=1
+qdvd.dll=1
+quartz.dll=1
+msdmo.dll=1
+msdvdopt.dll=1
+mswebdvd.dll=1
+qasf.dll=1
+qedit.dll=1
+qedwipes.dll=1
+joy.xpg=1
+pid.xpg=1
+mspqm.sys=1
+ksproxy.ax=1    ;KS
+ksolay.ax=1     ;KS
+ksuser.dll=1    ;KS
+ks.sys=1        ;KS
+mskssrv.sys=1   ;KS
+mspclock.sys=1  ;KS
+mstee.sys=1     ;KS
+stream.sys=1    ;KS
+swenum.sys=1    ;KS
+ks.inf=1        ;KS
+kscaptur.inf=1  ;KS
+ksfilter.inf=1  ;KS
+
+[DestinationDirs]
+WinXP_System=11
+WinXP_Driver=11,drivers
+WinXP_DriverCache=10,"Driver Cache\i386"
+WinXP_SWITCHABLE=11
+WinXP_KS_System=11
+WinXP_KS_Driver=11,drivers
+WinXP_KS_DriverCache=10,"Driver Cache\i386"
+WinXP_KS_Inf=17
+DirectX_Debug_System=11
+
+[DefaultInstall]
+CopyFiles=WinXP_System,WinXP_Driver,WinXP_DriverCache,WinXP_SWITCHABLE,WinXP_KS_System,WinXP_KS_Driver,WinXP_KS_DriverCache,WinXP_KS_Inf
+DelFiles=DirectX_Debug_System
+AddReg=add.reg
+
+[WINXP_INSTALL]
+CopyFiles=WinXP_System,WinXP_Driver,WinXP_DriverCache,WinXP_SWITCHABLE,WinXP_KS_System,WinXP_KS_Driver,WinXP_KS_DriverCache,WinXP_KS_Inf
+
+[WinXP_System]
+d3dim700.dll
+ddraw.dll
+ddrawex.dll
+dinput.dll,dinput.xpg
+dplaysvr.exe
+dplayx.dll
+dpmodemx.dll
+dpwsockx.dll
+dsound.dll
+dsound3d.dll
+dx7vb.dll
+gcdef.dll,gcdef.xpg
+d3d8thk.dll
+dx8vb.dll
+dpnaddr.dll
+dpnet.dll
+dpnhpast.dll
+dpnhupnp.dll
+dpnlobby.dll
+dpnsvr.exe
+dimap.dll,dimap.xpg
+diactfrm.dll,diactfrm.xpg
+dpvacm.dll
+dpvoice.dll
+dpvsetup.exe
+dpvvox.dll
+dsdmo.dll
+dsdmoprp.dll
+d3dim.dll,d3dim.xpg
+d3dpmesh.dll,d3dpmesh.xpg
+d3dramp.dll,d3dramp.xpg
+d3drm.dll,d3drm.xpg
+d3dxof.dll,d3dxof.xpg
+dxdiag.exe
+amstream.dll
+devenum.dll
+encapi.dll
+mciqtz32.dll
+mpg2splt.ax
+qcap.dll
+qdv.dll
+qdvd.dll
+quartz.dll
+msdmo.dll
+mswebdvd.dll
+qasf.dll
+qedit.dll
+qedwipes.dll
+joy.cpl,joy.xpg
+pid.dll,pid.xpg
+
+[WinXP_SWITCHABLE]
+d3d8.dll
+dinput8.dll,dinput8.xpg
+dmscript.dll
+dswave.dll
+dmband.dll
+dmcompos.dll
+dmime.dll
+dmloader.dll
+dmstyle.dll
+dmsynth.dll
+dmusic.dll
+
+[WinXP_Driver]
+dxapi.sys,dxapi.xpg
+mspqm.sys
+
+[WinXP_DriverCache]
+pid.dll,pid.xpg
+mspqm.sys
+
+[WinXP_KS_System]
+ksproxy.ax
+ksolay.ax
+ksuser.dll
+
+[WinXP_KS_Driver]
+ks.sys
+mskssrv.sys
+mspclock.sys
+mstee.sys
+stream.sys
+swenum.sys
+
+[WinXP_KS_DriverCache]
+ksproxy.ax
+ksolay.ax
+ksuser.dll
+ks.sys
+mskssrv.sys
+mspclock.sys
+mstee.sys
+stream.sys
+swenum.sys
+
+[WinXP_KS_Inf]
+ks.inf
+kscaptur.inf
+ksfilter.inf
+
+[DirectX_Debug_System]
+d3d8d.dll
+d3d9d.dll
+d3dref.dll
+d3dref8.dll
+d3dref9.dll
+d3dx8d.dll
+d3dx9d.dll
+dinput8d.dll
+dmbandd.dll
+dmcompod.dll
+dmimed.dll
+dmloaded.dll
+dmscripd.dll
+dmstyled.dll
+dmsynthd.dll
+dmusicd.dll
+dpnetd.dll
+dpnhpastd.dll
+dpnhupnpd.dll
+dpnsvrd.exe
+dpvacmd.dll
+dpvoiced.dll
+dpvvoxd.dll
+dswaved.dll
+directx.cpl
+
+[DirectX_UnReg_Del]
+dpnmodem.dll, UNREGISTERONLY
+dpnwsock.dll, UNREGISTERONLY
+dpnaddr.dll,  UNREGISTERONLY
+dpnlobby.dll, UNREGISTERONLY
+
+[add.reg]
+HKLM,"%DX%","Version",,"%DXREGISTRYVERSION%"
+HKLM,"%DX%","RC",,"%DXREGISTRYRCNUMBER%"
+HKLM,"%DX%","InstalledVersion",0x00030001,00,00,00,09,00,00,00,00
+HKLM,"%Run%","DXDllRegExe",,"%10%\RegisteredPackages\{44BBA855-CC51-11CF-AAFA-00AA00B6015C}\dxdllreg.exe"
+
+[Strings]
+Msft                 = "Microsoft"
+ExceptionClassDesc   = "DirectX 9.0 for Windows XP"
+DiskName             = "DirectX 9.0 Installation Disk"
+
+DX                   = "SOFTWARE\Microsoft\DirectX"
+Run                  = "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+
+DXREGISTRYVERSION    = "4.09.00.0904"
+DXREGISTRYRCNUMBER   = "0"
+

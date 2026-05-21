@@ -1,0 +1,366 @@
+
+
+
+
+
+
+
+
+
+
+
+
+[Version]
+Signature="$Chicago$"
+AdvancedINF=2.5, "You need a newer version of Advpack.dll."
+
+[DefaultInstall] 
+RequiredEngine=setupapi
+
+
+DelReg=DelReg.Uninst
+
+
+
+
+CatalogFile=wmdm.cat
+CopyFiles   =WMPCopy.System, CopyINF
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RegisterOCXs=WMPOCX.Register
+AddReg=reg.devices
+
+[DefaultInstall.NT]
+CopyFiles   =WMPCopy.System, CopyINF, WMPCopy.System.NT
+CatalogFile=wmdm.cat
+StopServices=MSPService
+RegisterOCXs=WMPOCX.Register, WMPOCX.Register.NT
+DelReg=DelReg.Uninst
+AddReg=reg.devices
+
+[DefaultInstall.NT5.1]
+CopyFiles   =WMPCopy.System, CopyINF, WMPCopy.System.NT
+CatalogFile=wmdm.cat
+StopServices=MSPService
+RegisterOCXs=WMPOCX.Register, WMPOCX.Register.NT
+DelReg=DelReg.Uninst
+AddReg=reg.devices,reg.autoplay
+
+
+
+[Uninstall]
+RequiredEngine=setupapi
+DelFiles   =WMPCopy.System
+DelReg=reg.devices
+UnRegisterOCXs=WMPOCX.Register
+
+[Uninstall.NT]
+RequiredEngine=setupapi
+
+StopServices=MSPService
+DelFiles   =WMPCopy.System, WMPCopy.System.NT
+DelReg=reg.devices
+UnRegisterOCXs=WMPOCX.Register.NT,WMPOCX.Register
+
+
+
+[DestinationDirs]
+WMPCopy.System=11
+WMPCopy.System.NT=11
+CopyINF=17
+
+[reg.devices]
+HKLM,"Software\Microsoft\Windows Media Device Manager\Plugins\SP\MSPMSP\KBDeviceList","SanDiskIM",, "SanDisk ;ImageMate III   ;2.3"
+HKLM,"Software\Microsoft\Windows Media Device Manager\Plugins\SP\MSPMSP\KBDeviceList","SanDiskIMb",, "E-USB Fl;ash             ;    "
+HKLM,"Software\Microsoft\Windows Media Device Manager\Plugins\SP\MSPMSP\KBDeviceList","Lexmark",, "Parallel; Flash Unit;"
+
+
+[reg.autoplay]
+; WMDM Handler
+
+
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\Handlers\MSWMDMHandler","Action",,"%STR_TRANSFER%"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\Handlers\MSWMDMHandler","Provider",,"@wmploc.dll,-6502"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\Handlers\MSWMDMHandler","DefaultIcon",0x00020000,"%ProgramFiles%\Windows Media Player\wmplayer.exe,0"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\Handlers\MSWMDMHandler","InitCmdLine",0x00020000,"""%ProgramFiles%\Windows Media Player\wmplayer.exe"" /prefetch:3 /task:PortableDevice"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\Handlers\MSWMDMHandler","ProgID",,"Shell.HWEventHandlerShellExecute"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\Handlers\MSWMDMHandler","CLSIDForCancel",,"{91778246-9BE4-4713-A651-E833B853CC30}"
+
+; Windows Media Player AppID
+HKCR,"CLSID\{91778246-9BE4-4713-A651-E833B853CC30}","AppID",,"{B8C54A54-355E-11D3-83EB-00A0C92A2F2D}"
+
+; Required to be invoked from a service process.
+HKCR,"AppID\{B8C54A54-355E-11D3-83EB-00A0C92A2F2D}","RunAs",,"Interactive User"
+
+; Required to be able to register in the Running Object Table with the ROTFLAGS_ALLOWANYCLIENT flag
+HKCR,"AppID\wmplayer.exe","AppID",,"{B8C54A54-355E-11D3-83EB-00A0C92A2F2D}"
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Rio One
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5081","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5081","Label",,"Rio One Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5081","DeviceHandlers",,"RioOneHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\RioOneHandler\EventHandlers\DeviceArrival","RioOneArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\RioOneArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Rio 600
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5001","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5001","Label",,"Rio 600 Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5001","DeviceHandlers",,"Rio600Handler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\Rio600Handler\EventHandlers\DeviceArrival","Rio600Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\Rio600Arrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Rio 800
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5002","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5002","Label",,"Rio 800 Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5002","DeviceHandlers",,"Rio800Handler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\Rio800Handler\EventHandlers\DeviceArrival","Rio800Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\Rio800Arrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Nike psaplay
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5003","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5003","Label",,"Nike psaplay Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_045A&PID_5003","DeviceHandlers",,"NikepsaplayHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\NikepsaplayHandler\EventHandlers\DeviceArrival","NikepsaplayArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\NikepsaplayArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Compaq PA-1/2
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_049F&PID_0018","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_049F&PID_0018","Label",,"Compaq PA Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_049F&PID_0018","DeviceHandlers",,"CompaqPA1Handler"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_049F&PID_0018","AutoplayOnSpecialInterface",,"{A5DCBF10-6530-11D2-901F-00C04FB951ED}"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\CompaqPA1Handler\EventHandlers\DeviceArrival","CompaqPA1Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\CompaqPA1Arrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Digisette Duo-64
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_05B4&PID_6002","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_05B4&PID_6002","Label",,"Digisette Duo-64 Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_05B4&PID_6002","DeviceHandlers",,"DigisetteDuo64Handler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\DigisetteDuo64Handler\EventHandlers\DeviceArrival","DigisetteDuo64Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\DigisetteDuo64Arrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Creative Nomad II
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_1002","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_1002","Label",,"Creative Nomad II Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_1002","DeviceHandlers",,"CreativeNomadIIHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\CreativeNomadIIHandler\EventHandlers\DeviceArrival","CreativeNomadIIArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\CreativeNomadIIArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Creative Nomad IIc
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_1002","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_1002","Label",,"Creative Nomad IIc Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_1002","DeviceHandlers",,"CreativeNomadIIcHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\CreativeNomadIIcHandler\EventHandlers\DeviceArrival","CreativeNomadIIcArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\CreativeNomadIIcArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Creative Nomad II MG
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_4004","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_4004","Label",,"Creative Nomad II MG Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_041E&PID_4004","DeviceHandlers",,"CreativeNomadIIMGHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\CreativeNomadIIMGHandler\EventHandlers\DeviceArrival","CreativeNomadIIMGArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\CreativeNomadIIMGArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Creative Nomad Jukebox
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_0471&PID_0222","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_0471&PID_0222","Label",,"Creative Nomad Jukebox Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_0471&PID_0222","DeviceHandlers",,"CreativeNomadJukeboxHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\CreativeNomadJukeboxHandler\EventHandlers\DeviceArrival","CreativeNomadJukeboxArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\CreativeNomadJukeboxArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Intel Pocket Concert
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_8086&PID_1101","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_8086&PID_1101","Label",,"Intel Pocket Concert Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_8086&PID_1101","DeviceHandlers",,"IntelPocketConcertHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\IntelPocketConcertHandler\EventHandlers\DeviceArrival","IntelPocketConcertArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\IntelPocketConcertArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Intel 3000
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_8086&PID_0100","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_8086&PID_0100","Label",,"Intel 3000 Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_8086&PID_0100","DeviceHandlers",,"Intel3000Handler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\Intel3000Handler\EventHandlers\DeviceArrival","Intel3000Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\Intel3000Arrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Iomega HipZip
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_059B&PID_006D","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_059B&PID_006D","Label",,"Iomega HipZip Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_059B&PID_006D","DeviceHandlers",,"IomegaHipZipHandler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\IomegaHipZipHandler\EventHandlers\DeviceArrival","IomegaHipZipArrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\IomegaHipZipArrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; Rave mp2300
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_059B&PID_0061","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_059B&PID_0061","Label",,"Rave mp2300 Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_059B&PID_0061","DeviceHandlers",,"Ravemp2300Handler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\Ravemp2300Handler\EventHandlers\DeviceArrival","Ravemp2300Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\Ravemp2300Arrival","MSWMDMHandler",,""
+
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; D-Link DMP-110
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_090A&PID_1042","DeviceGroup",,"PortableAudioPlayer"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_090A&PID_1042","Label",,"D-Link DMP-110 Player"
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PerHwIdStorage\USB#VID_090A&PID_1042","DeviceHandlers",,"DLinkDMP110Handler"
+;
+;   DeviceHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DeviceHandlers\DLinkDMP110Handler\EventHandlers\DeviceArrival","DLinkDMP110Arrival",,""
+;
+;   EventHandler
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlers\DLinkDMP110Arrival","MSWMDMHandler",,""
+
+
+[DelReg.Uninst]
+HKCR, "Software\Microsoft\Multimedia\Components\Installed\playback_wmdm\Uninstall"
+
+[SourceDisksNames]
+4659 = "Windows Media Device Management Support Install",,0
+
+[SourceDisksFiles]
+mswmdm.dll=4659
+msscp.dll=4659
+mspmsp.dll=4659
+wmdmps.dll=4659
+wmdmlog.dll=4659
+CEWMDM.dll=4659
+mspmsnsv.dll=4659
+
+wmdm.inf=4659
+
+[WMPOCX.Register]
+"%11%\mswmdm.dll"
+"%11%\msscp.dll"
+"%11%\mspmsp.dll"
+"%11%\wmdmps.dll"
+"%11%\wmdmlog.dll"
+"%11%\CEWMDM.dll"
+
+[WMPOCX.Register.NT]
+"%11%\mspmsnsv.dll"
+
+
+
+[WMPCopy.System.NT]
+mspmsnsv.dll,,,97
+
+[MSPService]
+WmdmPmSp
+
+[CopyINF]
+wmdm.inf
+
+[WMPCopy.System] 
+mswmdm.dll,,,97
+msscp.dll,,,97
+mspmsp.dll,,,97
+wmdmps.dll,,,97
+wmdmlog.dll,,,97
+CEWMDM.dll,,,97
+
+
+
+[Strings]
+;;;;;;;--------------------------------------------
+;-- Only localize strings below this line
+;;;;;;--------------------------------------------
+LANGUAGE="EN"
+
+STR_TRANSFER="Transfer files"
+
+;Error Messages

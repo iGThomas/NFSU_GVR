@@ -1,0 +1,315 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=Computer
+ClassGuid={4D36E966-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFT%
+LayoutFile=layout.inf
+DriverVer=07/01/2001,5.1.2600.0
+
+[ClassInstall32]
+AddReg=computer_class_addreg
+DelReg=apm_hal_cleanup
+
+[computer_class_addreg]
+HKR,,,,%ComputerClassName%
+HKR,,Installer32,,"SysSetup.dll,ComputerClassInstaller"
+HKR,,NoInstallClass,,1
+HKR,,Icon,,"-27"
+
+[rp_tags_addreg]
+HKR,,ResourcePickerTags,0x00000000,"HAL"
+
+[apm_hal_cleanup]
+HKLM,"SYSTEM\CurrentControlSet\Control\ApmLegalHal"
+
+[DestinationDirs]
+MP.CopyFiles = 11
+UP.CopyFiles = 11
+;
+; Most x86 HALs go into %windir%\system32
+;
+E_ISA_UP_HAL.CopyFiles = 11
+ACPIPIC_UP_HAL.CopyFiles = 11
+ACPIAPIC_UP_HAL.CopyFiles = 11
+ACPIAPIC_MP_HAL.CopyFiles = 11
+SYSPRO_MP_HAL.CopyFiles = 11
+MPS_UP_HAL.CopyFiles = 11
+MPS_MP_HAL.CopyFiles = 11
+
+[Manufacturer]
+%GENDEV_MFG%=GENDEV_SYS
+%COMPAQ_MFG%=COMPAQ_SYS
+
+[GENDEV_SYS]
+%E_ISA_UP.DeviceDesc%     = E_ISA_UP_HAL, E_ISA_UP, MPS_UP, MPS_MP, \
+                                          ACPIPIC_UP, ACPIAPIC_UP, ACPIAPIC_MP   ; Standard PC
+%ACPIPIC_UP.DeviceDesc%   = ACPIPIC_UP_HAL, ACPIPIC_UP, ACPIAPIC_UP, ACPIAPIC_MP ; ACPI PIC-based PC
+%ACPIAPIC_UP.DeviceDesc%  = ACPIAPIC_UP_HAL, ACPIAPIC_UP                         ; ACPI APIC-based PC (UP)
+%ACPIAPIC_MP.DeviceDesc%  = ACPIAPIC_MP_HAL, ACPIAPIC_MP, ACPIAPIC_UP            ; ACPI APIC-based PC (MP)
+%MPS_UP.DeviceDesc%       = MPS_UP_HAL, MPS_UP, ACPIAPIC_UP                      ; MPS UP PC
+%MPS_MP.DeviceDesc%       = MPS_MP_HAL, MPS_MP, MPS_UP, ACPIAPIC_MP, ACPIAPIC_UP ; MPS MP PC
+
+[COMPAQ_SYS]
+%SYSPRO_MP.DeviceDesc%    = SYSPRO_MP_HAL, SYSPRO_MP
+
+
+;****************************************************
+; Standard PC (UP) HAL
+[E_ISA_UP_HAL]
+CopyFiles = E_ISA_UP_HAL.CopyFiles
+AddReg = E_ISA_UP_HAL.AddReg
+DelReg = E_ISA_UP_HAL.DelReg
+CopyFiles = UP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[E_ISA_UP_HAL.CopyFiles]
+hal.dll,,,0x3000
+
+;
+; Property sheet for Pci Irq Routing.
+;
+[E_ISA_UP_HAL.DelReg]
+HKR,,EnumPropPages32
+
+[E_ISA_UP_HAL.CoInstallers]
+AddReg=CoInstallers.AddReg
+
+[CoInstallers.AddReg]
+HKR,,CoInstallers32,0x10008,"syssetup.dll,EisaUpHalCoInstaller"
+
+[E_ISA_UP_HAL.AddReg]
+;
+; marker for APM
+;
+HKLM,"SYSTEM\CurrentControlSet\Control\ApmLegalHal","Present",0x10001,1
+;
+;****************************************************
+; ACPI PIC-based PC (UP) HAL
+[ACPIPIC_UP_HAL]
+CopyFiles = ACPIPIC_UP_HAL.CopyFiles
+CopyFiles = UP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[ACPIPIC_UP_HAL.CopyFiles]
+hal.dll, halacpi.dll,,0x3000
+
+;****************************************************
+; ACPI APIC-based PC (UP) HAL
+[ACPIAPIC_UP_HAL]
+CopyFiles = ACPIAPIC_UP_HAL.CopyFiles
+CopyFiles = UP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[ACPIAPIC_UP_HAL.CopyFiles]
+hal.dll, halaacpi.dll,,0x3000
+
+;****************************************************
+; ACPI APIC-based PC (MP) HAL
+[ACPIAPIC_MP_HAL]
+CopyFiles = ACPIAPIC_MP_HAL.CopyFiles
+CopyFiles = MP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[ACPIAPIC_MP_HAL.CopyFiles]
+hal.dll, halmacpi.dll,,0x3000
+
+;****************************************************
+; Compaq SystemPro (MP) HAL
+[SYSPRO_MP_HAL]
+CopyFiles = SYSPRO_MP_HAL.CopyFiles
+CopyFiles = MP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[SYSPRO_MP_HAL.CopyFiles]
+hal.dll, halsp.dll,,0x3000
+
+;****************************************************
+; MPS (UP) HAL
+[MPS_UP_HAL]
+CopyFiles = MPS_UP_HAL.CopyFiles
+AddReg = MPS_UP_HAL.AddReg
+CopyFiles = UP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[MPS_UP_HAL.CopyFiles]
+hal.dll, halapic.dll,,0x3000
+
+[MPS_UP_HAL.AddReg]
+HKLM,System\CurrentControlSet\Services\EventLog\System\PCI_HAL,EventMessageFile,%REG_EXPAND_SZ%,"%%SystemRoot%%\System32\IoLogMsg.dll"
+HKLM,System\CurrentControlSet\Services\EventLog\System\PCI_HAL,TypesSupported,%REG_DWORD%,7
+
+;****************************************************
+; MPS (MP) HAL
+[MPS_MP_HAL]
+CopyFiles = MPS_MP_HAL.CopyFiles
+AddReg = MPS_MP_HAL.AddReg
+CopyFiles = MP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+[MPS_MP_HAL.CopyFiles]
+hal.dll, halmps.dll,,0x3000
+
+[MPS_MP_HAL.AddReg]
+HKLM,System\CurrentControlSet\Services\EventLog\System\PCI_HAL,EventMessageFile,%REG_EXPAND_SZ%,"%%SystemRoot%%\System32\IoLogMsg.dll"
+HKLM,System\CurrentControlSet\Services\EventLog\System\PCI_HAL,TypesSupported,%REG_DWORD%,7
+
+
+;****************************************************
+; DDInstall common to all UP platforms
+[UP_HAL.Common]
+CopyFiles = UP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+;****************************************************
+; DDInstall common to all MP platforms
+[MP_HAL.Common]
+CopyFiles = MP.CopyFiles
+AddReg = rp_tags_addreg
+Reboot
+
+
+;****************************************************
+; Files common to all x86 MP platforms
+[MP.CopyFiles]
+ntoskrnl.exe, ntkrnlmp.exe,,0x3000
+ntkrnlpa.exe, ntkrpamp.exe,,0x3000
+
+;****************************************************
+; Files common to all x86 UP platforms
+[UP.CopyFiles]
+ntoskrnl.exe,,,0x3000
+ntkrnlpa.exe,,,0x3000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Strings]
+
+
+
+
+
+
+
+
+
+ComputerClassName = "Computer"
+MSFT              = "Microsoft"
+
+;*******************************************
+;device descriptions
+
+GENDEV_MFG = "(Standard computers)"
+
+E_ISA_UP.DeviceDesc       = "Standard PC"
+ACPIPIC_UP.DeviceDesc     = "Advanced Configuration and Power Interface (ACPI) PC"
+ACPIAPIC_UP.DeviceDesc    = "ACPI Uniprocessor PC"
+ACPIAPIC_MP.DeviceDesc    = "ACPI Multiprocessor PC"
+MPS_UP.DeviceDesc         = "MPS Uniprocessor PC"
+MPS_MP.DeviceDesc         = "MPS Multiprocessor PC"
+
+COMPAQ_MFG = "Compaq"
+SYSPRO_MP.DeviceDesc      = "Compaq SystemPro Multiprocessor or 100% Compatible"
+
+
+REG_EXPAND_SZ                = 0x00020000
+REG_DWORD                    = 0x00010001
+

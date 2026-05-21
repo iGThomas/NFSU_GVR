@@ -1,0 +1,39 @@
+[Version]
+signature="$Windows NT$"
+ClassGUID={00000000-0000-0000-0000-000000000000}
+DriverVer=07/01/2001,5.1.2535.0
+
+[DriverSigningClasses]
+{B1D1A169-C54F-4379-81DB-BEE7D88D7454}        ; Anti-virus file system filter
+{72631e54-78a4-11d0-bcf7-00aa00b7b32a} = 5, 0 ; Batteries
+{4D36E966-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Computer
+{4d36e967-e325-11ce-bfc1-08002be10318} = 5, 0 ; Disk drives
+{4D36E968-E325-11CE-BFC1-08002BE10318}        ; Display
+{48721b56-6795-11d2-b1a8-0080c72e74a2} = 5, 0 ; Dot4
+{49ce6ac8-6f86-11d2-b1e5-0080c72e74a2} = 5, 0 ; Dot4Print
+{4d36e980-e325-11ce-bfc1-08002be10318} = 5, 0 ; Floppy disk drives
+{4D36E96B-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Keyboard
+{4D36E96A-E325-11CE-BFC1-08002BE10318} = 5, 0 ; HDC
+{745A17A0-74D3-11D0-B6FE-00A0C90F57DA} = 5, 0 ; HID
+{4658EE7E-F050-11D1-B6BD-00C04FA372A7}        ; IEEE 1394 and SCSI printers
+{6bdd1fc1-810f-11d0-bec7-08002be2092f}        ; IEEE 1394 Bus host controllers
+{6bdd1fc5-810f-11d0-bec7-08002be2092f}        ; Infrared devices
+{6BDD1FC6-810F-11D0-BEC7-08002BE2092F} = 5, 0 ; Image
+{4D36E96C-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Media
+{CE5939AE-EBDE-11D0-B181-0000F8753EC4} = 5, 0 ; Medium Changers
+{4D36E96D-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Modem
+{4D36E96E-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Monitor
+{4D36E96F-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Mouse
+{4d36e971-e325-11ce-bfc1-08002be10318} = 5, 0 ; Multifunction adapters
+{50906CB8-BA12-11D1-BF5D-0000F805F530} = 5, 0 ; MultiPortSerial
+{4D36E972-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Net
+{4d36e977-e325-11ce-bfc1-08002be10318} = 5, 0 ; PCMCIA adapters
+{4d36e978-e325-11ce-bfc1-08002be10318} = 5, 0 ; Ports (COM & LPT)
+{4D36E979-E325-11CE-BFC1-08002BE10318} = 5, 0 ; Printer
+{4D36E97B-E325-11CE-BFC1-08002BE10318} = 5, 0 ; SCSI Adapter
+{50DD5230-BA8A-11D1-BF5D-0000F805F530} = 5, 0 ; Smart Cart Reader
+{71a27cdd-812a-11d0-bec7-08002be2092f} = 5, 0 ; Storage volumes
+{6d807884-7d21-11cf-801c-08002be10318} = 5, 0 ; Tape drives
+{36fc9e60-c465-11cf-8056-444553540000}        ; Universal Serial Bus controllers 
+{4D36E97E-E325-11CE-BFC1-08002BE10318}        ; "Unknown"--make sure nobody is using this class
+
