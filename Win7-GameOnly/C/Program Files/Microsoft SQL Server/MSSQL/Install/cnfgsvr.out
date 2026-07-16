@@ -1,0 +1,42 @@
+
+###############################################################################
+
+
+Starting Service ...
+
+SQL_Latin1_General_CP1_CI_AS
+
+-m -Q -T4022 -T3659
+
+Connecting to Server ...
+
+driver={sql server};server=OEM-I3QKY3B2212;UID=sa;PWD=;database=master
+
+Configuring Server ...
+
+EXEC sp_grantlogin N'BUILTIN\Administrators' 
+
+[Microsoft][ODBC SQL Server Driver][SQL Server]Granted login access to 'BUILTIN\Administrators'.
+
+EXEC sp_addsrvrolemember N'BUILTIN\Administrators', 'sysadmin'
+
+[Microsoft][ODBC SQL Server Driver][SQL Server]'BUILTIN\Administrators' added to role 'sysadmin'.
+
+update master.dbo.spt_server_info set attribute_value = @@version where attribute_id = 2
+
+EXEC sp_detach_db 'pubs'
+
+EXEC sp_detach_db 'Northwind'
+
+EXEC sp_addserver N'OEM-I3QKY3B2212', local 
+
+[Microsoft][ODBC SQL Server Driver][SQL Server]Password changed.
+
+Disconnecting from Server ...
+
+Stopping Service ...
+
+SQL Server has been successfully configured!
+
+###############################################################################
+

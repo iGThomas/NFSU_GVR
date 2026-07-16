@@ -1,0 +1,408 @@
+; NVIDIA Display Driver uninstaller
+call Uninstall
+
+[UninstallSilent]
+Set ForceNoReboot=yes
+call UninstallSilentReboot
+
+[UninstallSilentReboot]
+Set Silent=yes
+call Uninstall
+Delreg {UninstRegkey}\NVIDIA Display Driver
+del {current Script}
+del {Current Parser Path}
+
+[Uninstall]
+getreg UninstStr=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\NVIDIAStereo\UninstallString
+if {UninstStr}%.exe then syscallandwait {UninstStr} 
+; Unregister any DLLs
+SysCallAndWait {sysdir}\regsvr32.exe /s /u {sysdir}\nvcpl.dll
+SysCallAndWait {sysdir}\regsvr32.exe /s /u {sysdir}\nview.dll
+SysCallAndWait {sysdir}\regsvr32.exe /s /u {sysdir}\nvshell.dll
+SysCallAndWait {sysdir}\regsvr32.exe /s /u {sysdir}\nvwdmcpl.dll
+
+UninstallService NVSvc
+
+set nViewDialogRegkeyPath=Software\NVIDIA Corporation\Global\nViewInstalled
+if {Silent}=yes then delreg HKLM\{nViewDialogRegkeyPath}
+if {Silent}=yes then delreg HKCU\{nViewDialogRegkeyPath}
+
+SysCallAndWait {sysdir}\nwiz.exe /uninstall
+; remove nView dir if empty
+Del {windir}\nView 
+
+call Clean up registry
+
+; Get rid of the non-workstation NV specific stuff in the local area
+set Current Root Key=HKCU
+set Current Reg Key=\Software\NVIDIA Corporation
+call DelNoneWorkStationKeys
+set Current Root Key=HKLM
+call DelNoneWorkStationKeys
+EnumRegCmd HKU\\{*}\Software\NVIDIA Corporation,Call DelNoneWorkStationKeys
+
+delreg HKCR\TypeLib\{1AFBF72B-58EA-41CB-B117-3CDE0857F4A6}
+
+Call DeleteFiles
+
+RemoveDevice pci,VEN_10DE,Display
+
+DelReg HKLM\Software\Microsoft\Windows\CurrentVersion\Run\NvDeskMgrRestart
+DelReg HKLM\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Run\NvDeskMgrRestart
+
+enumregcmd HKLM\SYSTEM\{*ControlSet}\Control\Video\{*},call EnumVideoKeys
+enumregcmd HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Reinstall\{*},call DelReinstallKeys
+set RegPath=HKCU\Software\Microsoft\Windows\ShellNoRoam\MUICache
+EnumRegNamesCmd {RegPath}, if {current Reg Value}%NVIDIA then delreg {RegPath}\{Current Reg Name}
+
+Enumregcmd HKLM\SYSTEM\{*ControlSet}\Control\Class\{4D36E968-E325-11CE-BFC1-08002BE10318}\{*},call DelnvDualViewRegs
+
+[DelnvDualViewRegs]
+GetReg ProviderName={Current Root Key}\{Current Reg Key}\ProviderName
+if {ProviderName}=NVIDIA then DelReg {Current Root Key}\{Current Reg Key}
+
+[EnumVideoKeys]
+set MyBaseKey={Current Root Key}\{Current Reg Key}
+enumregcmd {MyBaseKey}\{*},call CheckNVIDIAVideoKeys
+
+[CheckNVIDIAVideoKeys]
+GetReg Device Description={Current Root Key}\{Current Reg Key}\Device Description
+if {Device Description}%NVIDIA then delreg {MyBaseKey}
+
+[DelReinstallKeys]
+GetReg ProviderName={Current Root Key}\{Current Reg Key}\ProviderName
+GetReg DeviceInstanceIds={Current Root Key}\{Current Reg Key}\DeviceInstanceIds
+GetReg Class=HKLM\SYSTEM\CurrentControlSet\Enum\{DeviceInstanceIds}\Class
+if {Class},{ProviderName}%Display,NVIDIA then DelReg {Current Root Key}\{Current Reg Key}
+
+[Clean up registry]
+call RemoveInfFromRegistry
+DelReg HKLM\Software\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\RIVATNT
+DelReg HKLM\Software\Microsoft\Windows\CurrentVersion\Run\NvCplDaemon
+DelReg HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run\NvCplDaemon
+DelReg HKLM\Software\Microsoft\Windows\CurrentVersion\Run\nwiz
+DelReg HKLM\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Run\nwiz
+
+DelReg HKLM\HARDWARE\\RESOURCEMAP\\VIDEO\nv4
+DelReg HKLM\HARDWARE\\RESOURCEMAP\\VIDEO\nv
+
+set RootKey=HKLM\SYSTEM\{*ControlSet}
+call EnumAndDeleteHWKeys
+
+; NvTweak
+DelReg HKCR\CLSID\{FFB699E0-306A-11d3-8BD1-00104B6F7516}
+set Current Root Key=HKLM
+set Current Reg Key=\Software\Microsoft\Windows\CurrentVersion
+call DeleteNTTweak
+set RootKey=HKCU
+call DeleteNTTweak
+
+set Current Root Key=HKLM
+set Current Reg Key=\Software\Wow6432Node\Microsoft\Windows\CurrentVersion
+call DeleteNTTweak
+set RootKey=HKCU
+call DeleteNTTweak
+
+EnumRegCmd HKU\\{*}\Software\Microsoft\Windows\CurrentVersion,Call DeleteNTTweak
+EnumRegCmd HKU\\{*}\Software\Wow6432Node\Microsoft\Windows\CurrentVersion,Call DeleteNTTweak
+
+[EnumAndDelProfileKeys]
+DelReg {RegPath}\{*}\System\CurrentControlSet\Services\nv4
+DelReg {RegPath}\{*}\System\CurrentControlSet\Services\nv
+
+[EnumAndDeleteHWKeys]
+DelReg {RootKey}\Services\nv4
+DelReg {RootKey}\Services\EventLog\System\nv4
+DelReg {RootKey}\Enum\Root\LEGACY_NV4
+DelReg {RootKey}\Services\nv
+DelReg {RootKey}\Services\EventLog\System\nv
+DelReg {RootKey}\Enum\Root\LEGACY_NV
+set RegPath={RootKey}\Services
+DelReg {RegPath}\nvcap
+DelReg {RegPath}\nvtunep
+DelReg {RegPath}\tvsnd
+DelReg {RegPath}\nvxbar
+set RegPath={RootKey}\Enum\DISPLAY
+DelReg {RegPath}\nvcap
+DelReg {RegPath}\nvtunep
+DelReg {RegPath}\tvsnd
+DelReg {RegPath}\nvxbar
+DelReg {RegPath}\nvMultiView
+set RegPath={RootKey}\Hardware Profiles
+call EnumAndDelProfileKeys
+DelReg {RootKey}\Control\Class\{4D36E968-E325-11CE-BFC1-08002BE10318}\{*}\CoInstallers32
+DelReg {RootKey}\Control\Class\{4D36E968-E325-11CE-BFC1-08002BE10318}\{*}\Uninstall
+EnumRegCmd HKLM\SYSTEM\{*ControlSet}\Control\Class\{4D36E96C-E325-11CE-BFC1-08002BE10318}\{*},Call CheckWDMDriver
+
+[CheckDriver]
+GetReg Class={Current Root Key}\{Current Reg Key}\class
+GetReg Mfg={Current Root Key}\{Current Reg Key}\Mfg
+if {Class},{Mfg}=Display,NVIDIA then DelReg {Current Root Key}\{Current Reg Key}
+
+[CheckWDMDriver]
+GetReg ProviderName={Current Root Key}\{Current Reg Key}\ProviderName
+GetReg MatchingDeviceId={Current Root Key}\{Current Reg Key}\MatchingDeviceId
+if {ProviderName},{MatchingDeviceId}=nVidia,display\nvcap then DelReg {Current Root Key}\{Current Reg Key}
+if {ProviderName},{MatchingDeviceId}=nVidia,display\nvxbar then DelReg {Current Root Key}\{Current Reg Key}
+if {ProviderName},{MatchingDeviceId}=nVidia,display\nvtunep then DelReg {Current Root Key}\{Current Reg Key}
+if {ProviderName},{MatchingDeviceId}=nVidia,display\nvtvsnd then DelReg {Current Root Key}\{Current Reg Key}
+
+[DeleteNTTweak]
+delreg {Current Root Key}{Current Reg Key}\Controls Folder\Display\shellex\PropertySheetHandlers\NVIDIA CPL Extension
+delreg {Current Root Key}{Current Reg Key}\Run\Nv4QuickTweak
+delreg {Current Root Key}{Current Reg Key}\Run\Nv4ColorInit
+delreg {Current Root Key}{Current Reg Key}\Run\NvInitialize
+delreg {Current Root Key}{Current Reg Key}\Run\NvMediaCenter
+delreg {Current Root Key}{Current Reg Key}\Run\NvDeskMgrRestart
+delreg {Current Root Key}{Current Reg Key}\RunOnce\NvCplDaemon
+delreg {Current Root Key}{Current Reg Key}\RunOnce\nwiz
+
+[DelNoneWorkStationKeys]
+DelReg  {Current Root Key}{Current Reg Key}\Global\NvSvc
+DelReg  {Current Root Key}{Current Reg Key}\Global\NVTweak
+DelReg  {Current Root Key}{Current Reg Key}\Global\NVDesk
+DelReg  {Current Root Key}{Current Reg Key}\Global\Setup
+DelReg  {Current Root Key}{Current Reg Key}\Global\MediaCenterTray
+DelReg  {Current Root Key}{Current Reg Key}\Global
+DelRegE {Current Root Key}{Current Reg Key}
+
+
+[DeleteFiles]
+; delete oem*.inf files that have the following information
+; wildcard for filename, section1,variable1,value1 [,section2,variable2,value2[,...]]  
+DelOemInfs nv*,Version,Class,Display,Version,Provider,%NVIDIA%
+DelOemInfs nv*,Version,Class,Display,Strings,Mfg,NVIDIA
+DelOemInfs nv*,Version,Class,Media,Strings,MS,nVidia
+DelIniIfMatched {windir}\INF\INTERNET\NVIDIA*.INF,Version,Class,Display
+
+set BasePath={sysdir}
+DelBoot {basepath}\nv4_disp.dll
+DelBoot {basepath}\nvdccapp.cfg
+DelBoot {basepath}\nvwsapps.cfg
+DelBoot {basepath}\nvtuicpl.cpl
+DelBoot {basepath}\nvcpl.dll
+DelBoot {basepath}\nvmofb.mof
+DelBoot {basepath}\nview.dll
+DelBoot {basepath}\nview64.dll
+DelBoot {basepath}\nviewimg.dll
+DelBoot {basepath}\nvwimg64.dll
+DelBoot {basepath}\nviewx.dll
+DelBoot {basepath}\nvinstnt.dll
+DelBoot {basepath}\nvmctray.dll
+DelBoot {basepath}\nvnt4cpl.dll
+DelBoot {basepath}\nvoglnt.dll
+DelBoot {basepath}\nvshell.dll
+DelBoot {basepath}\nvwddi.dll
+DelBoot {basepath}\nvwddi64.dll
+DelBoot {basepath}\nvwdmcpl.dll
+DelBoot {basepath}\dmcpl.exe
+DelBoot {basepath}\keystone.exe
+DelBoot {basepath}\nvappbar.exe
+DelBoot {basepath}\nvsvc.exe
+DelBoot {basepath}\nvsvc32.exe
+DelBoot {basepath}\nvsvc64.exe
+DelBoot {basepath}\nwiz.exe
+DelBoot {basepath}\aliagp.sys
+DelBoot {basepath}\drivers\nv4_mini.sys
+DelBoot {basepath}\drivers\nvcap.sys
+DelBoot {basepath}\drivers\nvxbar.sys
+DelBoot {basepath}\drivers\nvtvsnd.sys
+DelBoot {basepath}\drivers\nvtunep.sys
+DelBoot {basepath}\filter.ax
+DelBoot {basepath}\nvcod.dll
+DelBoot {basepath}\nvcodins.dll
+DelBoot {basepath}\nvapps.xml
+DelBoot {basepath}\nvhwvid.dll
+
+DelBoot {basepath}\nvarch16.dll
+DelBoot {basepath}\nvarch32.dll
+DelBoot {basepath}\nvdd32.dll
+DelBoot {basepath}\nvmode.dll
+DelBoot {basepath}\nvopengl.dll
+DelBoot {basepath}\nvdisp.drv
+DelBoot {basepath}\agart.vxd
+DelBoot {basepath}\nvcore.vxd
+DelBoot {basepath}\nvmini.vxd
+DelBoot {basepath}\nvmini2.vxd
+DelBoot {basepath}\alipcimp.pci
+DelBoot {basepath}\nvinst32.dll
+DelBoot {basepath}\nvgfx.dll
+
+DelBoot {sysdir}\dllcache\nv4_mini.sys
+DelBoot {sysdir}\dllcache\nv4_disp.dll
+
+;NVPMAPI files
+DelBoot {basepath}\nvpmapi.dll
+DelBoot {basepath}\nvprfctr.reg
+DelBoot {basepath}\nvprfctr.ini
+DelBoot {basepath}\nvprfsmb.h
+
+DelBoot {syswow64dir}\nvogl32.dll
+DelBoot {syswow64dir}\nview.dll
+DelBoot {syswow64dir}\nvwdmcpl.dll
+DelBoot {syswow64dir}\nvappbar.exe
+DelBoot {syswow64dir}\nviewimg.dll
+DelBoot {syswow64dir}\nvnt4cpl.dll
+DelBoot {syswow64dir}\nvwddi.dll
+DelBoot {syswow64dir}\nwiz.exe
+DelBoot {syswow64dir}\keystone.exe
+
+; Resource DLLs
+DelBoot {basepath}\nvrsar.dll
+DelBoot {basepath}\nvrscs.dll
+DelBoot {basepath}\nvrsda.dll
+DelBoot {basepath}\nvrsde.dll
+DelBoot {basepath}\nvrsel.dll
+DelBoot {basepath}\nvrseng.dll
+DelBoot {basepath}\nvrses.dll
+DelBoot {basepath}\nvrsesm.dll
+DelBoot {basepath}\nvrsfi.dll
+DelBoot {basepath}\nvrsfr.dll
+DelBoot {basepath}\nvrshe.dll
+DelBoot {basepath}\nvrshu.dll
+DelBoot {basepath}\nvrsit.dll
+DelBoot {basepath}\nvrsja.dll
+DelBoot {basepath}\nvrsko.dll
+DelBoot {basepath}\nvrsnl.dll
+DelBoot {basepath}\nvrsno.dll
+DelBoot {basepath}\nvrspl.dll
+DelBoot {basepath}\nvrspt.dll
+DelBoot {basepath}\nvrsptb.dll
+DelBoot {basepath}\nvrsru.dll
+DelBoot {basepath}\nvrssk.dll
+DelBoot {basepath}\nvrssl.dll
+DelBoot {basepath}\nvrssv.dll
+DelBoot {basepath}\nvrstr.dll
+DelBoot {basepath}\nvrszhc.dll
+DelBoot {basepath}\nvrszht.dll
+
+; nView Resource DLLs
+DelBoot {basepath}\nvwrsar.dll
+DelBoot {basepath}\nvwrscs.dll
+DelBoot {basepath}\nvwrsda.dll
+DelBoot {basepath}\nvwrsde.dll
+DelBoot {basepath}\nvwrsel.dll
+DelBoot {basepath}\nvwrseng.dll
+DelBoot {basepath}\nvwrses.dll
+DelBoot {basepath}\nvwrsesm.dll
+DelBoot {basepath}\nvwrsfi.dll
+DelBoot {basepath}\nvwrsfr.dll
+DelBoot {basepath}\nvwrshe.dll
+DelBoot {basepath}\nvwrshu.dll
+DelBoot {basepath}\nvwrsit.dll
+DelBoot {basepath}\nvwrsja.dll
+DelBoot {basepath}\nvwrsko.dll
+DelBoot {basepath}\nvwrsnl.dll
+DelBoot {basepath}\nvwrsno.dll
+DelBoot {basepath}\nvwrspl.dll
+DelBoot {basepath}\nvwrspt.dll
+DelBoot {basepath}\nvwrsptb.dll
+DelBoot {basepath}\nvwrsru.dll
+DelBoot {basepath}\nvwrssk.dll
+DelBoot {basepath}\nvwrssl.dll
+DelBoot {basepath}\nvwrssv.dll
+DelBoot {basepath}\nvwrstr.dll
+DelBoot {basepath}\nvwrszhc.dll
+DelBoot {basepath}\nvwrszht.dll
+
+; Help Files
+set BasePath={windir}\help
+DelBoot {basepath}\nv3tweak.hlp
+DelBoot {basepath}\nvcpar.hlp
+DelBoot {basepath}\nvcpcs.hlp
+DelBoot {basepath}\nvcpda.hlp
+DelBoot {basepath}\nvcpde.hlp
+DelBoot {basepath}\nvcpel.hlp
+DelBoot {basepath}\nvcpeng.hlp
+DelBoot {basepath}\nvcpes.hlp
+DelBoot {basepath}\nvcpesm.hlp
+DelBoot {basepath}\nvcpfi.hlp
+DelBoot {basepath}\nvcpfr.hlp
+DelBoot {basepath}\nvcpfr.hlp
+DelBoot {basepath}\nvcphe.hlp
+DelBoot {basepath}\nvcphu.hlp
+DelBoot {basepath}\nvcpit.hlp
+DelBoot {basepath}\nvcpja.hlp
+DelBoot {basepath}\nvcpko.hlp
+DelBoot {basepath}\nvcpl.hlp
+DelBoot {basepath}\nvcpnl.hlp
+DelBoot {basepath}\nvcpno.hlp
+DelBoot {basepath}\nvcppl.hlp
+DelBoot {basepath}\nvcppt.hlp
+DelBoot {basepath}\nvcpptb.hlp
+DelBoot {basepath}\nvcpru.hlp
+DelBoot {basepath}\nvcpsk.hlp
+DelBoot {basepath}\nvcpsl.hlp
+DelBoot {basepath}\nvcpsv.hlp
+DelBoot {basepath}\nvcpth.hlp
+DelBoot {basepath}\nvcptr.hlp
+DelBoot {basepath}\nvcpzhc.hlp
+DelBoot {basepath}\nvcpzht.hlp
+
+; nView Help Files
+DelBoot {basepath}\nvwcpar.hlp
+DelBoot {basepath}\nvwcpcs.hlp
+DelBoot {basepath}\nvwcpda.hlp
+DelBoot {basepath}\nvwcpde.hlp
+DelBoot {basepath}\nvwcpel.hlp
+DelBoot {basepath}\nvwcpeng.hlp
+DelBoot {basepath}\nvwcpes.hlp
+DelBoot {basepath}\nvwcpesm.hlp
+DelBoot {basepath}\nvwcpfi.hlp
+DelBoot {basepath}\nvwcpfr.hlp
+DelBoot {basepath}\nvwcpfr.hlp
+DelBoot {basepath}\nvwcphe.hlp
+DelBoot {basepath}\nvwcphu.hlp
+DelBoot {basepath}\nvwcpit.hlp
+DelBoot {basepath}\nvwcpja.hlp
+DelBoot {basepath}\nvwcpko.hlp
+DelBoot {basepath}\nvwcplen.hlp
+DelBoot {basepath}\nvwcpnl.hlp
+DelBoot {basepath}\nvwcpno.hlp
+DelBoot {basepath}\nvwcppl.hlp
+DelBoot {basepath}\nvwcppt.hlp
+DelBoot {basepath}\nvwcpptb.hlp
+DelBoot {basepath}\nvwcpru.hlp
+DelBoot {basepath}\nvwcpsk.hlp
+DelBoot {basepath}\nvwcpsl.hlp
+DelBoot {basepath}\nvwcpsv.hlp
+DelBoot {basepath}\nvwcpth.hlp
+DelBoot {basepath}\nvwcptr.hlp
+DelBoot {basepath}\nvwcpzhc.hlp
+DelBoot {basepath}\nvwcpzht.hlp
+
+; Other files
+DelBoot {basepath}\nvmontrs.cfg
+DelBoot {basepath}\nv3api.dll
+DelBoot {basepath}\nv3dd32.dll
+DelBoot {basepath}\nv3ogl.dll
+DelBoot {basepath}\nv3qtwk.dll
+DelBoot {basepath}\nv3rm.vxd
+DelBoot {basepath}\nv3sys.dll
+DelBoot {basepath}\nv3tweak.dll
+DelBoot {basepath}\nv4_kdisp.dll 
+DelBoot {basepath}\nvdesk32.dll
+DelBoot {basepath}\nvdmcpl.dll
+DelBoot {basepath}\nvds15.dll
+DelBoot {basepath}\nvdspmgr.dll
+DelBoot {basepath}\nvogl32.dll
+DelBoot {basepath}\nvqtwk.dll
+DelBoot {basepath}\nvstercp.dll
+DelBoot {basepath}\nvstercp.dll
+DelBoot {basepath}\nvstres.dll
+DelBoot {basepath}\maxtreme.drv
+DelBoot {basepath}\nv3disp.drv
+DelBoot {basepath}\nvfsvm.exe
+DelBoot {basepath}\nvsttest.exe
+DelBoot {basepath}\nvstview.exe
+DelBoot {basepath}\quadroview.exe
+DelBoot {basepath}\nvdual.sys
+DelBoot {basepath}\nv3.vxd
+DelBoot {basepath}\nv3mini2.vxd
+
+;for older stuff we just delete them right away
+Del {sysdir}\nvsys\nvinst32.dll 
+Del {sysdir}\nvsys
+
+[RemoveInfFromRegistry]
+DelReg HKLM\Software\Microsoft\Windows\CurrentVersion\Setup\SetupX\INF\OEM Name\{windir}\INF\nvaml.inf

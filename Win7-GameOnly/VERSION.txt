@@ -1,0 +1,26 @@
+NFSU GlobalVR Game-Only AIO Release
+Version: 2026-07-16-verify-shell-content
+
+Installer:
+- Install-NFSU-GVR-AIO.ps1
+
+Key behavior:
+- Requires original OEM Disc 1 and Disc 2, or a legally extracted payload via -ExpandedPayloadRoot.
+- Installs MSDE/SQLXML/.NET 1.1/runtime DLL support.
+- Imports decoded nfscabinet SQL payload directly from Database\.
+- Skips hanging GvrPlusExportDatabaseScript.exe process and crashing UnregDlls.exe cleanup helper.
+- Requires unshield.exe or isxunpack.exe for direct OEM disc extraction. The tested i6comp.exe build is rejected early.
+- Maps Unshield's GvrGame extraction folder into C:\Underground and includes the required GvrPlus runtime payload.
+- Treats SQL 2000 OSQL output containing successful query results as success even when OSQL returns a misleading non-zero exit code.
+- Validates the imported nfscabinet database by checking table count, GvrGame rows, the NFSUG001 game row, and pricing lookup data.
+- Uses fully-qualified nfscabinet.dbo queries and accepts numeric OSQL scalar output during database validation.
+- Verifies the extracted payload instead of trusting the extractor's exit code. unshield reports
+  per-file failures on stdout and still exits 0, so a missing/unreadable Disc 2 data3.cab silently
+  produced an install with the game but no arcade shell content: C:\GvrRoot\gvr (41 files, ~448MB
+  of SHELLCARS.gvr / art.gvr / artTex*.gvr) was empty and GVRBoot/UniverShell2 black-screened
+  forever. The installer now checks the staged cabinet sizes, scans the extractor log for
+  "Failed to extract file", and hard-fails unless the shell content is really present.
+- Rotates the sa password to the one the GlobalVR frontend and game are hard-coded to use.
+  The OEM GvrPlusExportDatabaseScript.exe used to do this, and skipping that hanging tool meant sa
+  stayed on the MSDE setup password while the game could not log in. Without this the database looks
+  perfectly configured and the game still refuses to start. Use -SkipSaPasswordRotation to opt out.

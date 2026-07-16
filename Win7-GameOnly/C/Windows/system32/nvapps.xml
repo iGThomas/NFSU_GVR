@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FILE>
+	<INFO Number="684490220"/>
+	<PROFILESET>
+		<PROFILE Label="Medal of Honor">
+			<APPLICATION Label="mohaa.exe"/>
+			<APPLICATION Label="moh_breakthrough.exe"/>
+			<APPLICATION Label="moh_breakthrough_demo.exe"/>
+			<APPLICATION Label="moh_spearhead.exe"/>
+			<APPLICATION Label="moh_spearhead_demo.exe"/>
+			<APPLICATION Label="mohaademo.exe"/>
+			<PROPERTY Label="ogl_extension" Value="4520" Itemtype="predefined"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Alice">
+			<APPLICATION Label="alice.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Icewind Dale">
+			<APPLICATION Label="IDmain.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Quake3">
+			<APPLICATION Label="quake3.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Diablo II">
+			<APPLICATION Label="Diablo II.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="4x4 Evo 2">
+			<APPLICATION Label="4x42.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Halo">
+			<APPLICATION Label="halo.exe"/>
+			<PROPERTY Label="prevent_cpl_aa" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400201" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Tron2.0">
+			<APPLICATION Label="lithtech.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="00400031" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Sid Meier's Pirates!">
+			<APPLICATION Label="pirates!.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Painkiller">
+			<APPLICATION Label="Painkiller.exe"/>
+			<APPLICATION Label="paingame.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Breed">
+			<APPLICATION Label="breed.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2020001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="FlatOut">
+			<APPLICATION Label="flatout.exe"/>
+			<APPLICATION Label="flatoutdemo.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="NBA Live 2005">
+			<APPLICATION Label="nba2005.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="11" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Swat4">
+			<APPLICATION Label="swat4.exe"/>
+			<APPLICATION Label="swat4mp.exe"/>
+			<APPLICATION Label="swat4mpdemo.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2420001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Tomb Raider">
+			<APPLICATION Label="TRAOD.exe"/>
+			<APPLICATION Label="TRAOD_P3.exe"/>
+			<APPLICATION Label="TRAOD_P4.exe"/>
+			<PROPERTY Label="prevent_cpl_aa" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="6C10401" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Wolfenstein Enemy Territory">
+			<APPLICATION Label="ET.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Jedi Knight 2">
+			<APPLICATION Label="jk2sp.exe"/>
+			<APPLICATION Label="jk2mp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Soldier of Fortune 2">
+			<APPLICATION Label="sof2.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Soldier of Fortune 2 MultiPlayer">
+			<APPLICATION Label="sof2mp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Jedi Academy">
+			<APPLICATION Label="jasp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Jedi Academy MultiPlayer">
+			<APPLICATION Label="jamp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Call of Duty">
+			<APPLICATION Label="codsp.exe"/>
+			<APPLICATION Label="coduosp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Call of Duty MultiPlayer">
+			<APPLICATION Label="codmp.exe"/>
+			<APPLICATION Label="coduomp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="X29">
+			<APPLICATION Label="X29.EXE"/>
+			<PROPERTY Label="ogl_extension" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Splinter Cell">
+			<APPLICATION Label="splintercell.exe"/>
+			<APPLICATION Label="shadowstrike_static_retail.exe"/>
+			<PROPERTY Label="prevent_cpl_aa" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Splinter Pandora Tomorrow">
+			<APPLICATION Label="splintercell2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Splinter Cell Chaos Theory">
+			<APPLICATION Label="splintercell3.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Xpand Rallye">
+			<APPLICATION Label="xpandrally.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="The Westerner">
+			<APPLICATION Label="picture.exe"/>
+			<PROPERTY Label="prevent_cpl_aa" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Lineage II">
+			<APPLICATION Label="l2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2400111" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Doom 3">
+			<APPLICATION Label="doom3.exe"/>
+			<PROPERTY Label="prevent_cpl_af" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_ogl_options" Value="0" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Far Cry">
+			<APPLICATION Label="FarCry.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4C00002" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="3DMark01">
+			<APPLICATION Label="3DMark2001SE.exe"/>
+			<APPLICATION Label="3DMark2001.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="c00001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="3DMark03">
+			<APPLICATION Label="3DMark03.exe"/>
+			<APPLICATION Label="3DMark03_dev.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="3DMark05">
+			<APPLICATION Label="3DMark05.exe"/>
+			<APPLICATION Label="3DMark05_dev.exe"/>
+			<APPLICATION Label="3DMark05_prof.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2400C01" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="PCMark04">
+			<APPLICATION Label="PCMark04.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Unreal Tournament 2003">
+			<APPLICATION Label="UT2003.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Unreal Tournament 2004">
+			<APPLICATION Label="UT2004.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Unreal">
+			<APPLICATION Label="Unreal.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Half-Life 2">
+			<APPLICATION Label="HL2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="3C00c01" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="AquaMark 3">
+			<APPLICATION Label="aquamark.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="ATI Chimp Demo">
+			<APPLICATION Label="Chimp/SushiDX.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="ATI Gargoyle Demo">
+			<APPLICATION Label="ATI Gargoyle/SushiDX.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="ATI Caves Demo">
+			<APPLICATION Label="ATI Caves/SushiDX.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Code Creatures">
+			<APPLICATION Label="codecult.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="World Of Warcraft">
+			<APPLICATION Label="Wow.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="MS Flight Simulator 2004">
+			<APPLICATION Label="FS9.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Comanche 4">
+			<APPLICATION Label="c4.exe"/>
+			<APPLICATION Label="c4demo.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="X2 The Threat">
+			<APPLICATION Label="X2.exe"/>
+			<APPLICATION Label="X2-Demo.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Dungeon Siege">
+			<APPLICATION Label="DungeonSiege.exe"/>
+			<APPLICATION Label="DungeonSiegeDemo.exe"/>
+			<APPLICATION Label="DSLOA.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="HDRLighting">
+			<APPLICATION Label="HDRLighting.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="00400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="D3DRightMark">
+			<APPLICATION Label="d3drightmark.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Trees of Pangaea">
+			<APPLICATION Label="Trees_of_Pangaea.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="00020001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Serious Sam SE">
+			<APPLICATION Label="serioussam.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Star Wars Jedi Knight Academy">
+			<APPLICATION Label="jediacademy.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="IL 2 - Sturmovik: Forgotten Battles">
+			<APPLICATION Label="il2.exe"/>
+			<APPLICATION Label="il2fb.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Return to Castle Wolfenstein">
+			<APPLICATION Label="wolfsp.exe"/>
+			<APPLICATION Label="wolfmp.exe"/>
+			<PROPERTY Label="conformant_texture_clamp" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Battlefield Vietnam">
+			<APPLICATION Label="bfvietnam.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Colin McRae Rally 4">
+			<APPLICATION Label="CMR4.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Colin McRae Rally 5">
+			<APPLICATION Label="cmr5.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="30001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Sims 2">
+			<APPLICATION Label="sims2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Ground Control 2">
+			<APPLICATION Label="gcii.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Max Payne 2">
+			<APPLICATION Label="MaxPayne2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Unreal 2">
+			<APPLICATION Label="Unreal2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Tribes Vengeance">
+			<APPLICATION Label="tv_cd_dvd.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Age of Mythology">
+			<APPLICATION Label="aom.exe"/>
+			<APPLICATION Label="aomx.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Shadermark 2.1">
+			<APPLICATION Label="shadermark.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Armed and Dangerous">
+			<APPLICATION Label="ArmedAndDangerous.exe"/>
+			<APPLICATION Label="Armed And Dangerous/GameData/game.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Battlefield 1942">
+			<APPLICATION Label="BF1942.exe"/>
+			<APPLICATION Label="BF1942_w32ded.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Battlefield 2">
+			<APPLICATION Label="BF2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Lock On">
+			<APPLICATION Label="LockOn.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430041" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Dark Age of Camelot: Trials of Atlantis">
+			<APPLICATION Label="game.dll.exe"/>
+			<APPLICATION Label="tgame.dll.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="NHL 2005">
+			<APPLICATION Label="nhl2005.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Prince of Persia">
+			<APPLICATION Label="PrinceofPersia.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Prince of Persia: Sands of Time">
+			<APPLICATION Label="-007.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Perimeter">
+			<APPLICATION Label="Perimeter.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="211" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="SimCity 4.0">
+			<APPLICATION Label="simcity 4.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Kohan 2">
+			<APPLICATION Label="k2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Silent Storm">
+			<APPLICATION Label="Silent Storm/game.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Warhammer 40k Dawn of War">
+			<APPLICATION Label="w40k.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2000001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="TOCA Race Driver 2">
+			<APPLICATION Label="rd2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2000001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Star Wars Battlefront">
+			<APPLICATION Label="launchbf.exe.exe"/>
+			<APPLICATION Label="battlefront.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="80001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Star Wars Republic Commando">
+			<APPLICATION Label="swrepubliccommando.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="30011" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Rome Total War">
+			<APPLICATION Label="rometw.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Need for Speed Underground">
+			<APPLICATION Label="speed.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Need for Speed Underground 2">
+			<APPLICATION Label="speed2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Hitman Contracts">
+			<APPLICATION Label="hitmancontracts.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="MVP Baseball">
+			<APPLICATION Label="mvp2004.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Madden 2005">
+			<APPLICATION Label="mainapp.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Soldiers Heroes of WWII">
+			<APPLICATION Label="soldiers.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Joint Operations Typhoon Rising">
+			<APPLICATION Label="jointops.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="30011" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Leisure Suit Larry">
+			<APPLICATION Label="larry.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Tony Hawk's Underground">
+			<APPLICATION Label="thug2.exe"/>
+			<APPLICATION Label="launcher.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2430061" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Myst 4">
+			<APPLICATION Label="myst4.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Conan">
+			<APPLICATION Label="Conan.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="America's Army">
+			<APPLICATION Label="armyops.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Thief 3 Deadly Shadows">
+			<APPLICATION Label="t3main.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Tron 2.0">
+			<APPLICATION Label="tron.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Spellforce">
+			<APPLICATION Label="spellforce.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="AquaNox 2">
+			<APPLICATION Label="an2.dat.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Shadermark 2.1">
+			<APPLICATION Label="shadermark.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Dirt Track Racing2">
+			<APPLICATION Label="dtr2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Vampire The Masquerade - Bloodlines">
+			<APPLICATION Label="vampire.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="EverQuest 2">
+			<APPLICATION Label="everquest2.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="400001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="EverQuest">
+			<APPLICATION Label="eqgame.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Apocalyptica">
+			<APPLICATION Label="Apocalyptica.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="3dsmax">
+			<APPLICATION Label="3dsmax.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="4" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="The Chronicles of Riddick">
+			<APPLICATION Label="sbzengine.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_ogl_options" Value="00000001" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Dawn">
+			<APPLICATION Label="fairy.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_ogl_options" Value="0000fffe" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Nalu">
+			<APPLICATION Label="mermaid.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="1" Itemtype="predefined"/>
+			<PROPERTY Label="multichip_ogl_options" Value="0000fffe" Itemtype="predefined"/>
+		</PROFILE>
+		<PROFILE Label="Brothers In Arms">
+			<APPLICATION Label="bia.exe"/>
+			<PROPERTY Label="multichip_rendering_mode" Value="2400001" Itemtype="predefined"/>
+		</PROFILE>
+	</PROFILESET>
+</FILE>
