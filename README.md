@@ -12,7 +12,8 @@ Pick the guide that matches your target system:
 
 | Guide | Summary |
 |-------|---------|
-| **[Windows 7 32-bit — Game-Only Install](docs/install-windows-7-32bit.md)** | ⭐ Recommended. Automated PowerShell installer that stages the game from your original OEM discs without the cabinet lockdown scripts. Includes migrated MSDE/SQLXML runtimes, decoded database payload, and reboot-resume support. Files are in the [`Win7-GameOnly`](Win7-GameOnly) folder. |
+| **[SQLite Edition (Release V2)](GameOnly_SQLite_Patched/README.md)** | ⭐ Recommended. Standalone installer that installs the game from your OEM discs and runs it on an **embedded SQLite database** — no MSDE, no SQLXML, no `sa` password, no reboot. Files are in the [`GameOnly_SQLite_Patched`](GameOnly_SQLite_Patched) folder. |
+| **[Windows 7 32-bit — Game-Only Install (V1, MSDE)](docs/install-windows-7-32bit.md)** | The original game-only installer using the migrated MSDE/SQL Server 2000 backend. Superseded by the SQLite Edition, but kept for reference and for setups closest to the original cabinet. Files are in the [`Win7-GameOnly`](Win7-GameOnly) folder. |
 | **[Windows XP — Standalone Install](docs/install-windows-xp.md)** | Manual step-by-step clean install on real XP SP3 hardware: registry values, .NET 1.1, manual MSDE setup, and disc installation. |
 | **[Recovery Disc & Virtual Machines](docs/recovery-disc-and-vm.md)** | Notes on the original Windows XPe System Recovery Disc and getting it to boot inside VirtualBox/VMware. |
 
@@ -60,7 +61,8 @@ The disc images can be mounted with [WinCDEMU](https://wincdemu.sysprogs.org/) (
 
 **Working:**
 
-- ✅ Game-only install on Windows 7 32-bit via the automated PowerShell installer
+- ✅ SQLite Edition (V2): game runs on an embedded SQLite database — no MSDE service, no reboot
+- ✅ Game-only install on Windows 7 32-bit via the automated PowerShell installer (V1, MSDE)
 - ✅ Windows 7 32-bit install inside VirtualBox (tested on VirtualBox 6.0.24, VBoxVGA + 3D acceleration)
 - ✅ Game discs install on normal Windows XP after adding the required registry value
 - ✅ .NET Framework 1.1 allows Disc 2 to continue

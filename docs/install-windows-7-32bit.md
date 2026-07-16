@@ -2,6 +2,8 @@
 
 [← Back to main README](../README.md)
 
+> 💡 **A newer installer is available:** the [SQLite Edition (Release V2)](../GameOnly_SQLite_Patched/README.md) installs the game without MSDE/SQL Server — no SQL service, no `sa` password, and no reboot. This V1 MSDE-based guide is kept for reference and for setups closest to the original cabinet.
+
 This release package installs the GlobalVR NFS Underground game/runtime on **Windows 7 32-bit** without running the original cabinet lockdown scripts.
 
 It does not include the game payload. The installer asks for the original OEM Disc 1 and Disc 2, then stages and extracts the required payload locally.

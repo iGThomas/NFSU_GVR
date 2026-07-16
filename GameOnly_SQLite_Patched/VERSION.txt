@@ -1,0 +1,19 @@
+NFSU GlobalVR - SQLite Edition (Release V2)
+Version: 2026-07-17-sqlite-v2
+
+Runs the game on an embedded SQLite database instead of MSDE / SQL Server 2000.
+
+Key behavior:
+- NO MSDE / SQL Server 2000, NO SQLXML 3.0, NO osql import, NO sa rotation, NO reboot.
+- PLUSDE.dll patched (dnlib typeref-swap System.Data.SqlClient -> GvrSqlite) so all DB
+  traffic goes to a bundled provider GvrSqlite.dll -> sqlite3.dll against a seeded game.db.
+- GvrSqlite is a native .NET 1.1 assembly (recompiled on the target with its 1.1 csc;
+  prebuilt 1.1 binary is the fallback). It mirrors the exact SqlClient member surface the
+  game uses, translates the game's stored-proc/SQL to SQLite generically, and fills
+  DataSets so no code above the DB layer changes.
+- Connection string in the encrypted schema is ignored; the db path comes from
+  GVRSQLITE_DB (default C:\GvrPlus\game.db), shared by the cabinet and shell.
+- Validated: patched game booted and ran its DB init against SQLite with zero errors,
+  then reached attract mode. No SQL Server present.
+
+Provider tracing: set env var GVRSQLITE_LOG to log DB calls/exceptions to C:\gvrsqlite.log.
