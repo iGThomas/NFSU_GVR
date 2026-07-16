@@ -84,11 +84,18 @@ http://download.microsoft.com/download/SQLSVR2000/Trial/2000/NT45/EN-US/SQLEVAL.
 
 ## GPU Driver Requirement
 
-A working NVIDIA driver is required for the game to start.
+The game checks for NVIDIA support files at startup. This was originally discovered as a hard
+requirement: testing confirmed the game started on an Acer Aspire 9300 (AMD CPU + NVIDIA GeForce
+Go 6100) only once the NVIDIA video drivers were installed, and it could not be started
+successfully inside a virtual machine.
 
-Testing confirmed the game started on an Acer Aspire 9300 (AMD CPU + NVIDIA GeForce Go 6100) once the NVIDIA video drivers were installed.
+**This is now worked around by the installer.** `Install-LegacyNvidiaCplFiles` in the core
+installer copies the bundled legacy NVIDIA support DLLs (`nvcpl.dll`, `nv4_disp.dll`,
+`nvoglnt.dll`, `nvmctray.dll`, etc.) into `System32` to satisfy that check, so **actual NVIDIA
+hardware is no longer required**. Note this copies support DLLs only — it does *not* install an
+NVIDIA display driver; on real NVIDIA hardware, use the correct driver installer instead.
 
-The game could not be started successfully inside a virtual machine.
+A working Direct3D 9 device is still required.
 
 ## Dongle and Smart Card Notes
 

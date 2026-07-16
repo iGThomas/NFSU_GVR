@@ -55,11 +55,16 @@ itself on the target with the machine's .NET 1.1 `csc` (prebuilt 1.1 binary is t
 fallback), and the seeded db is installed to `C:\GvrPlus\game.db` with `GVRSQLITE_DB`
 set. Launch `GVRBoot.exe` (full cabinet) or `Underground\UndergroundGVR.exe`.
 
-Still requires a working Direct3D 9 / NVIDIA display, same as the original game.
+Still requires a working Direct3D 9 device, same as the original game. It does **not**
+require NVIDIA hardware — the required legacy NVIDIA support DLLs (`nvcpl.dll`,
+`nv4_disp.dll`, `nvoglnt.dll`, etc.) are copied into `System32` by the installer.
 
 ## Diagnostics
 The provider is silent by default. Set env var `GVRSQLITE_LOG` (to anything) to trace
 every DB call + exception to `C:\gvrsqlite.log`.
 
 ## Revert
-Each replaced `PLUSDE.dll` is backed up as `PLUSDE.dll.sqlbak`.
+Before it is patched, each `PLUSDE.dll` is backed up as `PLUSDE.dll.sqlbak`. The backup is
+only written when no `.sqlbak` already exists, so the very first (original, unpatched) DLL is
+preserved across re-runs rather than being overwritten by an already-patched copy. To revert,
+restore each `PLUSDE.dll.sqlbak` over its `PLUSDE.dll`.
