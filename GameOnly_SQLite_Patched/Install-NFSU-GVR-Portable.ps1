@@ -393,11 +393,24 @@ function Deploy-Sqlite($ug,$gvrroot,$gvrplus){
     New-Dir (Join-Path $gvrplus "1\lib"); Copy-Item (Join-Path $sd "PLUSDE.dll") (Join-Path $gvrplus "1\lib\PLUSDE.dll") -Force
     # the shared seeded db lives at <GvrPlus>\game.db - the provider derives this from the
     # registry PlusSchemaPath, so no env var / reboot is needed.
-    Copy-Item (Join-Path $sd "game.db") (Join-Path $gvrplus "game.db") -Force
+    #
+    # NEVER clobber an existing game.db. Once the game has run, this file is not seed data any
+    # more - it holds all player and operator state: car configurations (CarConfiguration_NFS1),
+    # leaderboards and best times (GameResult_NFS1), and everything set in the O operator menu
+    # (Settings_NFS1: volume, laps per track, difficulty, free play), plus coin/accounting rows.
+    # Re-running the installer to repair an install used to silently reset all of that.
+    # This matches how the rest of the installer treats an existing game tree: keep it unless
+    # -ForceOverwrite is passed.
+    $dbDst = Join-Path $gvrplus "game.db"
+    if((Test-Path $dbDst) -and -not $ForceOverwrite){
+        Log "  game.db already exists - KEEPING it (scores/settings preserved; -ForceOverwrite resets to the seed)"
+    } else {
+        Copy-Item (Join-Path $sd "game.db") $dbDst -Force
+        Log "  game.db -> $dbDst  (fresh seed)"
+    }
     # belt-and-suspenders: the newer provider derives this from the registry, but the prebuilt
     # fallback (used when the target has no 1.1 csc) reads GVRSQLITE_DB first.
-    [Environment]::SetEnvironmentVariable("GVRSQLITE_DB", (Join-Path $gvrplus "game.db"), "Machine")
-    Log "  game.db -> $(Join-Path $gvrplus 'game.db')  (GVRSQLITE_DB set)"
+    [Environment]::SetEnvironmentVariable("GVRSQLITE_DB", $dbDst, "Machine")
 }
 
 # ===================== batch-file path rewrite ============================

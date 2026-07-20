@@ -108,6 +108,11 @@ fallback). No reboot needed.
 Switches: `-InstallRoot <dir>`, `-ExpandedPayloadRoot <dir>` (skip discs), `-DryRun`,
 `-ForceOverwrite`, `-Disc1Path`/`-Disc2Path`, `-SkipDirectX`, `-SkipDotNet`.
 
+**Re-running the installer keeps your `game.db`.** Once the game has run, that file is no
+longer seed data — it holds your car configurations, leaderboards and best times, and
+everything set in the `O` operator menu. So a repair install preserves it. Pass
+`-ForceOverwrite` if you deliberately want to reset it back to the shipped seed.
+
 The desktop shortcut launches `GvrRoot\UniverShell2.exe` (the frontend). The arcade
 `GVRBoot` chain (dongle/coin/stall monitors + 60s warm-up) is deliberately skipped —
 it isn't needed for home play and its crash monitor spawns no children on a normal PC.
