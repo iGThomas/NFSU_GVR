@@ -294,6 +294,35 @@ the wrong rows.
 statement and every error, and it found the above in about a minute. Screens not yet
 exercised (career, tournaments, operator menu) may still hide more untranslated T-SQL.
 
+### White cars, part two: `CarConfiguration_NFS1` must be seeded
+
+Fixing the `SELECT TOP` translation made the car-configuration query *succeed*, but on a fresh
+install it returned **zero rows** — and the cars were still white. The table has **no seed data
+anywhere in the OEM media**: only the schema and its stored procs.
+
+On a real cabinet the installer runs
+
+```
+UndergroundGVR.exe -initializeplustabledata
+```
+
+which generates **126 rows** (21 `CarType`s × 6 `ConfigType`s) of default per-car configuration —
+body kit, paint, vinyl, decals and so on. The portable installer ships a pre-seeded `game.db`
+and never runs the game, so that step never happened and the table stayed empty. No config
+back means no paint and no vinyl: every car in the car-select screen renders white.
+
+Two separate causes, same symptom — both are required:
+
+| | |
+|---|---|
+| `SELECT TOP n` untranslated | the query *threw*, so the shell got nothing |
+| `CarConfiguration_NFS1` empty | the query *succeeds* and returns nothing |
+
+The 126 rows are now baked into the shipped `game.db`. They are deterministic (only the
+generated ids and timestamps vary between runs), so they were dumped once to
+`Tools/carconfig_defaults.sql` and are re-applied by `Build-GvrSqliteDb.py` on every rebuild.
+To regenerate them, run the switch above against a fresh install and dump the table.
+
 ### Free play (`Settings_NFS1.FreePlay`)
 
 The stock cabinet value is **`0`** — this is arcade software, so an operator expects the coin
