@@ -345,6 +345,49 @@ with the GVR Plus operator tables (bulk-loaded from `PlusScripts\a+*.tbl`), a sy
 free-play cabinet, and the bogus duplicate `GvrGame` row removed. The shipped `game.db` has
 this already done.
 
+### Finishing a race restarts it instead of returning to the menu
+
+**Symptom.** The race ends, `UndergroundGVR.exe` exits, and instead of going back to the
+UniverShell2 menu the *same race* launches again, indefinitely.
+
+**Cause.** The `GlobalVariable` table shipped **empty**. When the game exits, the shell reads
+exactly three values to decide what to do next:
+
+```sql
+SELECT * FROM GlobalVariable WHERE VariableName='gCareerRaceSuccessful'
+                                               ='gCurrentCareerRace'
+                                               ='gDbPropagateError'
+```
+
+With no rows it can never conclude that the career race succeeded, and its fallback is to
+launch the race again. Two separate defects combined here:
+
+1. **The seed rows were never loaded.** The 29 `Exec SP_InsertOrUpdate_GlobalVariable
+   <id>,'<name>','<value>',...` statements live inline in the *schema* dump
+   `nfscabinet.txt` (~line 27965), not in `nfscabinet_Content.txt` where the rest of the seed
+   data lives. Only this one table may be seeded from that file — every other
+   `EXEC SP_Insert_*` occurrence in it is a call *inside a stored-procedure body*
+   (`@parameter` placeholders), and importing those wholesale is what originally produced the
+   bogus duplicate `GvrGame` row.
+2. **`GlobalVariable` has no primary key.** It is one of only two tables in the 93-table
+   schema without one — the OEM DDL declares it plain `bigint NOT NULL`, because on SQL
+   Server the upsert lives inside `SP_InsertOrUpdate_GlobalVariable`, which keys on
+   `GlobalVariableId`. The SQLite provider maps `InsertOrUpdate` to `INSERT OR REPLACE`,
+   which without a conflict target **appends a duplicate** instead of updating, after which
+   the shell reads the stale first row. A `UNIQUE INDEX` on `GlobalVariableId` restores the
+   stored procedure's semantics.
+
+**Why nothing ever wrote the value either.** `gvrsqlite.log` showed `GlobalVariable` read 173
+times and written **0** times. The shell writes through the ADO.NET `Fill` → modify `DataRow`
+→ `Update` pattern (the same shape as its `CabinetStatus_NFS1` traffic); with zero rows there
+is no `DataRow` to modify, so no `UPDATE` is ever generated. Seeding the table unblocks the
+write path as well as the read.
+
+Useful detail while diagnosing: there were **no SQL errors at all** in the log (the
+`SELECT TOP` → `LIMIT` translation was working), and `GameResult_NFS1` and `PlusTransaction`
+were each written once per race — so the race itself was recording correctly the whole time.
+The shipped `game.db` has the rows and the index already.
+
 ## Windows 10 / 11 (x64) Notes
 
 - **The registry must land in `WOW6432Node`.** The game is 32-bit and reads `HKLM\SOFTWARE`
