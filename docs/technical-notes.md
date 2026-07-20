@@ -294,6 +294,23 @@ the wrong rows.
 statement and every error, and it found the above in about a minute. Screens not yet
 exercised (career, tournaments, operator menu) may still hide more untranslated T-SQL.
 
+### Free play (`Settings_NFS1.FreePlay`)
+
+The stock cabinet value is **`0`** — this is arcade software, so an operator expects the coin
+door to charge for each play. On a home install there is no coin mechanism and no dongle, so
+with free play off the frontend asks for credits it can never receive and the game appears
+broken.
+
+The shipped `game.db` therefore sets `Settings_NFS1.FreePlay = 1` **deliberately**. It is the
+only value that differs from the stock settings row (everything else in `Settings_NFS1` is
+untouched). Press **`O`** in the frontend to open the operator menu and switch it back off for
+genuine coin-op behaviour.
+
+Note this is *separate* from the free-play **cabinet billing** rows (`GvrCabinet[0]` +
+`CabinetBilling[0]`) that the provisioning step synthesises: those satisfy the pricing lookup
+so the frontend stops looping, while `FreePlay` is the operator toggle the game actually
+checks before it will start a game. Both are needed.
+
 Related: the frontend also **hangs in a pricing-init loop** unless `game.db` is provisioned
 with the GVR Plus operator tables (bulk-loaded from `PlusScripts\a+*.tbl`), a synthesised
 free-play cabinet, and the bogus duplicate `GvrGame` row removed. The shipped `game.db` has

@@ -83,6 +83,17 @@ pillarboxed. (Generic wrappers like dgVoodoo2/DXVK only scale output — they ca
 a projection. ThirteenAG's retail NFSU WidescreenFix loads but is inert here: only
 9 of its 42 byte patterns match this recompiled build.)
 
+## Free play is ON by default
+The shipped `game.db` has `Settings_NFS1.FreePlay = 1`. **This is deliberate and is the only
+value changed from the stock cabinet settings row.**
+
+The stock value is `0` because this is arcade software — an operator wants the coin door to
+charge for each play. A home install has no coin mechanism and no dongle, so with free play
+off the frontend asks for credits it can never receive, and the game looks broken.
+
+It is still a normal operator setting: press **`O`** in the frontend to open the operator menu
+and switch it back off if you want genuine coin-op behaviour.
+
 ## Install (elevated Administrator PowerShell)
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted

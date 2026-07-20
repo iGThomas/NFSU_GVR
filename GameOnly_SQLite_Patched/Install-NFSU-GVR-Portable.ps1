@@ -525,7 +525,7 @@ function Make-Shortcut($ug,$gvrroot){
     $exe=Join-Path $gvrroot "UniverShell2.exe"
     if(!(Test-Path $exe)){ $exe=Join-Path $ug "UndergroundGVR.exe" }
     if(!(Test-Path $exe)){ return }
-    $lnk=Join-Path ([Environment]::GetFolderPath("DesktopDirectory")) "NFS Underground (SQLite).lnk"
+    $lnk=Join-Path ([Environment]::GetFolderPath("DesktopDirectory")) "NFS Underground GVR.lnk"
     Log "shortcut -> $exe"; if($DryRun){return}
     $ws=New-Object -ComObject WScript.Shell; $s=$ws.CreateShortcut($lnk); $s.TargetPath=$exe; $s.WorkingDirectory=(Split-Path -Parent $exe); $s.Save()
 }

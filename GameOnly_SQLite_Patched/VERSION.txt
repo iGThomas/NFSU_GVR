@@ -28,3 +28,9 @@ Resolution is configurable via gvr_settings.ini + Tools\Apply-GvrSettings.ps1 -
 neither EXE has any resolution setting, so the constants are rewritten in place
 from a pristine .orig backup. Use a 4:3 mode: the engine never adapts its
 projection to the render aspect, so 16:9 stretches the image.
+
+Free play: the shipped game.db sets Settings_NFS1.FreePlay = 1 deliberately. The stock
+cabinet value is 0 (an operator wants the coin door to charge); a home install has no
+coin mechanism or dongle, so with it off the frontend asks for credits it can never
+receive. It is the only value changed from the stock settings row, and it remains a
+normal operator setting - press O in the frontend to switch it back off.

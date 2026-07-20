@@ -75,10 +75,10 @@ The disc images can be mounted with [WinCDEMU](https://wincdemu.sysprogs.org/) (
 
 **Not working yet:**
 
-- ❌ Reliable startup inside a virtual machine on the Windows XP route (Windows 7 route works — see above)
 - ❌ Full original cabinet behavior
 - ❌ Career mode without smart card reader
 - ❌ Complete understanding of all dongle-related checks
+- ❌ Make carreer mode work without GVR Tournament cards
 - ❌ **True 16:9 widescreen.** The engine never adapts its projection to the render aspect, so a
   widescreen resolution stretches the image. Use a 4:3 mode (1280×960) for correct geometry.
   ThirteenAG's retail NFSU WidescreenFix loads but is inert here — only 9 of its 42 byte
