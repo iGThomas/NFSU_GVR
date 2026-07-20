@@ -1,0 +1,4 @@
+LIBRARY GVRSCR28
+EXPORTS
+    CreateGVRStorageDeviceImp
+    ReleaseGVRStorageDeviceImp

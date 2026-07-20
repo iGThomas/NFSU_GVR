@@ -314,6 +314,59 @@ function Deploy-Dxvk($ug){
     # ------------------------------------------------------------------------------------
 }
 
+function Deploy-CardEmulator($ug,$gvrroot){
+    # ---- Software smart card + reader (enables CAREER mode) -----------------------------
+    # A GlobalVR cabinet has a PC/SC smart card reader and the player owns a Players' Card.
+    # Career mode is the card's whole reason to exist: your name, the career car you keep,
+    # and the upgrades bought between races all live ON the card (GamePlayerInfo.NFS).
+    # With no reader the shell greys CAREER out as "No Smart Card Reader".
+    #
+    # There are TWO independent gates, and both must be satisfied:
+    #
+    #  1. the CARD - PLUSDE loads GVRSCR28.dll through GVRStorageDevice (LoadLibraryA +
+    #     GetProcAddress "CreateGVRStorageDeviceImp") and calls a 15-slot vtable on the
+    #     object it returns. Our GVRSCR28.dll implements that ABI and serves an 8 KB card
+    #     image, so the shell sees a real PLAYER card it can read, write and register.
+    #
+    #  2. the READER - ScriptPlug-Ins\SCDiagnostic.dll does NOT go through that abstraction.
+    #     It calls PCSCSCR2.dll!PCSC_GetReaderNames -> SCardListReadersA against the real
+    #     Windows smart card service, gets SCARD_E_NO_READERS_AVAILABLE, and the shell then
+    #     writes CabinetStatus_NFS1.SmartCardReaderStatus = 0 and greys CAREER out no matter
+    #     how well the card behaves. Our PCSCSCR2.dll answers "one reader present".
+    #
+    # Both DLLs are game-local: nothing is installed on the host and no Windows virtual smart
+    # card is required. Originals are kept as *.real-hardware, so a machine that really does
+    # have a GlobalVR reader can be restored by putting those two files back.
+    #
+    # Career progress persists in GvrPlus\GvrCardEmu.card (deliberately next to game.db, so
+    # the shell in GvrRoot and the game in Underground share one card) and the shell also
+    # backs the image up into CareerData_NFS1.GamePlayerInfo, keyed by CardId.
+    # F9 forces a card eject; see docs/technical-notes.md.
+    $src = Join-Path $Root "CardEmu"
+    if(!(Test-Path $src)){ Warn "CardEmu folder not bundled - career mode will stay greyed out (no smart card reader)"; return }
+
+    $pairs = @(
+        @{ name="GVRSCR28.dll"; dirs=@($ug,$gvrroot) },
+        @{ name="PCSCSCR2.dll"; dirs=@($ug,$gvrroot) }
+    )
+    foreach($p in $pairs){
+        $from = Join-Path $src $p.name
+        if(!(Test-Path $from)){ Warn "  $($p.name) missing from CardEmu - skipped"; continue }
+        foreach($d in $p.dirs){
+            if(!(Test-Path $d)){ continue }
+            $dst = Join-Path $d $p.name
+            $bak = "$dst.real-hardware"
+            if($DryRun){ Log "DRY RUN would install software $($p.name) in $d"; continue }
+            # keep the genuine driver exactly once - never overwrite an existing backup with
+            # our own DLL on a re-install
+            if((Test-Path $dst) -and !(Test-Path $bak)){ Copy-Item -LiteralPath $dst -Destination $bak -Force }
+            Copy-Item -LiteralPath $from -Destination $dst -Force
+            Log "  software card layer: $($p.name) -> $d"
+        }
+    }
+    Log "  CAREER mode enabled (virtual card + virtual reader, no hardware, nothing installed on the host)"
+}
+
 function Disable-GammaSet($gvr){
     # ---- Cabinet display-calibration tool (Win10/11 / any non-NVIDIA-XP host) -----------
     # UniverShell2 shells out to Gvr\system\GammaSet.exe -gammasetting 0 a few seconds after
@@ -610,6 +663,7 @@ if(!$DryRun){
 Ensure-DirectX
 Deploy-Dxvk $UG
 Disable-GammaSet $GVR
+Deploy-CardEmulator $UG $GVRROOT
 Deploy-Settings $InstallRoot
 Make-Shortcut $UG $GVRROOT
 

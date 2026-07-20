@@ -1,0 +1,29 @@
+LIBRARY PCSCSCR2
+EXPORTS
+    PCSC_EstablishContext
+    PCSC_GetReaderNames
+    PCSC_GetLastError
+    PCSC_ReleaseContext
+    PCSC_GetCardStatus
+    PCSC_READER_Connect
+    PCSC_READER_Disconnect
+    PCSC_READER_StartSession
+    PCSC_READER_EndSession
+    PCSC_READER_IsCardSwiped
+    PCSC_READER_ReadTracks
+    PCSC_READER_GetMode
+    PCSC_READER_SetToEMV
+    PCSC_READER_SetToISO7816
+    PCSC_READER_SetToSync
+    PCSC_READER_LED1
+    PCSC_READER_LED2
+    PCSC_SCARD_Connect
+    PCSC_SCARD_Disconnect
+    PCSC_SCARD_Transmit
+    PCSC_AToSendBuf
+    PCSC_ByteToOutFormat
+    ISODeocdeForward
+    ISODeocdeReverse
+    JIS2DeocdeForward
+    JIS2DeocdeReverse
+    ?PCSC_READER_LED3@@YGHPAUPCSC_SCMC@@H@Z = PCSC_READER_LED3_impl

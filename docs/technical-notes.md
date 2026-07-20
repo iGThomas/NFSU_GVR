@@ -18,6 +18,7 @@ Reference material discovered while reverse engineering the Global VR installati
 - [UndergroundGVR.exe Command-Line Options (complete)](#undergroundgvrexe-command-line-options-complete)
 - [Resolution and Widescreen](#resolution-and-widescreen)
 - [SQLite Backend: T-SQL Dialect Gaps](#sqlite-backend-t-sql-dialect-gaps)
+- [Smart Card Emulation (enables CAREER without a reader)](#smart-card-emulation-enables-career-without-a-reader)
 - [Windows 10 / 11 (x64) Notes](#windows-10--11-x64-notes)
 - [Cabinet Leftovers Worth Disabling](#cabinet-leftovers-worth-disabling)
 
@@ -125,6 +126,24 @@ Career mode is greyed out due to the absence of a smart card reader.
 | `Q` | Quit |
 | `E` | E-brake |
 | `M` | Reduce song volume / stop music / change song |
+
+### Navigating the career menus on a keyboard
+
+The frontend menus were built for a cabinet's **analog steering wheel**, not a keyboard. The
+selection follows the wheel's *position*, so a digital key press slams the axis to full lock —
+which is why menu navigation feels wrong even though driving is fine.
+
+| Step | Keys |
+|---|---|
+| Move along a row (name entry, menus) | `Numpad 4` (left) / `Numpad 6` (right) — same as steering |
+| Confirm a letter / selection | `Left Arrow` |
+| Move to the next row / advance | `S` (start) |
+| Pick a car, or an upgrade after a race | **hold `Numpad 4` + `Numpad 6` together, then release one** |
+
+That last one is the trick worth knowing: holding both keys centres the axis, and releasing one
+gives a small controlled deflection instead of a full-lock jump, which is the only way to land
+on a specific car or upgrade. It takes a few attempts — keep at it. With a real wheel (or any
+analog axis mapped to steering) this is all immediate.
 
 ## Launch Arguments
 
@@ -387,6 +406,130 @@ Useful detail while diagnosing: there were **no SQL errors at all** in the log (
 `SELECT TOP` → `LIMIT` translation was working), and `GameResult_NFS1` and `PlusTransaction`
 were each written once per race — so the race itself was recording correctly the whole time.
 The shipped `game.db` has the rows and the index already.
+
+### Career mode: `CareerRaceInfo_NFS1` must be seeded
+
+`CareerRaceInfo_NFS1` defines every career race — track, direction, laps, traffic, AI count,
+the goal, and the two reward choices. Both the game and the shell configure each race with
+
+```sql
+SELECT TOP 1 * FROM CareerRaceInfo_NFS1 WHERE CareerNumber = ? AND CareerRaceNumber = ?
+```
+
+so an empty table means career mode has no race to run. As with `CarConfiguration_NFS1`, there
+is **no seed data anywhere on the OEM media** — a cabinet generates it by running
+`UndergroundGVR.exe -initializeplustabledata`, whose `GvrCareerInfoManager::PopulatePLUS` reads
+`Underground\CareerInfo.bin`.
+
+`Tools/Gen-CareerRaceInfo.py` parses that file directly instead (deterministic and reproducible
+on any machine) and emits `careerraceinfo_defaults.sql` — **328 rows = 4 careers × 82 races**.
+
+`CareerInfo.bin` is 132,512 bytes = 328 records × 404:
+
+| off | type | column |
+|-----|------|--------|
+| 0 | int32 | `CareerNumber` (1–4) |
+| 4 | int32 | `CareerRaceNumber` (1–82) |
+| 8 | int32 | `TrackNumber` (1001–1308) |
+| 12 | int32 | `TrackDirection` |
+| 16 | int32 | `LapCount` |
+| 20 | int32 | `TrafficDensity` |
+| 24 | int32 | `AICarCount` |
+| 28 | int32 | `RequirementType` |
+| 32 | int32 | `RequirementValue` (seconds) |
+| 36 | int32 | `RewardType` |
+| 40 | int32 | `RewardCategory` |
+| 44 | char[16] | `RaceDesc` (`Circuit` / `Sprint` / `Drag` …) |
+| 60 | char[64] | `TrackDesc` |
+| 124 | char[128] | `GoalDesc` |
+| 252 | char[48] | `RewardTitle` |
+| 300 | char[48] | `RewardDesc1` |
+| 348 | char[48] | `RewardDesc2` |
+| 396 | int32 | `Choice1` |
+| 400 | int32 | `Choice2` |
+
+The mapping was verified rather than assumed: record 0 has `LapCount=3` against goal text
+*"…3 laps…"* and `RequirementValue=225` = exactly **3:45**; record 1 has `150` = **2:30**.
+
+## Smart Card Emulation (enables CAREER without a reader)
+
+Career mode is the card's whole reason to exist — your name, the career car you keep, and the
+upgrades bought between races all live **on the card** (`GamePlayerInfo.NFS`). Without a
+GlobalVR PC/SC reader the shell greys CAREER out as *"No Smart Card Reader"*.
+
+`src/GvrCardEmu/` implements both halves in software. Nothing is installed on the host: two
+DLLs are dropped into the game folder, and the originals are kept as `*.real-hardware`.
+
+**There are two independent gates, and both must be satisfied** — this is the part that is easy
+to get wrong, because a perfect virtual card alone changes nothing:
+
+| our DLL | replaces | answers |
+|---|---|---|
+| `GVRSCR28.dll` | the reader driver | the **card** — present, PLAYER type, header read/write, persisted |
+| `PCSCSCR2.dll` | the PC/SC layer | **"does a reader exist?"** — the gate that greys out CAREER |
+
+### Gate 1 — the card
+
+`PLUSDE.dll` hardcodes the name `GVRSCR28.dll` and hands it to
+`GVRStorageDevice::Initialize`, which only does `LoadLibraryA` + `GetProcAddress`
+(`CreateGVRStorageDeviceImp`) and then calls through the returned object's vtable. The factory
+is `__cdecl` with no args and returns a **0x408-byte object**: vptr at +0, `char name[0x400]`
+at +4 (the facade `strcpy`s it out), state at +0x404. The vtable is **15 `__thiscall` slots**:
+`Initialize(__int64)`, `Shutdown`, `IsPresent`, `GetStatus(int&)`, `Connect`, `Disconnect`,
+`GetId(__int64*)`, `GetType`, `GetSize`, `GetManufacturerInfo`, `Format`, `SetAccessIndicator`,
+`Read(off,len,dst)`, `Write`, `ReadMagStripe`. `0` = success. `GVRSDType`: **0 = PLAYER**,
+1 = OPERATOR, 2 = DONGLE, 3 = HOURLY.
+
+### Gate 2 — the reader
+
+`ScriptPlug-Ins\SCDiagnostic.dll` bypasses all of that and imports four functions from
+`PCSCSCR2.dll` — `PCSC_EstablishContext`, `PCSC_GetReaderNames`, `PCSC_GetLastError`,
+`PCSC_ReleaseContext`. `PCSC_GetReaderNames` calls `SCardListReadersA` against the **real
+Windows smart card service**; with no reader that returns `0x8010002E`
+(`SCARD_E_NO_READERS_AVAILABLE`), the shell writes
+`CabinetStatus_NFS1.SmartCardReaderStatus = 0`, and CAREER stays greyed out no matter how well
+the card behaves.
+
+`SmartCardReaderStatus` is therefore an **output** of that probe — editing it in SQL does
+nothing — but it is the best headless diagnostic there is: watch it flip 0 → 1.
+
+Every `PCSCSCR2` export is `__stdcall` taking one `PCSC_SCMC*`:
+
+| off | field |
+|---|---|
+| +0x000 | `SCARDCONTEXT hContext` |
+| +0x004 | `SCARDHANDLE hCard` |
+| +0x008 | `LONG lastError` |
+| +0x00C | `char errorMsg[256]` |
+| +0x110 | `DWORD readerCount` |
+| +0x114 | `char readerNames[][0x80]` |
+
+### Saving
+
+The card image persists to `GvrPlus\GvrCardEmu.card` — next to `game.db` on purpose, because
+the shell (`GvrRoot`) and the game (`Underground`) each load their own copy of the DLL and
+would otherwise get a private card. The shell additionally backs the image up into
+`CareerData_NFS1.GamePlayerInfo`, keyed by `CardId`, which is the stock cabinet behaviour.
+
+`Header.PlayerInfo` on the card: `CardType` @0, `CardId` @1, `PlayerId` @9, `FirstName` @17,
+`LastName` @27, `Nickname` @37, `Email` @47, `MembershipLevel` @97, `Activated` @98,
+`Registered` @99, `GameList.Game[8]` @132 (8 × 12).
+
+### Card removal
+
+The shell sometimes shows *"PLEASE REMOVE PLAYER'S CARD"* and waits for the card to actually
+go away — it polls `GetStatus` until bit 0 clears. There is **no explicit eject signal** to
+trigger on (verified across 3,848 logged calls: `SetAccessIndicator` is only ever called with
+0, `Format`/`ReadMagStripe` never, and every long `GetStatus`-only stretch follows a plain
+`Disconnect` — including idle attract waits of 279 s, so a timeout alone is useless).
+
+The emulator therefore ejects when **a write has happened since the last eject** *and* there
+has been **no card I/O for `GVRCARD_AUTOEJECT` ms** (default 2500) — i.e. the shell saved the
+session and then went quiet. The card reappears after `GVRCARD_EJECTMS` ms (default 2000).
+The "write since last eject" condition is what stops it firing repeatedly while idle.
+**F9** forces an eject manually at any time.
+
+Diagnostics: `GvrPlus\GvrCardEmu.log` records every call made to the card.
 
 ## Windows 10 / 11 (x64) Notes
 
