@@ -1,19 +1,30 @@
-NFSU GlobalVR - SQLite Edition (Release V2)
-Version: 2026-07-17-sqlite-v2
+NFSU GlobalVR - Portable SQLite Edition (Release V2)
+Version: 2026-07-20-portable-v2
 
-Runs the game on an embedded SQLite database instead of MSDE / SQL Server 2000.
+Installs into a user-chosen folder with the GVR folders nested inside it:
+  <ROOT>\Underground\  +  <ROOT>\Underground\GVR\{GvrRoot,GvrPlus,Gvr}
 
-Key behavior:
-- NO MSDE / SQL Server 2000, NO SQLXML 3.0, NO osql import, NO sa rotation, NO reboot.
-- PLUSDE.dll patched (dnlib typeref-swap System.Data.SqlClient -> GvrSqlite) so all DB
-  traffic goes to a bundled provider GvrSqlite.dll -> sqlite3.dll against a seeded game.db.
-- GvrSqlite is a native .NET 1.1 assembly (recompiled on the target with its 1.1 csc;
-  prebuilt 1.1 binary is the fallback). It mirrors the exact SqlClient member surface the
-  game uses, translates the game's stored-proc/SQL to SQLite generically, and fills
-  DataSets so no code above the DB layer changes.
-- Connection string in the encrypted schema is ignored; the db path comes from
-  GVRSQLITE_DB (default C:\GvrPlus\game.db), shared by the cabinet and shell.
-- Validated: patched game booted and ran its DB init against SQLite with zero errors,
-  then reached attract mode. No SQL Server present.
+Relocatable because the game learns its locations from the registry (Ini,
+PlusSchemaPath x2, PublicKeyPath, GVRCrashMonitor Prog0x path) which this installer
+emits at the chosen paths; UniverShell2.exe's hardcoded C:\gvrRoot strings are dead
+editor constants (proven via Ghidra: zero xrefs); and the SQLite provider derives
+game.db from the registry PlusSchemaPath so it needs no env var. No MSDE / SQL Server
+/ SQLXML, no cabinet-lockdown Run keys, no fixed C:\, no system32 dependency
+(runtime DLLs + patched engine + provider are placed app-local beside the EXEs).
 
-Provider tracing: set env var GVRSQLITE_LOG to log DB calls/exceptions to C:\gvrsqlite.log.
+Provider is compiled on the target with the machine's .NET 1.1 csc (prebuilt binary
+is the fallback). Disc-based (asks for OEM Disc 1 / Disc 2) or -ExpandedPayloadRoot.
+Provider tracing: env var GVRSQLITE_LOG=1 -> gvrsqlite.log (Vista+ redirects it to
+%LOCALAPPDATA%\VirtualStore\gvrsqlite.log). Grep it for 'prepare FAIL': untranslated
+T-SQL fails at prepare time and silently returns zero rows with no in-game error.
+
+Win10/11 (x64): registry also imported into WOW6432Node (via SysWOW64\reg.exe); real
+.NET 1.1 SP1 installed via slipstream (plain dotnetfx = MSI 1603, and CLR 2.0
+redirection AVs inside PLUSDE's native C++ EH); app-local DXVK d3d9.dll caps the
+framerate-tied physics at 60fps (game side only); cabinet GammaSet.exe disabled
+(its rundll32 NvCpl.dll call pops a RunDLL error on 64-bit Windows).
+
+Resolution is configurable via gvr_settings.ini + Tools\Apply-GvrSettings.ps1 -
+neither EXE has any resolution setting, so the constants are rewritten in place
+from a pristine .orig backup. Use a 4:3 mode: the engine never adapts its
+projection to the render aspect, so 16:9 stretches the image.

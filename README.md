@@ -12,7 +12,7 @@ Pick the guide that matches your target system:
 
 | Guide | Summary |
 |-------|---------|
-| **[SQLite Edition (Release V2)](GameOnly_SQLite_Patched/README.md)** | ⭐ Recommended. Standalone installer that installs the game from your OEM discs and runs it on an **embedded SQLite database** — no MSDE, no SQLXML, no `sa` password, no reboot. Files are in the [`GameOnly_SQLite_Patched`](GameOnly_SQLite_Patched) folder. |
+| **[SQLite Edition (Release V2)](GameOnly_SQLite_Patched/README.md)** | ⭐ Recommended. Standalone installer that installs the game from your OEM discs into **any folder you choose** and runs it on an **embedded SQLite database** — no MSDE, no SQLXML, no `sa` password, no reboot, no fixed `C:\` paths. Runs on **Windows XP → Windows 11 (x64)**. Configurable resolution via `gvr_settings.ini`. Files are in the [`GameOnly_SQLite_Patched`](GameOnly_SQLite_Patched) folder. |
 | **[Windows 7 32-bit — Game-Only Install (V1, MSDE)](docs/install-windows-7-32bit.md)** | The original game-only installer using the migrated MSDE/SQL Server 2000 backend. Superseded by the SQLite Edition, but kept for reference and for setups closest to the original cabinet. Files are in the [`Win7-GameOnly`](Win7-GameOnly) folder. |
 | **[Windows XP — Standalone Install](docs/install-windows-xp.md)** | Manual step-by-step clean install on real XP SP3 hardware: registry values, .NET 1.1, manual MSDE setup, and disc installation. |
 | **[Recovery Disc & Virtual Machines](docs/recovery-disc-and-vm.md)** | Notes on the original Windows XPe System Recovery Disc and getting it to boot inside VirtualBox/VMware. |
@@ -62,6 +62,10 @@ The disc images can be mounted with [WinCDEMU](https://wincdemu.sysprogs.org/) (
 **Working:**
 
 - ✅ SQLite Edition (V2): game runs on an embedded SQLite database — no MSDE service, no reboot
+- ✅ **Windows 11 (x64) on real hardware** — full install, frontend and racing (registry into `WOW6432Node`, real .NET 1.1 SP1 via slipstream, 60 fps cap via app-local DXVK)
+- ✅ Installs to **any folder**; nothing is written outside it except a handful of registry keys
+- ✅ Frontend car liveries, leaderboards and best times (needed a `SELECT TOP` → `LIMIT` fix in the SQLite shim)
+- ✅ Configurable resolution (`gvr_settings.ini`) — the stock 800×600 is not a hard limit
 - ✅ Game-only install on Windows 7 32-bit via the automated PowerShell installer (V1, MSDE)
 - ✅ Windows 7 32-bit install inside VirtualBox (tested on VirtualBox 6.0.24, VBoxVGA + 3D acceleration)
 - ✅ Game discs install on normal Windows XP after adding the required registry value
@@ -75,6 +79,10 @@ The disc images can be mounted with [WinCDEMU](https://wincdemu.sysprogs.org/) (
 - ❌ Full original cabinet behavior
 - ❌ Career mode without smart card reader
 - ❌ Complete understanding of all dongle-related checks
+- ❌ **True 16:9 widescreen.** The engine never adapts its projection to the render aspect, so a
+  widescreen resolution stretches the image. Use a 4:3 mode (1280×960) for correct geometry.
+  ThirteenAG's retail NFSU WidescreenFix loads but is inert here — only 9 of its 42 byte
+  patterns match this recompiled build. See [Technical Notes](docs/technical-notes.md#resolution-and-widescreen).
 
 ---
 

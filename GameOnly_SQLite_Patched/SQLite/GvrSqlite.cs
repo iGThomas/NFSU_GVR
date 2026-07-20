@@ -143,13 +143,38 @@ namespace GvrSqlite
             }
             if (path == null || path.Length == 0)
             {
-                // deployment default installed by Deploy-GvrSqlite.ps1 (shared by
-                // the cabinet + shell); used even if GVRSQLITE_DB wasn't inherited.
+                // relocation-aware: derive the shared db from the game's own registry
+                // PlusSchemaPath (<GvrPlus>\1\schema\...), so it works at any install
+                // location without an env var. Cabinet + shell resolve the same file.
+                string reg = DbFromRegistry();
+                if (reg != null) return reg;
                 if (System.IO.File.Exists("C:\\GvrPlus\\game.db")) return "C:\\GvrPlus\\game.db";
                 string dir = System.IO.Path.GetDirectoryName(typeof(GvrConnection).Assembly.Location);
                 path = System.IO.Path.Combine(dir, "game.db");
             }
             return path;
+        }
+
+        private static string DbFromRegistry()
+        {
+            try
+            {
+                Microsoft.Win32.RegistryKey k = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\\Gvr\\Plus\\1.1\\Cabinet");
+                if (k == null) return null;
+                object sp = k.GetValue("PlusSchemaPath");
+                k.Close();
+                if (sp == null) return null;
+                string dir = System.IO.Path.GetDirectoryName(sp.ToString()); // <GvrPlus>\1\schema
+                if (dir == null) return null;
+                dir = System.IO.Path.GetDirectoryName(dir);                  // <GvrPlus>\1
+                if (dir == null) return null;
+                dir = System.IO.Path.GetDirectoryName(dir);                  // <GvrPlus>
+                if (dir == null) return null;
+                string cand = System.IO.Path.Combine(dir, "game.db");
+                if (System.IO.File.Exists(cand)) return cand;
+            }
+            catch { }
+            return null;
         }
 
         public void Open()
@@ -567,7 +592,59 @@ namespace GvrSqlite
             s = s.Replace("dbo.", "");
             // GETDATE() -> datetime('now')
             s = ReplaceCI(s, "GETDATE()", "datetime('now')");
+            // SELECT TOP n -> ... LIMIT n
+            s = TopToLimit(s);
             return s;
+        }
+
+        // T-SQL "SELECT TOP n ..." has no SQLite equivalent - SQLite spells it as a trailing
+        // "LIMIT n". Without this the statement does not even parse (sqlite reports
+        // near "1": syntax error), Fill throws, and the caller silently gets no rows.
+        // The shell leans on this for every car-configuration lookup
+        // (SELECT TOP 1 * FROM CarConfiguration_NFS1 WHERE ConfigType=.. AND CarType=..),
+        // so with it failing each car in the frontend is drawn with no paint and no vinyl -
+        // i.e. every car is white. Also used by the leaderboard/best-time queries
+        // (GameResult_NFS1) and TempPlayerInfo_NFS1.
+        internal static string TopToLimit(string s)
+        {
+            if (s == null) return s;
+            int i = SkipWs(s, 0);
+            while (i < s.Length && s[i] == '(') i = SkipWs(s, i + 1);
+            if (!IsWordAt(s, i, "SELECT")) return s;
+            int p = SkipWs(s, i + 6);
+            if (IsWordAt(s, p, "DISTINCT")) p = SkipWs(s, p + 8);
+            else if (IsWordAt(s, p, "ALL")) p = SkipWs(s, p + 3);
+            if (!IsWordAt(s, p, "TOP")) return s;
+
+            int numStart = SkipWs(s, p + 3);
+            bool paren = false;
+            if (numStart < s.Length && s[numStart] == '(') { paren = true; numStart = SkipWs(s, numStart + 1); }
+            int numEnd = numStart;
+            while (numEnd < s.Length && char.IsDigit(s[numEnd])) numEnd++;
+            if (numEnd == numStart) return s;            // TOP @var / non-literal - leave alone
+            string n = s.Substring(numStart, numEnd - numStart);
+
+            int end = numEnd;
+            if (paren) { end = SkipWs(s, end); if (end < s.Length && s[end] == ')') end++; }
+            // TOP n PERCENT / WITH TIES have no clean LIMIT equivalent - better to leave the
+            // statement untouched (and fail loudly) than to silently return the wrong rows.
+            if (IsWordAt(s, SkipWs(s, end), "PERCENT")) return s;
+
+            string body = (s.Substring(0, p) + s.Substring(end).TrimStart()).TrimEnd();
+            bool semi = body.EndsWith(";");
+            if (semi) body = body.Substring(0, body.Length - 1).TrimEnd();
+            // don't double-limit if the statement already carries one
+            if (body.ToUpper(CultureInfo.InvariantCulture).IndexOf(" LIMIT ") >= 0) return s;
+            return body + " LIMIT " + n + (semi ? ";" : "");
+        }
+        private static int SkipWs(string s, int i) { while (i < s.Length && char.IsWhiteSpace(s[i])) i++; return i; }
+        private static bool IsWordAt(string s, int i, string word)
+        {
+            if (i < 0 || i + word.Length > s.Length) return false;
+            if (string.Compare(s, i, word, 0, word.Length, true, CultureInfo.InvariantCulture) != 0) return false;
+            int after = i + word.Length;
+            if (after < s.Length && (char.IsLetterOrDigit(s[after]) || s[after] == '_')) return false;
+            return true;
         }
         private static string ReplaceCI(string s, string find, string repl)
         {
