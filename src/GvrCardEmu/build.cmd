@@ -35,6 +35,16 @@ cl /nologo /LD /MT /EHsc /O2 /W3 ^
 
 if errorlevel 1 ( echo BUILD FAILED ^(PCSCSCR2^) & exit /b 1 )
 
+REM GvrCardKey.exe - out-of-process key watcher. In-process keyboard detection does not work
+REM inside UniverShell2 (see the header of GvrCardKey.cpp), so S/F9 are watched from here.
+cl /nologo /MT /EHsc /O2 /W3 ^
+   /Fo:build\key_ /Fd:build\key_ ^
+   GvrCardKey.cpp ^
+   /link /OUT:build\GvrCardKey.exe /SUBSYSTEM:WINDOWS ^
+   user32.lib kernel32.lib
+
+if errorlevel 1 ( echo BUILD FAILED ^(GvrCardKey^) & exit /b 1 )
+
 echo BUILD_OK
-dir /b build\GVRSCR28.dll build\PCSCSCR2.dll
+dir /b build\GVRSCR28.dll build\PCSCSCR2.dll build\GvrCardKey.exe
 endlocal

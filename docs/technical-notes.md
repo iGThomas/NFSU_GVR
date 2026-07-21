@@ -515,6 +515,68 @@ would otherwise get a private card. The shell additionally backs the image up in
 `LastName` @27, `Nickname` @37, `Email` @47, `MembershipLevel` @97, `Activated` @98,
 `Registered` @99, `GameList.Game[8]` @132 (8 × 12).
 
+### Card insertion — and why the intro disappears without it
+
+Attract (including `GvrRoot\video\NFS_Intro.wmv`) only plays while the card slot is **empty**;
+inserting a card is what interrupts it. A permanently-inserted card therefore makes the shell
+jump straight into the player flow at boot and the intro never plays.
+
+So the card starts **out**, and pressing **S (START)** inserts it — which is also the key that
+skips attract, so it is the natural moment. **F9** toggles it manually.
+
+Do **not** try to gate the *reader* the same way. Reporting "no reader" until START greys out
+CAREER permanently: the shell latches reader availability early and never re-checks it, so
+inserting the card afterwards does not bring CAREER back. `IsPresent` and
+`PCSC_GetReaderNames` must always answer yes; only the **card** (`GetStatus` bit 0) comes and
+goes.
+
+#### Key detection must live OUTSIDE the game process
+
+`GvrCardKey.exe` watches the keyboard and signals the shared event. It is launched by the DLL
+and exits with the game. Everything tried *inside* `UniverShell2` failed, several of them
+destructively — do not reintroduce any of it:
+
+| attempted in-process | result |
+|---|---|
+| `GetAsyncKeyState` polling | Fires constantly. `S`, `Numpad 4`, even `F9` read as down with nobody at the keyboard. |
+| `RegisterRawInputDevices` | **Broke the game.** Raw input registration is per-process per-device, so ours displaced the game's own `GVRInputRaw` registration and the shell stopped receiving keys until an alt-tab forced it to re-register. |
+| `WH_KEYBOARD_LL` | Delivered *nothing* — not even deliberately injected test keys, with the hook confirmed installed and the pump thread alive. |
+| subclassing the shell window for `WM_INPUT` | Also nothing. |
+| any hook at all in the game process | Taxes every keystroke; **made the controls feel sticky while racing**, since `S` is also reset-car. |
+
+Two rules for the watcher itself:
+
+* **The hook callback must do no work.** It sits in the path of every keystroke on the
+  machine; doing file I/O there made typing sticky, and Windows silently unhooks a callback
+  that overruns `LowLevelHooksTimeout`. It only sets a flag — the message loop does the rest.
+* **Act only while the game is foreground** (checked by process image name), so typing "s"
+  elsewhere cannot insert the card.
+
+Note on a red herring: the "attract demo presses S itself" reading came from
+`GetAsyncKeyState`, which reflects global key state and cannot attribute a source. Raw input
+shows an ordinary ACPI keyboard throughout, and the rapid repeats are 0.12–0.2 s apart, i.e.
+ordinary key auto-repeat. No device-level filtering is needed.
+
+#### The two processes must share the slot state
+
+The shell (`GvrRoot`) and the game (`Underground`) each load their own copy of the DLL. A
+per-process flag meant the card could be "in" for one and "out" for the other — which is what
+produced *"insert card"* inside career mode. The named event is the single source of truth.
+
+When a process notices the slot changed underneath it, it **must restart its own idle timers**.
+Without that, the process that did not perform the insert still holds an ancient `g_lastIo`,
+the idle test passes immediately, and it ejects the card the instant the other inserts it —
+the two then fight, insert/eject, dozens of times a second. The idle eject additionally
+requires the card to have been in for the full timeout (`g_insertedAt`).
+
+#### The DLL must be pinned
+
+`GVRStorageDevice::Shutdown` calls `FreeLibrary`, and PLUSDE creates/destroys the device
+constantly (42 `Initialize` / 16 `Shutdown` in one short session). Every unload tore down the
+hook and the watcher thread, so no keypress was ever seen. `GetModuleHandleExA` with
+`GET_MODULE_HANDLE_EX_FLAG_PIN` keeps the image — and the card state — alive for the life of
+the process.
+
 ### Card removal
 
 The shell sometimes shows *"PLEASE REMOVE PLAYER'S CARD"* and waits for the card to actually

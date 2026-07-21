@@ -345,9 +345,15 @@ function Deploy-CardEmulator($ug,$gvrroot){
     $src = Join-Path $Root "CardEmu"
     if(!(Test-Path $src)){ Warn "CardEmu folder not bundled - career mode will stay greyed out (no smart card reader)"; return }
 
+    # GvrCardKey.exe is the out-of-process key watcher: the card starts OUT of the slot so the
+    # attract reel / intro plays as it does on a cabinet, and pressing S (START) inserts it.
+    # It has to be a separate process - every in-process method of reading the keyboard either
+    # failed outright or broke the game's own input. The DLL launches it automatically and it
+    # exits with the game. See docs/technical-notes.md.
     $pairs = @(
-        @{ name="GVRSCR28.dll"; dirs=@($ug,$gvrroot) },
-        @{ name="PCSCSCR2.dll"; dirs=@($ug,$gvrroot) }
+        @{ name="GVRSCR28.dll";   dirs=@($ug,$gvrroot) },
+        @{ name="PCSCSCR2.dll";   dirs=@($ug,$gvrroot) },
+        @{ name="GvrCardKey.exe"; dirs=@($ug,$gvrroot) }
     )
     foreach($p in $pairs){
         $from = Join-Path $src $p.name
@@ -358,8 +364,10 @@ function Deploy-CardEmulator($ug,$gvrroot){
             $bak = "$dst.real-hardware"
             if($DryRun){ Log "DRY RUN would install software $($p.name) in $d"; continue }
             # keep the genuine driver exactly once - never overwrite an existing backup with
-            # our own DLL on a re-install
-            if((Test-Path $dst) -and !(Test-Path $bak)){ Copy-Item -LiteralPath $dst -Destination $bak -Force }
+            # our own DLL on a re-install. (GvrCardKey.exe is ours alone, nothing to back up.)
+            if((Test-Path $dst) -and !(Test-Path $bak) -and $p.name -ne "GvrCardKey.exe"){
+                Copy-Item -LiteralPath $dst -Destination $bak -Force
+            }
             Copy-Item -LiteralPath $from -Destination $dst -Force
             Log "  software card layer: $($p.name) -> $d"
         }

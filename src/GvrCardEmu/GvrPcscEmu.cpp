@@ -62,6 +62,24 @@
 // What the cabinet will believe is plugged in.
 static const char kReaderName[] = "GVR Virtual Card Reader 0";
 
+// Shared with GvrCardEmu (our GVRSCR28.dll). The reader must NOT exist until the player
+// presses START: SCDiagnostic's reader probe is part of what decides whether the shell runs
+// its plain attract sequence, so a permanently-present reader is why the intro stopped
+// playing. Signalled = card inserted = reader present.
+#define GVRCARD_EVENT_NAME "Local\\GvrCardEmuInserted"
+#ifndef SCARD_E_NO_READERS_AVAILABLE                 // already in winerror.h on modern SDKs
+#define SCARD_E_NO_READERS_AVAILABLE 0x8010002EL
+#endif
+
+static bool CardInserted()
+{
+    HANDLE h = OpenEventA(SYNCHRONIZE, FALSE, GVRCARD_EVENT_NAME);
+    if (!h) return false;                       // card DLL not loaded yet -> no reader
+    bool on = (WaitForSingleObject(h, 0) == WAIT_OBJECT_0);
+    CloseHandle(h);
+    return on;
+}
+
 static void SetLong(void* p, int off, LONG v)
 {
     *(LONG*)((BYTE*)p + off) = v;
@@ -81,6 +99,11 @@ int __stdcall PCSC_EstablishContext(void* p)
 int __stdcall PCSC_GetReaderNames(void* p)
 {
     if (!p) return 0;
+
+    // ALWAYS report the reader. Gating this on card presence was tried and is wrong: the
+    // shell latches reader availability early, so answering "no readers" at startup greys
+    // out CAREER permanently - inserting the card afterwards does not restore it. The intro
+    // is preserved by leaving the CARD out until START instead (see GvrCardEmu.cpp).
     SetLong(p, OFF_LASTERROR, 0);
     // exactly one reader, in the first 128-byte slot
     *(DWORD*)((BYTE*)p + OFF_READERCOUNT) = 1;
