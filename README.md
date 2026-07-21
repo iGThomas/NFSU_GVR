@@ -72,11 +72,11 @@ The disc images can be mounted with [WinCDEMU](https://wincdemu.sysprogs.org/) (
 - ✅ .NET Framework 1.1 allows Disc 2 to continue
 - ✅ Manual MSDE installation solves part of the database requirement
 - ✅ Game starts on real hardware with compatible NVIDIA drivers
+- ✅ Career mode without smart card reader
 
 **Not working yet:**
 
 - ❌ Full original cabinet behavior
-- ❌ Career mode without smart card reader
 - ❌ Complete understanding of all dongle-related checks
 - ❌ Make carreer mode work without GVR Tournament cards
 - ❌ **True 16:9 widescreen.** The engine never adapts its projection to the render aspect, so a
