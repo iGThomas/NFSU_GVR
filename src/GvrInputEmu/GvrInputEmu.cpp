@@ -30,6 +30,7 @@
 #include <setupapi.h>
 #include <cstdint>
 #include <cstdio>
+#include <intrin.h>   // _ReturnAddress (identify who reads the wheel buffer)
 
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "setupapi.lib")
@@ -43,6 +44,32 @@ static void logf(const char* fmt, ...) {
     va_end(ap);
     fputc('\n', g_log);
     fflush(g_log);
+}
+
+// ------------------------------------------------------------------ host detection
+// This one DLL is dropped into TWO processes that both use the arcade input ABI:
+//   UndergroundGVR.exe  -> the race game (analog wheel + pedals + buttons + gear/camera hooks)
+//   UniverShell2.exe    -> the front-end menu shell (reads the wheel axis to pick menu items)
+// The game-only code (gear-selector / SetGear / camera-cycle patches at fixed 0x40xxxx addresses)
+// must NEVER run in the shell, whose memory map is different. We gate it on the host exe name.
+// (The patches are also byte-verified before applying, so this is belt-and-suspenders.)
+static bool g_is_game  = false;   // host == UndergroundGVR.exe
+static bool g_is_shell = false;   // host == UniverShell2.exe
+
+static void detect_host() {
+    char path[MAX_PATH] = {0};
+    GetModuleFileNameA(nullptr, path, MAX_PATH);
+    const char* base = strrchr(path, '\\'); base = base ? base + 1 : path;
+    g_is_game  = _stricmp(base, "UndergroundGVR.exe") == 0;
+    g_is_shell = _stricmp(base, "UniverShell2.exe")   == 0;
+    logf("host exe = %s  (game=%d shell=%d)", base, g_is_game, g_is_shell);
+}
+
+static void maybe_open_log() {
+    if (g_log || !getenv("GVRINPUT_LOG")) return;
+    char path[MAX_PATH]; DWORD n = GetTempPathA(MAX_PATH, path);
+    strcpy(path + n, "gvrinput_emu.log");
+    g_log = fopen(path, "w");
 }
 
 // ------------------------------------------------------------------ XInput (Xbox)
@@ -198,6 +225,7 @@ static bool patch_jmp(uint32_t at, void** targetPtr) {   // patch `jmp dword ptr
 }
 static void install_gear_hook() {
     if (g_hook_installed) return;
+    if (!g_is_game) return;                   // game-only: never patch fixed addrs in the shell
     if (getenv("GVR_NOGEARHOOK")) return;     // ON by default (the sequential-shifter fix); opt-out
     g_drop_clamp = getenv("GVR_NOCLAMP") != nullptr;
     // Verify the expected original bytes first, so we never patch a different exe build (would crash).
@@ -367,15 +395,16 @@ extern "C" {
 
 // Init(hwnd, buf, name). Returns 0 on success; must set buf+0x30 = 6.
 int GVRInputRawInit(void* /*hwnd*/, void* buf, const char* /*name*/) {
-    if (getenv("GVRINPUT_LOG") && !g_log) {
-        char path[MAX_PATH]; DWORD n = GetTempPathA(MAX_PATH, path);
-        strcpy(path + n, "gvrinput_emu.log");
-        g_log = fopen(path, "w");
-        logf("GVRInputRawInit buf=%p", buf);
-    }
+    maybe_open_log();
+    logf("GVRInputRawInit buf=%p  (game=%d shell=%d)", buf, g_is_game, g_is_shell);
     g_gear = 1;                        // start each race in 1st
-    __try { g_cam_ok = (*(volatile uint8_t*)0x0058f740 == 0x56); }   // verify camera-cycle fn (right exe)
-    __except (EXCEPTION_EXECUTE_HANDLER) { g_cam_ok = false; }
+    // camera-cycle fn only exists in the race exe; verify + gate on host so we never call it in the shell
+    if (g_is_game) {
+        __try { g_cam_ok = (*(volatile uint8_t*)0x0058f740 == 0x56); }
+        __except (EXCEPTION_EXECUTE_HANDLER) { g_cam_ok = false; }
+    } else {
+        g_cam_ok = false;
+    }
     install_gear_hook();               // replace the game's gear-selector so we control the clamp
     load_xinput();
     if (g_ds4 == INVALID_HANDLE_VALUE) {
@@ -394,13 +423,9 @@ int GVRInputRawInit(void* /*hwnd*/, void* buf, const char* /*name*/) {
     return 0;
 }
 
-// Update(buf): fill the game's input buffer from the live controller.
-int GVRInputRawUpdate(void* buf) {
-    if (!buf) return 0;
-    uint8_t* b = (uint8_t*)buf;
-
-    int steer = 128, gas = 0, brake = 0;
-    unsigned ub = 0;                  // unified button flags
+// Read the live controller into (steer, gas, brake, ub). Shared by game + shell paths.
+static const char* read_pad(int& steer, int& gas, int& brake, unsigned& ub) {
+    steer = 128; gas = 0; brake = 0; ub = 0;
     const char* src = "none";
 
     // 1) XInput (Xbox controllers; also DS4 when Steam Input presents it as XInput)
@@ -436,7 +461,130 @@ int GVRInputRawUpdate(void* buf) {
             src = "ds4";
         }
     }
+    return src;
+}
 
+// ---- SHELL keyboard injection (menu buttons) ----------------------------------------------
+// UniverShell2 reads the analog wheel (b+0x00) for game-menu SELECTION, but the action buttons
+// (select / enter-operator / operator-menu arrows) are plain keyboard keys. We inject them with
+// hold-based scan-code SendInput (a DirectInput poll reads current key state each frame, so the
+// key must stay physically down while the pad button is held). Only while the shell is foreground,
+// so this never leaks into the running race game.
+static const struct { WORD vk; WORD scan; } SH_SCANS[] = {
+    {VK_LEFT,0xCB},{VK_RIGHT,0xCD},{VK_UP,0xC8},{VK_DOWN,0xD0},{'S',0x1F},{'O',0x18},
+};
+static WORD sh_scan_of(WORD vk){ for (auto& s : SH_SCANS) if (s.vk == vk) return s.scan; return 0; }
+static void sh_keyevent(WORD vk, bool down) {
+    WORD scan = sh_scan_of(vk);
+    INPUT in = {}; in.type = INPUT_KEYBOARD;
+    in.ki.wVk = vk; in.ki.wScan = (WORD)(scan & 0x7F);
+    in.ki.dwFlags = KEYEVENTF_SCANCODE | ((scan & 0x80) ? KEYEVENTF_EXTENDEDKEY : 0) | (down ? 0 : KEYEVENTF_KEYUP);
+    INPUT in2 = {}; in2.type = INPUT_KEYBOARD; in2.ki.wVk = vk; in2.ki.dwFlags = down ? 0 : KEYEVENTF_KEYUP;
+    INPUT arr[2] = { in2, in };
+    UINT sent = SendInput(2, arr, sizeof(INPUT));
+    logf("  inject vk=0x%X %s scan=0x%X sent=%u/2 err=%lu", vk, down ? "DOWN" : "up", scan, sent, GetLastError());
+}
+struct ShHeld { WORD vk; bool down; };
+static ShHeld g_sh_held[] = { {VK_LEFT},{VK_RIGHT},{VK_UP},{VK_DOWN},{'S'},{'O'} };
+static void sh_hold(WORD vk, bool want) {
+    for (auto& h : g_sh_held) if (h.vk == vk) {
+        if (want && !h.down)      { sh_keyevent(vk, true);  h.down = true; }
+        else if (!want && h.down) { sh_keyevent(vk, false); h.down = false; }
+        return;
+    }
+}
+static void sh_release_all() { for (auto& h : g_sh_held) if (h.down) { sh_keyevent(h.vk, false); h.down = false; } }
+
+static bool shell_is_foreground() {
+    HWND h = GetForegroundWindow(); if (!h) return false;
+    DWORD pid = 0; GetWindowThreadProcessId(h, &pid);
+    bool same = (pid == GetCurrentProcessId());
+    if (g_log) {
+        static DWORD prevpid = 0;
+        if (pid != prevpid) {   // log the foreground process only when it changes
+            char nm[MAX_PATH] = "?";
+            HANDLE p = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+            if (p) { DWORD n = MAX_PATH; QueryFullProcessImageNameA(p, 0, nm, &n); CloseHandle(p); }
+            const char* bn = strrchr(nm, '\\'); bn = bn ? bn + 1 : nm;
+            logf("FG changed: pid=%lu name=%s  same-as-shell=%d", pid, bn, same);
+            prevpid = pid;
+        }
+    }
+    return same;
+}
+
+// ---- SHELL menu path: UniverShell2's NFSControl.dll picks menu items from the wheel axis by ANGLE.
+// Verified from NFSControl.dll @0x231F: it reads buf+0x00 as a SIGNED 16-bit WORD and computes
+//   index = round( ((steer_word + 128) / 256) * itemCount )   (C_e8=128, C_e4=1/256).
+// So the wheel must be a signed word -128 (full left) .. +128 (full right), center 0. We were only
+// writing the low byte, leaving buf+0x01 garbage -> movsx read a huge/negative value (the inverted,
+// hyper-sensitive behavior). Write the full signed word.
+static int shell_update(uint8_t* b) {
+    int steer, gas, brake; unsigned ub;
+    const char* src = read_pad(steer, gas, brake, ub);
+
+    // keyboard Numpad4/6 still step the menu (the original nav), alongside the analog stick
+    if (GetAsyncKeyState(VK_NUMPAD4) & 0x8000) steer = 0;
+    if (GetAsyncKeyState(VK_NUMPAD6) & 0x8000) steer = 255;
+
+    int sw = steer - 128;                // -128 (full left) .. +127 (full right), center 0
+    if (sw >  127) sw =  127;
+    if (sw < -128) sw = -128;
+    *(int16_t*)(b + 0x00) = (int16_t)sw; // analog wheel as a SIGNED WORD -> selection by angle
+    *(int16_t*)(b + 0x02) = 0;
+    *(int16_t*)(b + 0x34) = 0;
+
+    // ---- menu buttons as BUFFER BITS in buf+0x0c. These bit values are the EXACT ones the OEM
+    // GVRInputRaw folded from its DirectInput keyboard (reverse-engineered from the OEM DLL):
+    //   S=0x10(select/card)  O=0x20(operator)  Up=0x10000 Down=0x200 Left=0x400 Right=0x100  E=0x20000
+    // The consumer edge-detects via (buf+0x0c AND NOT buf+0x10), so we publish the previous frame's
+    // mask in buf+0x10.  Keyboard injection was the wrong layer - nothing here reads window keys. ----
+    uint32_t cur = 0;
+    if (ub & UB_CROSS)   cur |= 0x10;       // Cross   -> select / card-swipe ('S')
+    if (ub & UB_OPTIONS) cur |= 0x20;       // Options -> operator menu ('O')
+    if (ub & UB_DUP)     cur |= 0x10000;    // D-pad   -> operator-menu nav (arrow keys)
+    if (ub & UB_DDOWN)   cur |= 0x200;
+    if (ub & UB_DLEFT)   cur |= 0x400;
+    if (ub & UB_DRIGHT)  cur |= 0x100;
+    if (ub & UB_CIRCLE)  cur |= 0x20000;    // Circle  -> e-brake / exit-to-main ('E')
+    static uint32_t prev0c = 0;
+    *(uint32_t*)(b + 0x0c) = cur;           // current button mask
+    *(uint32_t*)(b + 0x10) = prev0c;        // previous mask -> engine edge-detects new presses
+    prev0c = cur;
+    *(uint32_t*)(b + 0x30) = 6;             // keep the interface gate asserted
+
+    if (g_log) {
+        static unsigned prevub = 0xFFFFFFFF;
+        if (ub != prevub) { logf("shell BTN ub=0x%X -> buf+0x0c=0x%X", ub, cur); prevub = ub; }
+        static int fc = 0;
+        if ((fc++ % 60) == 0) logf("shell src=%s steer=%d sw=%d ub=0x%X", src, steer, sw, ub);
+    }
+    return 0;
+}
+
+// Identify (once) the module + offset that calls us, so we know who consumes the wheel byte.
+static void log_caller_once(void* ra) {
+    if (!g_log) return;
+    static bool done = false; if (done) return; done = true;
+    HMODULE m = nullptr;
+    GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                       (LPCSTR)ra, &m);
+    char name[MAX_PATH] = "?"; if (m) GetModuleFileNameA(m, name, MAX_PATH);
+    const char* bn = strrchr(name, '\\'); bn = bn ? bn + 1 : name;
+    logf("Update caller: %s + 0x%X   (ra=%p base=%p)", bn, m ? (unsigned)((uintptr_t)ra - (uintptr_t)m) : 0, ra, m);
+}
+
+// Update(buf): fill the game's input buffer from the live controller.
+int GVRInputRawUpdate(void* buf) {
+    void* ra = _ReturnAddress();
+    if (!buf) return 0;
+    uint8_t* b = (uint8_t*)buf;
+
+    if (g_is_shell) { log_caller_once(ra); return shell_update(b); }   // front-end menu: analog wheel only
+
+    int steer = 128, gas = 0, brake = 0;
+    unsigned ub = 0;                  // unified button flags
+    const char* src = read_pad(steer, gas, brake, ub);
     uint32_t buttons = map_buttons(ub);
 
     // ---- keyboard passthrough: the original driving keys work alongside the pad ----
@@ -449,15 +597,17 @@ int GVRInputRawUpdate(void* buf) {
     if (GetAsyncKeyState('N') & 0x8000) buttons |= 0x00000400; // nitrous
     if (GetAsyncKeyState('E') & 0x8000) buttons |= 0x00020000; // e-brake
     if (GetAsyncKeyState('S') & 0x8000) buttons |= 0x00000010; // start / reset
+    if (GetAsyncKeyState('M') & 0x8000) buttons |= 0x00000100; // music / change song
 
     // ---- camera: R1 (rising edge) cycles the drive-camera POV ----
     // Calls the game's own no-arg "cycle player camera" FUN_0058f740 (uses global player object,
     // self-null-checks). Direct call because keyboard V is suppressed in GVRInputRaw input mode.
     {
-        static bool prevR1 = false;
+        static bool prevR1 = false, prevV = false;
         bool r1 = (ub & UB_R1) != 0;
-        if (r1 && !prevR1 && g_cam_ok) ((void(__cdecl*)())0x0058f740)();
-        prevR1 = r1;
+        bool vk = (GetAsyncKeyState('V') & 0x8000) != 0;             // keyboard V also cycles view
+        if (((r1 && !prevR1) || (vk && !prevV)) && g_cam_ok) ((void(__cdecl*)())0x0058f740)();
+        prevR1 = r1; prevV = vk;
     }
 
     // ---- sequential shifter: Square = up, Triangle = down (manual only; ignored in auto) ----
@@ -520,8 +670,11 @@ void GVRInputRawClearButtonFault(int)         {}
 void GVRInputRawClearStuckButtonFault(int)    {}
 void GVRInputRawIncButtonFault(int)           {}
 
-// ---- exports the game never calls; harmless stubs so the DLL is a complete drop-in ----
-int  GVRInputRawGetCUSBIO(void)               { return 0; }
+// log the first call to an export (to learn the shell's call pattern; game path stays silent-fast)
+#define LOG_FIRST(nm) do { static bool once=false; if(!once){ once=true; logf("EXPORT first call: " nm); } } while(0)
+
+// ---- exports the game never calls; the SHELL may use some of these ----
+int  GVRInputRawGetCUSBIO(void)               { LOG_FIRST("GetCUSBIO"); return 0; }
 void GVRInputRawSleep(void)                   {}
 void GVRInputRawWake(void)                    {}
 int  GVRInputRawClearFFFault(void)            { return 0; }
@@ -529,19 +682,26 @@ int  GVRInputRawIncFFFault(void)              { return 0; }
 int  GVRInputRawIncStuckAxis(int)             { return 0; }
 int  GVRInputRawIncUncalibratedAxis(int)      { return 0; }
 int  GVRInputRawClearUncalibratedAxis(int)    { return 0; }
-int  GVRInputRawGetCardStatus(void)           { return 0; }
+int  GVRInputRawGetCardStatus(void)           { LOG_FIRST("GetCardStatus"); return 0; }
 int  GVRInputRawGetCardShutdown(void)         { return 0; }
 int  GVRInputRawDispenseCard(void)            { return 0; }
-int  GVRInputRawSetInterfaceType(int)         { return 0; }
-int  GVRInputRawSetMode(int)                  { return 0; }
+int  GVRInputRawSetInterfaceType(int t)       { logf("SetInterfaceType(%d)", t); return 0; }
+int  GVRInputRawSetMode(int m)                { logf("SetMode(%d)", m); return 0; }
 int  GVRInputRawResetCalibration(void)        { return 0; }
 int  GVRInputRawResetImmersion(void)          { return 0; }
-int  GVRInputRawReadDrivingValues(void*)      { return 0; }
+// The shell may pull the wheel/pedal state through this instead of Update(). If so, fill the
+// same buffer layout Update() uses so menu selection tracks the stick.
+int  GVRInputRawReadDrivingValues(void* buf)  { LOG_FIRST("ReadDrivingValues"); if(buf) GVRInputRawUpdate(buf); return 0; }
 int  GVRInputRawWriteDrivingValues(void*)     { return 0; }
 
 } // extern "C"
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID) {
-    if (reason == DLL_PROCESS_DETACH) GVRInputRawCleanup();
+    if (reason == DLL_PROCESS_ATTACH) {
+        maybe_open_log();
+        detect_host();
+    } else if (reason == DLL_PROCESS_DETACH) {
+        GVRInputRawCleanup();
+    }
     return TRUE;
 }

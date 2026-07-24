@@ -1,10 +1,14 @@
-# GvrInputEmu — game-controller support for UndergroundGVR.exe
+# GvrInputEmu — game-controller support for UndergroundGVR.exe **and** UniverShell2.exe
 
 A drop-in replacement for the OEM `GVRInputRaw.dll` that lets a normal **Xbox (XInput)** or
 **PS4/DS4 (raw HID)** controller drive the game natively, replacing the arcade cabinet's
 Immersion force-feedback wheel + CUSBIO pedal/button board (which no longer exist).
 
-## What it does (all confirmed working)
+The one DLL is **process-aware**: both the race game (`UndergroundGVR.exe`) and the frontend
+shell (`UniverShell2.exe`) load `GVRInputRaw.dll`, so it detects its host and behaves correctly
+in each. The installer deploys it to **both** `Underground\` and `GVR\GvrRoot\`.
+
+## In the race game (`UndergroundGVR.exe`)
 | Input | Control |
 |---|---|
 | Left stick | **Steering** — analog/progressive (like the wheel, not full-lock) |
@@ -20,16 +24,37 @@ Immersion force-feedback wheel + CUSBIO pedal/button board (which no longer exis
 
 Manual transmission (for the shifter) is the shell's normal `-trans 1` (select Manual in UniverShell2).
 
+## In the frontend menu (`UniverShell2.exe`)
+The shell's menu plug-in (`NFSControl.dll`) reads the arcade wheel + cabinet buttons out of the
+same input buffer. We feed it the pad instead:
+| Input | Menu action | Buffer field |
+|---|---|---|
+| Left stick | **Menu selection by ANGLE** (true analog wheel — a small tilt = one item over, more = further) | `buf+0x00` signed **word** |
+| Cross | **Select** / card-swipe | `buf+0x0c` bit `0x10` |
+| Options | **Operator menu** | bit `0x20` |
+| D-pad ↑/↓/←/→ | **Operator-menu navigation** | bits `0x10000` / `0x200` / `0x400` / `0x100` |
+| Circle | **E-brake / exit-to-main** | bit `0x20000` |
+
+These bit values are the exact ones the OEM DLL folded from its DirectInput keyboard (recovered
+by disassembling the stock DLL's key→bit jump table). The consumer edge-detects via
+`buf+0x0c AND NOT buf+0x10`, so the previous frame's mask is published in `buf+0x10`.
+
+> The card **insert** on Cross is handled by `GvrCardKey.exe` (in `GvrCardEmu`), which ORs a pad
+> Cross rising-edge into the same insert trigger as the `S` key.
+
 ## How it works
-- Reimplements the 15 `GVRInputRaw*` exports the game imports; reads XInput + DS4 HID and fills the
-  game's input buffer (steer = signed byte centered 0, throttle/brake bytes, button bitmask).
-- Two tiny, byte-verified inline patches on the game (fixed base 0x400000, no ASLR), **on by default**
-  (opt-out env `GVR_NOGEARHOOK`):
+- Reimplements the `GVRInputRaw*` exports the game/shell import; reads XInput + DS4 HID and fills the
+  input buffer. **Steering width differs by host** (found by reversing each consumer):
+  the game reads `buf+0x00` as a signed **byte** (`(char)buf[0]-0x80`); the shell reads it as a
+  signed **word** — so the shell path writes the full `int16`, the game path writes the byte.
+- Game-only, byte-verified inline patches (fixed base 0x400000, no ASLR), **on by default**, and
+  gated to `UndergroundGVR.exe` so they never run in the shell (opt-out env `GVR_NOGEARHOOK`):
   - **GearSelector** (0x4276c0) → our sequential value.
   - **SetGear** (0x422910) → forces the player car's engaged gear to our value, bypassing the
     RPM/traction-gated transmission FSM that otherwise rounds it (AI cars untouched).
 - **Camera**: R1 calls the game's own no-arg camera-cycle `FUN_0058f740()` directly (keyboard V is
-  suppressed in this input mode).
+  suppressed in this input mode). Also gated to the game host.
+- Optional logging: set env `GVRINPUT_LOG=1` → `%TEMP%\gvrinput_emu.log`.
 
 Full reverse-engineering notes: `Decompiled/NativeFunctionMap.md` in the project root.
 
@@ -38,5 +63,6 @@ Full reverse-engineering notes: `Decompiled/NativeFunctionMap.md` in the project
 ```
 build.cmd    ->    build\GVRInputRaw.dll
 ```
-Deploy next to `UndergroundGVR.exe` (the installer's `DLLs\GVRInputRaw.dll`). The OEM DLL is kept
-alongside as `GVRInputRaw.dll.orig` — restore it to disable controller support.
+Deploy next to `UndergroundGVR.exe` **and** `UniverShell2.exe` (the installer's
+`DLLs\GVRInputRaw.dll` → copied to both). The OEM DLL is kept alongside as `GVRInputRaw.dll.orig`
+(game) / `GVRInputRaw.dll.oem` (shell) — restore it to disable controller support.

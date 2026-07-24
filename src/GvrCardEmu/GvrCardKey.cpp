@@ -33,9 +33,95 @@
 #include <windows.h>
 #include <stdio.h>
 #include <tlhelp32.h>
+#include <hidsdi.h>
+#include <setupapi.h>
+
+#pragma comment(lib, "hid.lib")
+#pragma comment(lib, "setupapi.lib")
 
 #define EVENT_NAME  "Local\\GvrCardEmuInserted"
 #define MUTEX_NAME  "Local\\GvrCardKeyOnce"
+
+// ---------------------------------------------------------------------------
+// Gamepad support: Cross (PS4) / A (Xbox) inserts the card, exactly like the S key.
+// The pad has no attract-demo problem (the demo never touches the controller), so a plain
+// rising-edge on the button is enough - the same GameIsForeground()/!CardIn() guards in the
+// message loop still gate whether the insert actually happens.
+// ---------------------------------------------------------------------------
+struct XPAD { WORD wButtons; BYTE bLT, bRT; SHORT lx, ly, rx, ry; };
+struct XST  { DWORD packet; XPAD g; };
+typedef DWORD (WINAPI *PFN_XGet)(DWORD, XST*);
+static PFN_XGet pXGet = NULL;
+static void LoadXInput()
+{
+    const char* names[] = { "xinput1_4.dll", "xinput1_3.dll", "xinput9_1_0.dll" };
+    for (int i = 0; i < 3; ++i) { HMODULE h = LoadLibraryA(names[i]);
+        if (h) { pXGet = (PFN_XGet)GetProcAddress(h, "XInputGetState"); if (pXGet) return; } }
+}
+
+static HANDLE     g_ds4 = INVALID_HANDLE_VALUE, g_ds4ev = NULL;
+static OVERLAPPED g_ds4ov = {};
+static bool       g_ds4pending = false;
+static BYTE       g_ds4rpt[78] = {};
+static volatile bool g_ds4cross = false;
+
+static void OpenDs4()
+{
+    GUID hg; HidD_GetHidGuid(&hg);
+    HDEVINFO di = SetupDiGetClassDevs(&hg, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    if (di == INVALID_HANDLE_VALUE) return;
+    SP_DEVICE_INTERFACE_DATA ifd; ifd.cbSize = sizeof(ifd);
+    for (DWORD i = 0; SetupDiEnumDeviceInterfaces(di, NULL, &hg, i, &ifd); ++i) {
+        DWORD need = 0; SetupDiGetDeviceInterfaceDetailA(di, &ifd, NULL, 0, &need, NULL);
+        if (!need) continue;
+        SP_DEVICE_INTERFACE_DETAIL_DATA_A* det = (SP_DEVICE_INTERFACE_DETAIL_DATA_A*)malloc(need);
+        det->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA_A);
+        if (SetupDiGetDeviceInterfaceDetailA(di, &ifd, det, need, NULL, NULL)) {
+            HANDLE h = CreateFileA(det->DevicePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                   NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+            if (h != INVALID_HANDLE_VALUE) {
+                HIDD_ATTRIBUTES at; at.Size = sizeof(at);
+                if (HidD_GetAttributes(h, &at) && at.VendorID == 0x054C) {
+                    g_ds4 = h; free(det); SetupDiDestroyDeviceInfoList(di); return;
+                }
+                CloseHandle(h);
+            }
+        }
+        free(det);
+    }
+    SetupDiDestroyDeviceInfoList(di);
+}
+static void PumpDs4()
+{
+    if (g_ds4 == INVALID_HANDLE_VALUE) return;
+    for (int guard = 0; guard < 16; ++guard) {
+        if (g_ds4pending) {
+            DWORD rd = 0;
+            if (!GetOverlappedResult(g_ds4, &g_ds4ov, &rd, FALSE)) {
+                if (GetLastError() == ERROR_IO_INCOMPLETE) return;
+                g_ds4pending = false;
+            } else {
+                g_ds4pending = false;
+                int o = (g_ds4rpt[0] == 0x11) ? 2 : (g_ds4rpt[0] == 0x01 ? 0 : -1);
+                if (o >= 0 && (DWORD)(o + 6) <= rd) g_ds4cross = (g_ds4rpt[o + 5] & 0x20) != 0;
+            }
+        }
+        ResetEvent(g_ds4ev); memset(g_ds4rpt, 0, sizeof(g_ds4rpt));
+        DWORD rd = 0;
+        if (ReadFile(g_ds4, g_ds4rpt, sizeof(g_ds4rpt), &rd, &g_ds4ov)) {
+            int o = (g_ds4rpt[0] == 0x11) ? 2 : (g_ds4rpt[0] == 0x01 ? 0 : -1);
+            if (o >= 0 && (DWORD)(o + 6) <= rd) g_ds4cross = (g_ds4rpt[o + 5] & 0x20) != 0;
+        } else if (GetLastError() == ERROR_IO_PENDING) { g_ds4pending = true; return; }
+        else return;
+    }
+}
+// True while Cross/A is held (either controller type).
+static bool PadCrossHeld()
+{
+    if (pXGet) { XST xs; if (pXGet(0, &xs) == 0 && (xs.g.wButtons & 0x1000)) return true; }
+    PumpDs4();
+    return g_ds4cross;
+}
 
 static HANDLE g_ev = NULL;
 static HHOOK  g_hook = NULL;
@@ -177,6 +263,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int)
 
     g_ev = CreateEventA(NULL, TRUE, FALSE, EVENT_NAME);   // manual-reset, shared
 
+    // gamepad: Cross / A behaves like the S key (insert the card)
+    LoadXInput();
+    g_ds4ev = CreateEventA(NULL, TRUE, FALSE, NULL);
+    g_ds4ov.hEvent = g_ds4ev;
+    OpenDs4();
+    Log("gamepad: xinput=%s ds4=%s (Cross/A inserts the card)",
+        pXGet ? "yes" : "no", g_ds4 != INVALID_HANDLE_VALUE ? "opened" : "none");
+
     // Raw Input, for the ORIGINATING DEVICE of each keystroke.
     // LLKHF_INJECTED is not enough: the attract demo's synthetic START arrives WITHOUT the
     // injected flag (it comes from a driver-level layer, not SendInput), so the low-level
@@ -216,11 +310,19 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int)
             TranslateMessage(&msg);
             DispatchMessageA(&msg);
         }
+        // gamepad Cross/A -> insert (rising edge), same as the S key
+        {
+            static bool prevCross = false;
+            bool cross = PadCrossHeld();
+            if (cross && !prevCross) { g_wantInsert = 1; Log("pad Cross -> insert request"); }
+            prevCross = cross;
+        }
+
         // perform whatever the hook recorded (event signalling + logging happen HERE)
         if (InterlockedExchange(&g_wantInsert, 0)) {
             if (GameIsForeground() && !CardIn()) {
                 SetEvent(g_ev);
-                Log("S pressed -> card INSERTED");
+                Log("insert (S or pad Cross) -> card INSERTED");
             }
         }
         if (InterlockedExchange(&g_wantToggle, 0)) {
