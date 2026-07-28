@@ -1,5 +1,4 @@
-NFSU GlobalVR - Portable SQLite Edition (Release V2)
-Version: 2026-07-20-portable-v2
+NFSU_GVR_Portable - NFS Underground: GlobalVR as a normal Windows game
 
 Installs into a user-chosen folder with the GVR folders nested inside it:
   <ROOT>\Underground\  +  <ROOT>\Underground\GVR\{GvrRoot,GvrPlus,Gvr}

@@ -1,10 +1,45 @@
-# NFSU GlobalVR — Portable SQLite Edition (Release V2)
+# NFSU_GVR_Portable — NFS Underground: GlobalVR as a normal Windows game
 
 Installs Need for Speed Underground: GlobalVR into **one folder of your choice**,
 with the GVR folders **nested inside it**, running on **SQLite** — no fixed `C:\`
 paths, no MSDE / SQL Server / SQLXML, no cabinet-lockdown boot entries.
 
 Runs on **Windows XP → Windows 11 (x64)**.
+
+**Download the ZIP from the Releases page, extract it anywhere, and run the installer below.**
+You supply the game itself: the original OEM **Disc 1** and **Disc 2**. Nothing from the discs
+is redistributed here — the installer reads them on your machine.
+
+## Install (elevated Administrator PowerShell)
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+cd <this folder>
+.\Install-NFSU-GVR-Portable.ps1
+```
+It asks **where to install**, then for **Disc 1** and **Disc 2**, extracts the game
+into the nested layout, wires the registry, and deploys the SQLite backend. The
+provider is compiled on the target with its .NET 1.1 `csc` (prebuilt binary is a
+fallback). No reboot needed.
+
+Switches: `-InstallRoot <dir>`, `-ExpandedPayloadRoot <dir>` (skip discs), `-DryRun`,
+`-ForceOverwrite`, `-Disc1Path`/`-Disc2Path`, `-SkipDirectX`, `-SkipDotNet`.
+
+**Re-running the installer keeps your `game.db`.** Once the game has run, that file is no
+longer seed data — it holds your car configurations, leaderboards and best times, and
+everything set in the `O` operator menu. So a repair install preserves it. Pass
+`-ForceOverwrite` if you deliberately want to reset it back to the shipped seed.
+
+The desktop shortcut (with the game's icon) launches **`GvrLaunch.exe`** in the install root, which applies
+`gvr_settings.ini` and then starts the frontend. (Starting `GvrRoot\UniverShell2.exe`
+directly still works — you just don't get the `[Display]` window size or the backdrop.)
+The arcade `GVRBoot` chain (dongle/coin/stall monitors + 60s warm-up) is deliberately
+skipped — it isn't needed for home play and its crash monitor spawns no children on a
+normal PC.
+
+At the end the installer **verifies** that `GVRInputRaw.dll`, `GVRInputRaw_oem.dll`,
+`dsound.dll` and `gvr_settings.ini` all landed, and warns per file if one is missing —
+each of those fails in a way that is otherwise hard to attribute (see the warning under
+*Package contents*).
 
 ## Layout it produces
 For an install root you choose (e.g. `D:\Games\NFSU`):
@@ -174,37 +209,6 @@ off the frontend asks for credits it can never receive, and the game looks broke
 
 It is still a normal operator setting: press **`O`** in the frontend to open the operator menu
 and switch it back off if you want genuine coin-op behaviour.
-
-## Install (elevated Administrator PowerShell)
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
-cd <this folder>
-.\Install-NFSU-GVR-Portable.ps1
-```
-It asks **where to install**, then for **Disc 1** and **Disc 2**, extracts the game
-into the nested layout, wires the registry, and deploys the SQLite backend. The
-provider is compiled on the target with its .NET 1.1 `csc` (prebuilt binary is a
-fallback). No reboot needed.
-
-Switches: `-InstallRoot <dir>`, `-ExpandedPayloadRoot <dir>` (skip discs), `-DryRun`,
-`-ForceOverwrite`, `-Disc1Path`/`-Disc2Path`, `-SkipDirectX`, `-SkipDotNet`.
-
-**Re-running the installer keeps your `game.db`.** Once the game has run, that file is no
-longer seed data — it holds your car configurations, leaderboards and best times, and
-everything set in the `O` operator menu. So a repair install preserves it. Pass
-`-ForceOverwrite` if you deliberately want to reset it back to the shipped seed.
-
-The desktop shortcut (with the game's icon) launches **`GvrLaunch.exe`** in the install root, which applies
-`gvr_settings.ini` and then starts the frontend. (Starting `GvrRoot\UniverShell2.exe`
-directly still works — you just don't get the `[Display]` window size or the backdrop.)
-The arcade `GVRBoot` chain (dongle/coin/stall monitors + 60s warm-up) is deliberately
-skipped — it isn't needed for home play and its crash monitor spawns no children on a
-normal PC.
-
-At the end the installer **verifies** that `GVRInputRaw.dll`, `GVRInputRaw_oem.dll`,
-`dsound.dll` and `gvr_settings.ini` all landed, and warns per file if one is missing —
-each of those fails in a way that is otherwise hard to attribute (see the warning under
-*Package contents*).
 
 ## Known behaviour (by design / not worth fixing)
 - **The frontend sits on top while its intro/attract reel plays.** It is cabinet software: it
