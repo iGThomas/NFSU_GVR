@@ -43,6 +43,12 @@ function Warn($m) { Write-Host "[v2] WARN: $m" -ForegroundColor Yellow; Add-Cont
 function Fail($m) { throw $m }
 function New-Dir($p){ if(!(Test-Path $p)){ if($DryRun){Log "would mkdir $p"; return}; New-Item -ItemType Directory -Force $p|Out-Null } }
 function Test-Admin { $id=[Security.Principal.WindowsIdentity]::GetCurrent(); (New-Object Security.Principal.WindowsPrincipal($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) }
+# GDI font registration (Deploy-Fonts). AddFontResource makes a newly copied font usable without a
+# reboot; the WM_FONTCHANGE broadcast tells already-running programs to re-read the font table.
+Add-Type -Name GvrFontApi -Namespace "" -MemberDefinition @'
+[DllImport("gdi32.dll", CharSet=CharSet.Auto)] public static extern int AddFontResource(string lpszFilename);
+[DllImport("user32.dll", CharSet=CharSet.Auto)] public static extern int SendMessageTimeout(IntPtr hWnd,int Msg,IntPtr wParam,IntPtr lParam,int flags,int timeout,out IntPtr result);
+'@ -EA SilentlyContinue
 function Copy-FileRequired($s,$d){ if(!(Test-Path $s)){Fail "required file missing: $s"}; New-Dir (Split-Path -Parent $d); Copy-Item -LiteralPath $s $d -Force }
 function Copy-Contents($s,$d){ if(!(Test-Path $s)){return}; New-Dir $d; Copy-Item -Path (Join-Path $s "*") -Destination $d -Recurse -Force }
 
@@ -404,28 +410,87 @@ function Disable-GammaSet($gvr){
     # ------------------------------------------------------------------------------------
 }
 
+function Get-Max43ForPrimaryScreen(){
+    # Largest 4:3 size that fits the PRIMARY screen, e.g. 1920x1080 -> 1440x1080.
+    # Read from EnumDisplaySettings(ENUM_CURRENT_SETTINGS) rather than GetSystemMetrics or
+    # Windows.Forms, because those report DPI-SCALED values in a non-DPI-aware process (a 1080p
+    # screen at 150% would come back as 1280x720 and we would write a needlessly small window).
+    try {
+        Add-Type -ErrorAction Stop @"
+using System;using System.Runtime.InteropServices;
+public class GvrCurMode{
+ [DllImport("user32.dll",CharSet=CharSet.Ansi)] static extern bool EnumDisplaySettingsA(string d,int n,ref DEVMODE m);
+ [StructLayout(LayoutKind.Sequential,CharSet=CharSet.Ansi)] public struct DEVMODE{
+  [MarshalAs(UnmanagedType.ByValTStr,SizeConst=32)] public string dmDeviceName;
+  public ushort dmSpecVersion,dmDriverVersion,dmSize,dmDriverExtra; public uint dmFields;
+  public short u1,u2,u3,u4,u5,u6,u7,u8; public short dmColor,dmDuplex,dmYResolution,dmTTOption,dmCollate;
+  [MarshalAs(UnmanagedType.ByValTStr,SizeConst=32)] public string dmFormName;
+  public ushort dmLogPixels; public uint dmBitsPerPel,dmPelsWidth,dmPelsHeight,dmDisplayFlags,dmDisplayFrequency;}
+ public static uint[] Current(){ var m=new DEVMODE(); m.dmSize=(ushort)Marshal.SizeOf(typeof(DEVMODE));
+  if(!EnumDisplaySettingsA(null,-1,ref m)) return new uint[]{0,0};
+  return new uint[]{m.dmPelsWidth,m.dmPelsHeight}; } }
+"@
+        $cur=[GvrCurMode]::Current()
+        $sw=[int]$cur[0]; $sh=[int]$cur[1]
+        if($sw -lt 640 -or $sh -lt 480){ return $null }
+        $w=[Math]::Min($sw, [Math]::Floor($sh*4/3))
+        $h=[Math]::Floor($w*3/4)
+        $w=[int]($w - ($w % 2)); $h=[int]($h - ($h % 2))   # keep both even
+        if($w -lt 640 -or $h -lt 480){ return $null }
+        return @{ w=$w; h=$h; sw=$sw; sh=$sh }
+    } catch { return $null }
+}
+
+function Set-IniResolution($iniPath,$w,$h){
+    # Rewrite Width=/Height= under [Display]; comments and everything else untouched.
+    # [Race]/[Shell] are the pre-merge section names and are still handled for older inis.
+    $section=""
+    $out=@()
+    foreach($line in (Get-Content $iniPath)){
+        $t=$line.Trim()
+        if($t -match '^\[(.+)\]$'){ $section=$matches[1] }
+        elseif($section -eq "Display" -or $section -eq "Race" -or $section -eq "Shell"){
+            if($t -match '^Width\s*='){  $out += "Width=$w";  continue }
+            if($t -match '^Height\s*='){ $out += "Height=$h"; continue }
+        }
+        $out += $line
+    }
+    Set-Content -Path $iniPath -Value $out -Encoding UTF8
+}
+
 function Deploy-Settings($installRoot){
-    # ---- user-editable resolution (gvr_settings.ini) ------------------------------------
-    # Neither EXE has any resolution setting - no ini, no registry value, no command-line
-    # switch (the game's full 62-entry option table was dumped; the only display switches are
+    # ---- user-editable settings (gvr_settings.ini) --------------------------------------
+    # Neither EXE has any settings screen - no ini, no registry value, no command-line switch
+    # (the game's full 62-entry option table was dumped; the only display switches are
     # -forcewindowed / -forcefullscreen and the undocumented -screenshot, which forces
-    # 1280x1024). Both are therefore set by rewriting constants in place; see
-    # Tools\Apply-GvrSettings.ps1 for the offsets and the reasoning behind each.
-    # The tool keeps a pristine <exe>.orig and always re-patches from it, so this is safe to
-    # re-run and a value of 800x600 restores the untouched original.
+    # 1280x1024). So this file is simply DEPLOYED here, and applied AT LAUNCH:
+    #   GvrLaunch.exe    - frontend window size, and the fullscreen/windowed token for the race
+    #   GVRInputRaw.dll  - race resolution + the whole controller map
+    #   GvrCardKey.exe   - the card button
+    # All three patch memory only, every launch, so nothing on disk is ever modified and editing
+    # this file is enough. (Players must start the game via GvrLaunch.exe for the window size.)
     $src=Join-Path $Root "gvr_settings.ini"
-    $tool=Join-Path $Root "Tools\Apply-GvrSettings.ps1"
-    if(!(Test-Path $tool)){ Warn "Tools\Apply-GvrSettings.ps1 not bundled - skipping resolution setup"; return }
     $dstIni=Join-Path $installRoot "gvr_settings.ini"
-    $dstTool=Join-Path $installRoot "Tools\Apply-GvrSettings.ps1"
-    if($DryRun){ Log "would deploy gvr_settings.ini + Tools\Apply-GvrSettings.ps1 and apply the resolutions"; return }
-    New-Dir (Join-Path $installRoot "Tools")
-    Copy-Item $tool $dstTool -Force                       # always refresh the tool
+    if($DryRun){ Log "would deploy gvr_settings.ini (sized to this screen)"; return }
     if(Test-Path $dstIni){ Log "  gvr_settings.ini already present - keeping your settings" }
-    elseif(Test-Path $src){ Copy-Item $src $dstIni -Force; Log "  gvr_settings.ini written (edit it, then run Tools\Apply-GvrSettings.ps1)" }
-    else { Warn "  gvr_settings.ini not bundled - skipping"; return }
-    try { & $dstTool -InstallRoot $installRoot }
-    catch { Warn "  applying gvr_settings.ini failed: $_ (game still runs at its stock 800x600)" }
+    elseif(Test-Path $src){
+        Copy-Item $src $dstIni -Force
+        Log "  gvr_settings.ini written"
+        # Size a FRESH ini to this machine: the biggest 4:3 that fits the primary screen. One
+        # [Display] size drives both the race and the frontend, so the two always line up and no
+        # wallpaper shows around them.
+        # 4:3 because the engine derives vertical FOV from a fixed horizontal one - a 16:9 render
+        # stretches the picture. Written as plain numbers you can edit afterwards; we never
+        # re-detect at launch, and an existing ini is never touched.
+        $best=Get-Max43ForPrimaryScreen
+        if($best){
+            Set-IniResolution $dstIni $best.w $best.h
+            Log ("  screen {0}x{1} -> [Display] {2}x{3} (largest 4:3 that fits)" -f $best.sw,$best.sh,$best.w,$best.h)
+        } else {
+            Log "  could not read the primary display mode - keeping the shipped 1280x960"
+        }
+    }
+    else { Warn "  gvr_settings.ini not bundled - skipping" }
     # ------------------------------------------------------------------------------------
 }
 
@@ -592,16 +657,123 @@ function Register-Assemblies($gvrplus){
     }
 }
 
-function Make-Shortcut($ug,$gvrroot){
-    # Launch the frontend (UniverShell2) directly. GVRBoot is the arcade boot chain
-    # (dongle/coin/stall monitors + 60s warm-up via GVRCrashMonitor) - unnecessary and flaky
-    # for a home install; the shell runs standalone and drives the full menu -> race flow.
-    $exe=Join-Path $gvrroot "UniverShell2.exe"
+function Deploy-Fonts($installRoot){
+    # ---- the OEM font component ----------------------------------------------------------
+    # The shell's art definitions (GvrRoot\gvr\art.gvr) name four families that ship on Disc 1
+    # and exist on NO Windows install: GVR_nfsu (383 references), GVR_digital (81), Ethnocentric
+    # (76) and Digital dream Narrow. Without them GDI substitutes Arial - readable, but not the
+    # NFSU styling - on the main menu ("START GAME"), the circuit name and the operator menu.
+    #
+    # THIS IS THE ONE THING THE INSTALL PUTS OUTSIDE ITS OWN FOLDER, and it is deliberate.
+    # App-local loading was tried first and does not work: GVRInputRaw.dll called
+    # AddFontResourceEx(..., FR_PRIVATE) on these files, and the frontend then rendered those
+    # same fields as UNREADABLE GARBAGE - worse than not loading them at all, with or without
+    # FR_NOT_ENUM. The engine resolves the family by name but cannot use a privately-loaded
+    # face. A normally-registered font renders correctly, so that is what we do - the same
+    # thing the OEM installer did.
+    #
+    # Only families Windows does not already have are installed. The component also carries
+    # Microsoft's Arial bold/italic, Arial Narrow, Impact and Trebuchet MS Bold; every modern
+    # Windows has those, and dropping the disc's Arial (bold/italic faces with NO regular face)
+    # over the system family is a good way to break text everywhere.
+    $dst=Join-Path $installRoot "Fonts"
+    $cands=@((Join-Path $WorkRoot "Extracted\Fonts"), (Join-Path $WorkRoot "C\Fonts"), (Join-Path $Root "Fonts"))
+    if(![string]::IsNullOrEmpty($ExpandedPayloadRoot)){
+        $cands += (Join-Path $ExpandedPayloadRoot "Fonts"), (Join-Path $ExpandedPayloadRoot "C\Fonts")
+    }
+    $src=$cands | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if(!$src){ Warn "OEM Fonts component not found - the frontend will fall back to Arial for GVR_nfsu et al."; return }
+    if($DryRun){ Log "would copy the OEM fonts from $src to $dst and install the missing families into Windows"; return }
+
+    # keep a copy in the install folder: it documents what was installed and lets anyone
+    # re-install by hand (right-click -> Install) if the registration is ever lost.
+    New-Dir $dst
+    $files=@(Get-ChildItem $src -File -EA SilentlyContinue | Where-Object { $_.Extension -match '^\.(ttf|otf|ttc|fon)$' })
+    foreach($f in $files){ Copy-Item $f.FullName (Join-Path $dst $f.Name) -Force }
+    Log "  fonts: $($files.Count) file(s) -> $dst"
+
+    try { Add-Type -AssemblyName System.Drawing -EA Stop } catch { Warn "  System.Drawing unavailable - skipping font registration"; return }
+    $installed=(New-Object System.Drawing.Text.InstalledFontCollection).Families | ForEach-Object { $_.Name }
+    $winFonts=Join-Path $env:windir "Fonts"
+    $key="HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+    $added=0; $skipped=0
+    foreach($f in $files){
+        $fam=$null
+        try { $pfc=New-Object System.Drawing.Text.PrivateFontCollection; $pfc.AddFontFile($f.FullName); $fam=$pfc.Families[0].Name } catch { }
+        if(!$fam){ Warn "  fonts: cannot read the family name of $($f.Name) - skipped"; continue }
+        if($installed -contains $fam){ $skipped++; continue }        # Windows already has it
+        try {
+            Copy-Item $f.FullName (Join-Path $winFonts $f.Name) -Force
+            New-ItemProperty -Path $key -Name "$fam (TrueType)" -Value $f.Name -PropertyType String -Force | Out-Null
+            [void][GvrFontApi]::AddFontResource((Join-Path $winFonts $f.Name))
+            Log "  fonts: installed $fam ($($f.Name))"
+            $added++
+        } catch { Warn "  fonts: could not install $fam - $_" }
+    }
+    if($added){ $r=[IntPtr]::Zero; [void][GvrFontApi]::SendMessageTimeout([IntPtr]0xffff,0x001D,[IntPtr]::Zero,[IntPtr]::Zero,2,1000,[ref]$r) }  # WM_FONTCHANGE
+    Log "  fonts: $added installed into Windows, $skipped already present"
+}
+
+function Deploy-Launcher($installRoot){
+    # ---- GvrLaunch.exe : the thing the player actually starts ---------------------------
+    # It applies gvr_settings.ini at startup (frontend window size, and the
+    # -forcefullscreen/-forcewindowed token for the race), hands the foreground to whichever
+    # program is live, and paints the game's own boot screen over the desktop while the
+    # frontend and the race swap. None of that modifies an executable on disk.
+    # (The [Display] resolution + controller map are applied by GVRInputRaw.dll instead, which the
+    #  game loads before its own entry point, so those work however you launch it.)
+    $src=Join-Path $Root "GvrLaunch.exe"
+    if(!(Test-Path $src)){ Warn "GvrLaunch.exe not bundled - settings will not be applied at launch"; return }
+    if($DryRun){ Log "would deploy GvrLaunch.exe (+ NFSU_GVR.ico) to $installRoot"; return }
+    Copy-Item $src (Join-Path $installRoot "GvrLaunch.exe") -Force
+    Log "  launcher: GvrLaunch.exe -> $installRoot"
+    # Desktop-shortcut icon. GvrLaunch.exe carries no resource icon of its own, so the .ico ships
+    # beside the installer and is copied into the install root; the shortcut points at it there
+    # (a shortcut stores the icon by PATH, so it must live somewhere permanent, not in %TEMP%).
+    $ico=Join-Path $Root "NFSU_GVR.ico"
+    if(Test-Path $ico){
+        Copy-Item $ico (Join-Path $installRoot "NFSU_GVR.ico") -Force
+        Log "  icon: NFSU_GVR.ico -> $installRoot"
+    } else { Warn "NFSU_GVR.ico not bundled - the shortcut will use the default exe icon" }
+}
+
+function Verify-Deployment($ug,$gvrroot,$installRoot){
+    # These four are easy to lose in a partial copy and each fails in a way that is hard to
+    # attribute, so state plainly whether they landed.
+    #   GVRInputRaw_oem.dll : the STOCK driver. Our frontend copy of GVRInputRaw.dll forwards the
+    #       whole cabinet ABI to it; without it the frontend freezes after roughly 100 seconds
+    #       (it looks like a race-end hang, but it is idle time).
+    #   dsound.dll          : keeps audio alive when the window is not focused, and stops the
+    #       frontend warping the mouse pointer into the corner.
+    if($DryRun){ return }
+    $checks=@(
+        @{ p=(Join-Path $gvrroot   "GVRInputRaw_oem.dll"); why="frontend would hang after ~100s" },
+        @{ p=(Join-Path $gvrroot   "GVRInputRaw.dll");     why="no gamepad in the menus" },
+        @{ p=(Join-Path $ug        "GVRInputRaw.dll");     why="no gamepad in the race" },
+        @{ p=(Join-Path $gvrroot   "dsound.dll");          why="audio stops when unfocused; mouse gets trapped" },
+        @{ p=(Join-Path $installRoot "gvr_settings.ini");  why="settings cannot be applied" }
+    )
+    $missing=@()
+    foreach($c in $checks){ if(!(Test-Path $c.p)){ $missing += "$(Split-Path $c.p -Leaf) ($($c.why))" } }
+    if($missing.Count -eq 0){ Log "  verified: controller + audio + settings components in place" }
+    else { foreach($m in $missing){ Warn "MISSING $m" } }
+}
+
+function Make-Shortcut($ug,$gvrroot,$installRoot){
+    # Point at GvrLaunch.exe so the ini is applied every time. It starts the frontend itself
+    # (UniverShell2); GVRBoot - the arcade boot chain with the dongle/coin/stall monitors and a
+    # 60s warm-up - stays skipped, as it is unnecessary and flaky for a home install.
+    $exe=Join-Path $installRoot "GvrLaunch.exe"
+    if(!(Test-Path $exe)){ $exe=Join-Path $gvrroot "UniverShell2.exe" }      # fallback: frontend
     if(!(Test-Path $exe)){ $exe=Join-Path $ug "UndergroundGVR.exe" }
     if(!(Test-Path $exe)){ return }
     $lnk=Join-Path ([Environment]::GetFolderPath("DesktopDirectory")) "NFS Underground GVR.lnk"
+    # Icon deployed by Deploy-Launcher; fall back to the exe's own (default) icon if it is missing.
+    $ico=Join-Path $installRoot "NFSU_GVR.ico"
     Log "shortcut -> $exe"; if($DryRun){return}
-    $ws=New-Object -ComObject WScript.Shell; $s=$ws.CreateShortcut($lnk); $s.TargetPath=$exe; $s.WorkingDirectory=(Split-Path -Parent $exe); $s.Save()
+    $ws=New-Object -ComObject WScript.Shell; $s=$ws.CreateShortcut($lnk); $s.TargetPath=$exe; $s.WorkingDirectory=(Split-Path -Parent $exe)
+    if(Test-Path $ico){ $s.IconLocation="$ico,0"; Log "  icon: $ico" }
+    $s.Save()
 }
 
 # ============================ run =========================================
@@ -672,11 +844,16 @@ Ensure-DirectX
 Deploy-Dxvk $UG
 Disable-GammaSet $GVR
 Deploy-CardEmulator $UG $GVRROOT
+Deploy-Fonts $InstallRoot
 Deploy-Settings $InstallRoot
-Make-Shortcut $UG $GVRROOT
+Deploy-Launcher $InstallRoot
+Verify-Deployment $UG $GVRROOT $InstallRoot
+Make-Shortcut $UG $GVRROOT $InstallRoot
 
 Log "DONE. Installed to $UG on SQLite - no SQL Server, no fixed C:\ paths."
-Log "Launch: $GVRROOT\UniverShell2.exe (frontend, what the shortcut points at) or $UG\UndergroundGVR.exe"
+Log "Launch: $InstallRoot\GvrLaunch.exe (what the shortcut points at - applies gvr_settings.ini)"
+Log "Settings: edit $InstallRoot\gvr_settings.ini - resolution, fullscreen/windowed, gamepad map."
+Log "  Nothing else to run: the exes are never modified, the settings apply on the next launch."
 # The SQLite provider locates game.db via the GVRSQLITE_DB machine env var. Processes already
 # running (Explorer!) don't see a var set mid-session, so a shortcut launch before re-logon
 # hands the game an empty environment -> the shell waits on a db it can't find (AppHangB1).

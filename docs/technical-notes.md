@@ -21,6 +21,7 @@ Reference material discovered while reverse engineering the Global VR installati
 - [Smart Card Emulation (enables CAREER without a reader)](#smart-card-emulation-enables-career-without-a-reader)
 - [Windows 10 / 11 (x64) Notes](#windows-10--11-x64-notes)
 - [Cabinet Leftovers Worth Disabling](#cabinet-leftovers-worth-disabling)
+- [Controller Support, Launcher and Window Behaviour](#controller-support-launcher-and-window-behaviour)
 
 ---
 
@@ -198,8 +199,14 @@ There is **no** width/height/resolution/fov option — the full table was dumped
 ## Resolution and Widescreen
 
 Neither executable has any resolution setting: no ini, no registry value, no command-line
-switch. Both hardcode it, so Release V2 rewrites the constants in place (`gvr_settings.ini`
-plus `Tools\Apply-GvrSettings.ps1`, always re-patched from a pristine `<exe>.orig`).
+switch. Both hardcode it, so the constants below are patched **in memory at every launch**,
+from the single `[Display]` section of `gvr_settings.ini`: `GVRInputRaw.dll` does the race
+(its `DllMain` runs before the exe's entry point) and `GvrLaunch.exe` does the frontend
+(started suspended, CIL operands written, then resumed). Nothing on disk is modified.
+
+*(Release V2 instead rewrote the constants on disk via `Tools\Apply-GvrSettings.ps1`, keeping a
+pristine `<exe>.orig`. That tool is gone — it had to be re-run after every edit, and it only ever
+covered resolution. The offsets it used are the same ones tabulated below.)*
 
 **UndergroundGVR.exe** (native x86, image base `0x400000`) — device init is `FUN_005c40e0`,
 which calls the hardcoded `FUN_005c3d30(800,600)`; those two args become
@@ -634,6 +641,104 @@ Diagnostics: `GvrPlus\GvrCardEmu.log` records every call made to the card.
   monitors plus a 60-second warm-up). On a normal PC the crash monitor spawns no children, so
   nothing starts. Launch `GvrRoot\UniverShell2.exe` directly instead; the frontend → race
   flow is complete without it.
+
+
+## Controller Support, Launcher and Window Behaviour
+
+Three small binaries sit next to the stock executables. None of them modify an exe on disk.
+
+| File | Where | Purpose |
+|---|---|---|
+| `GVRInputRaw.dll` | both | gamepad, race resolution, window placement/z-order, quit prompt |
+| `GVRInputRaw_oem.dll` | frontend only | the **stock** driver; our copy forwards the whole ABI to it |
+| `dsound.dll` | both | keeps audio alive when unfocused; frees the mouse cursor |
+| `GvrLaunch.exe` | install root | applies settings at launch, hands focus over, draws the backdrop |
+
+### The frontend forwards to the OEM driver (do not "simplify" this)
+Our replacement stubs the cabinet health probes (`GetUncalibratedAxis`, `GetCardStatus`,
+`GetAxisFault`, `SetMode`, ...) to a constant `0`. `NFSControl.dll` calls those **every frame and
+branches on the answers**, and a stock install never answers that way, so the frontend's idle
+script fell into a retry/exception loop and Windows killed it (AppHangB1) after roughly 100
+seconds of sitting idle. It looked like a "race-end hang" purely because that is when the menu
+gets left alone.
+
+Fix: in the frontend our DLL loads `GVRInputRaw_oem.dll` and forwards the **entire** ABI to it, so
+the shell behaves byte-identically to stock (and we inherit its keyboard handling for free). The
+gamepad is only *overlaid* on top in `Update`. Proven by four 4-minute idle tests: pure OEM
+survived; forwarding only `Init`+`Update` hung at ~100 s; disabling the DS4 hung at ~166 s;
+forwarding the full ABI survived.
+
+The **race** deliberately keeps our own implementation — it is the well-tested path, and if the
+OEM `Init` returned non-zero there the game would never enable the input path at all.
+
+### Resolution is applied in memory, at two call sites
+`UndergroundGVR.exe` statically imports `GVRInputRaw.dll`, so `DllMain` runs *before* the exe
+entry point — early enough to set the device size before D3D initialises. **Two** call sites feed
+`FUN_005c3d30(w,h)` and both must be patched (missing the second is why windowed mode stayed
+800x600): `0x5C431D`/`0x5C4322` and `0x5C50D9`/`0x5C50DE`. Each `push imm32` is byte-verified
+first. The frontend is a managed image, so `GvrLaunch.exe` starts it **suspended** and patches the
+CIL `ldc.i4` operands instead — again two pairs: file `0x928D`/`0x9292` (Form ClientSize) and
+`0x9451`/`0x9456` (DXPanel = the render surface).
+
+`Fullscreen` simply swaps the `-forcefullscreen` / `-forcewindowed` token inside the frontend's
+launch-args container (`GvrRoot\gvr\CommandlineArgs_data.gvr`). Both tokens are exactly 16 bytes,
+so the swap is length-preserving and the GVRD record stays valid.
+
+### `buf+0x00` is a signed WORD, not a byte
+The driving code reads only the low byte of the steering field, but **other consumers read it as a
+signed 16-bit word** — the frontend's menu wheel (`NFSControl.dll`) and the in-race quit prompt
+both `movsx` it. Writing only the byte leaves `buf+0x01` stale, which produced an inverted,
+hyper-sensitive menu wheel *and* a quit prompt that ignored steering. Always write the full
+`int16`.
+
+### Window z-order: topmost follows focus
+Both windows enter the always-on-top band while one of our programs is in front, and leave it when
+you switch away, so they look full-screen without trapping alt-tab. Three traps, all real:
+
+1. **Poll fast (~120 ms), not once a second.** The frontend re-asserts always-on-top *itself*,
+   continuously; a slow correction left it effectively pinned on top and alt-tab felt broken.
+2. **`explorer.exe` must not count as "ours"** — the alt-tab switcher *is* explorer, so treating it
+   as ours re-grabs the top the moment you try to switch. It is allowed only in the race, and only
+   for a ~20 s grace window after start (right after loading nobody owns the foreground and the
+   race would otherwise sink behind the taskbar).
+3. **Re-assert `HWND_TOPMOST` every poll.** The taskbar is topmost too, so whichever window was
+   raised *last* wins; a change-only update leaves the game behind the taskbar while still
+   reporting that the topmost flag is set.
+
+The frontend additionally yields the band entirely while `UndergroundGVR.exe` exists, or the two
+fight and the race flickers.
+
+### Cabinet lockdown taming (`dsound.dll` proxy)
+The proxy is a **static import of both exes**, so its `DllMain` is the earliest available hook
+point (our `GVRInputRaw` arrives late in the frontend, via the `NFSControl` plug-in).
+
+- **Audio when unfocused** — hooks `IDirectSound::CreateSoundBuffer` and ORs in
+  `DSBCAPS_GLOBALFOCUS`, so sound no longer stops when the window loses focus.
+- **Mouse** — the frontend *warps* the pointer to the top-left every frame (`SetCursorPos`); that
+  and `ClipCursor` are swallowed. (`ClipCursor` alone was the wrong first guess — the clip
+  rectangle measured clean while the pointer was still being yanked.)
+- **Focus stealing** — `SetForegroundWindow` is swallowed in the frontend. Its intro reel can still
+  push itself forward; see the README "Known behaviour".
+- ⚠️ **Both exes import dsound BY ORDINAL** (`UniverShell2 -> @11`, `UndergroundGVR -> @1, @11`), so
+  a proxy `.def` must pin the exact ordinals or the app calls the wrong function.
+- ⚠️ Only **full-replacement** detours are safe here. Detouring `SetWindowPos` (which needs a
+  trampoline) crashed the frontend instantly — blindly copying 5 bytes can split an instruction.
+
+### In-race quit prompt
+`Q` (or D-pad down) raises the engine's own `QUIT GAME?` prompt by setting the command byte
+`buf+0xEC = 0x10`. Do **not** use the documented `0x10610` button combo: those bits are also
+nitrous / look-back / start, so it fires the NOS. Steering selects YES/NO (needs the `int16`
+steering fix above) and `S`/Cross confirms by setting the engine's own flag `0x00c228a3`, so it
+exits through its normal shutdown path. Opening the prompt also cycles the camera — that is the
+engine's own behaviour, not a bug.
+
+### Card insertion from the pad
+`GvrCardKey.exe` watches for the insert key. `R3` toggles the card (insert/eject). Two fixes were
+needed: a Bluetooth DS4 reports a **547-byte** HID report (USB is 64), so the original fixed
+78-byte read simply failed; and the keyboard's "game must be focused" guard rejected every pad
+press, because the borderless frontend often leaves `explorer.exe` as the foreground window. The
+pad path therefore only requires the game to be *running* — a pad button cannot be typed into
+another application by accident.
 
 ---
 

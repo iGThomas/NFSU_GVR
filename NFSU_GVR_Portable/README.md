@@ -13,8 +13,10 @@ D:\Games\NFSU\Underground\                game (UndergroundGVR.exe, TRACKS, ...)
 D:\Games\NFSU\Underground\GVR\GvrRoot\    arcade shell (UniverShell2/GVRBoot + gvr\*.gvr)
 D:\Games\NFSU\Underground\GVR\GvrPlus\    plus libs + schema + game.db
 D:\Games\NFSU\Underground\GVR\Gvr\        helpers
-D:\Games\NFSU\gvr_settings.ini            resolution settings (editable)
-D:\Games\NFSU\Tools\Apply-GvrSettings.ps1
+D:\Games\NFSU\GvrLaunch.exe               start the game with this
+D:\Games\NFSU\gvr_settings.ini            all settings (editable)
+D:\Games\NFSU\Fonts\                      the OEM fonts (see below)
+D:\Games\NFSU\NFSU_GVR.ico                shortcut icon
 ```
 
 ## How it stays location-independent
@@ -58,23 +60,100 @@ genuine XP/Win7 install is unaffected:
   popup on every launch. It only set gamma `1.00` (a no-op) and a CRT vibrance tweak,
   so nothing is lost. Left enabled where a 32-bit `NvCpl.dll` is present.
 
-## Resolution — `gvr_settings.ini`
-Neither executable has any resolution setting: no ini, no registry value, no
-command-line switch. Both are set by rewriting constants in place. Edit
-`gvr_settings.ini`, then run `Tools\Apply-GvrSettings.ps1`.
+## Everything is configured in one file — `gvr_settings.ini`
+Neither executable has a settings screen, so all of this is applied at launch by
+`GvrLaunch.exe` + `GVRInputRaw.dll`. **Start the game with `GvrLaunch.exe`** (in the
+install root) and just edit the ini — nothing else to run, and **the executables are
+never modified**.
 
 ```ini
-[Race]      ; UndergroundGVR.exe  (fullscreen)
-Width=1280
-Height=960
-
-[Shell]     ; UniverShell2.exe    (borderless window)
-Width=1440
+[Display]     ; ONE size for both the frontend and the race, so they line up
+Width=1440         ; installer picks the largest 4:3 that fits your screen
 Height=1080
+Fullscreen=false   ; default: borderless window. true = take over the screen
+Borderless=true    ; windowed only: no title bar, centred
+
+[Controller]  ; gamepad map in a race - see "Controller support"
+Cross    = ebrake, confirm, skipintro
+Circle   = nitrous
+...
+
+[Frontend]    ; gamepad map in the menus
+Cross    = select
+R3       = card
+...
+
+[Launcher]
+Backdrop=true      ; show the game's boot screen between frontend and race
+Merge=false        ; experimental, see Known behaviour
 ```
 
-A pristine `<exe>.orig` is kept and every run re-patches **from that backup**, so it's
-idempotent and setting `800x600` restores the untouched original.
+On a **fresh install** the installer measures your primary screen and writes the largest 4:3
+size that fits (1920×1080 → `1440x1080`), because the engine needs 4:3 (see the FOV note
+below). It is a plain number you can change afterwards; nothing is re-detected at launch, and
+an existing ini is never touched.
+
+> **Fullscreen needs a REAL display mode.** The race creates a fullscreen D3D device, so
+> a made-up size (e.g. 1440×1080 — fine as a window) fails to create the device.
+> Unsupported sizes are auto-corrected to the nearest supported one instead of crashing.
+> Windowed mode — the default — accepts any size.
+
+## Fonts — the one thing installed outside the folder
+Disc 1 carries a `Fonts` component, and the shell's art definitions (`GvrRoot\gvr\art.gvr`) name
+four families from it that **no Windows install has**:
+
+| Family | references in `art.gvr` |
+|---|---|
+| `GVR_nfsu` | 383 |
+| `GVR_digital` (7-segment) | 81 |
+| `Ethnocentric` | 76 |
+| `Digital dream Narrow` | — |
+
+Without them GDI substitutes Arial: readable, but the main menu (`START GAME`), the circuit name and
+the operator menu lose the NFSU styling. So the installer **registers the missing families with
+Windows**, as the OEM installer did, and keeps a copy in `<InstallRoot>\Fonts\`.
+
+Only families Windows lacks are installed. The component also holds Microsoft's Arial bold/italic,
+Arial Narrow, Impact and Trebuchet MS Bold — every modern Windows already has those, and the disc's
+Arial files are bold/italic faces with *no regular face*, which would break text if dropped over the
+system family.
+
+> Loading them app-locally instead — `AddFontResourceEx(..., FR_PRIVATE)` from `GVRInputRaw.dll` —
+> was tried and **does not work**: the frontend then renders those same fields as unreadable
+> garbage, worse than not loading them at all, with or without `FR_NOT_ENUM`. The engine resolves
+> the family by name but cannot use a privately-loaded face. Registering the font is the only way
+> that renders correctly.
+
+## Controller support (Xbox / PS4, USB or Bluetooth)
+A drop-in `GVRInputRaw.dll` replaces the arcade wheel/pedal driver, so a normal pad gives
+**analog progressive steering** and analog throttle/brake. Keyboard keeps working alongside it.
+
+| | Race — `[Controller]` | Frontend — `[Frontend]` |
+|---|---|---|
+| Steer / throttle / brake | left stick, R2, L2 | left stick (or numpad 4/6) |
+| Select / back | — | Cross / Circle (or `S` / `E`) |
+| Menu navigation | — | D-pad (or the arrow keys) |
+| Career name entry | — | R2 accept, L2 backspace |
+| Operator menu | — | Options (or `O`) |
+| Shift up / down | Square / Triangle | — |
+| Camera / look back | R1 / L1 | — |
+| Nitrous / e-brake | Circle / Cross | — |
+| Start · reset car | Options | — |
+| Music / volume | D-pad right | — |
+| Skip race intro | Cross (or `S`) | — |
+| Quit prompt · confirm | D-pad down (or `Q`) · Cross (or `S`) | — |
+| Insert / eject card | — | **R3** (or `S` / `F9`) |
+
+**Every one of these is remappable** — nothing is hardcoded. `[Controller]` is the in-race map and
+`[Frontend]` the menu map; they are separate because the same button means different things in the
+two programs (Cross is the e-brake while driving, "select" in the menus). One button can carry
+several comma-separated actions, e.g. `Cross = ebrake, confirm, skipintro`. Steering (left stick)
+and the in-race triggers are fixed. The keyboard keeps working alongside the pad.
+
+**Xbox pads need no edit** — the map is positional, so `Cross` *is* the bottom face button. You can
+also write the name printed on your pad: `a`=cross, `b`=circle, `x`=square, `y`=triangle,
+`lb`/`rb`=l1/r1, `lt`/`rt`=l2/r2, `start` or `menu`=options, `back` or `view`=share, `ls`/`rs`=l3/r3.
+(`guide`/`ps` is DS4-only — XInput does not report the Guide button.)
 
 **Use a 4:3 mode.** The engine derives vertical FOV from a fixed *horizontal* FOV and
 never adapts the projection to the render aspect, so a 16:9 resolution stretches the
@@ -113,16 +192,46 @@ longer seed data — it holds your car configurations, leaderboards and best tim
 everything set in the `O` operator menu. So a repair install preserves it. Pass
 `-ForceOverwrite` if you deliberately want to reset it back to the shipped seed.
 
-The desktop shortcut launches `GvrRoot\UniverShell2.exe` (the frontend). The arcade
-`GVRBoot` chain (dongle/coin/stall monitors + 60s warm-up) is deliberately skipped —
-it isn't needed for home play and its crash monitor spawns no children on a normal PC.
+The desktop shortcut (with the game's icon) launches **`GvrLaunch.exe`** in the install root, which applies
+`gvr_settings.ini` and then starts the frontend. (Starting `GvrRoot\UniverShell2.exe`
+directly still works — you just don't get the `[Display]` window size or the backdrop.)
+The arcade `GVRBoot` chain (dongle/coin/stall monitors + 60s warm-up) is deliberately
+skipped — it isn't needed for home play and its crash monitor spawns no children on a
+normal PC.
+
+At the end the installer **verifies** that `GVRInputRaw.dll`, `GVRInputRaw_oem.dll`,
+`dsound.dll` and `gvr_settings.ini` all landed, and warns per file if one is missing —
+each of those fails in a way that is otherwise hard to attribute (see the warning under
+*Package contents*).
+
+## Known behaviour (by design / not worth fixing)
+- **The frontend sits on top while its intro/attract reel plays.** It is cabinet software: it
+  forces itself to the front. Most of that is tamed (it no longer clips your mouse pointer, and
+  it drops behind other windows once you click away), but during the intro it can still push
+  itself forward. Click into the menu, or press `S` to skip the reel, and it behaves normally.
+- **Both windows cover the taskbar while they are the active window** and drop behind it as soon
+  as you switch away — deliberate, so it feels full-screen without trapping alt-tab.
+- **A brief glimpse of the desktop edges** can appear during the frontend↔race hand-over: the
+  backdrop covers the game's 4:3 area, not the whole 16:9 screen.
+- **`[Launcher] Merge=true`** (run both programs inside one window) is **experimental and off**:
+  the frontend exits when it is not a top-level window.
+- Verified on Windows 10/11 x64 desktops. **Not tested on real cabinet hardware.**
 
 ## Package contents
-`Install-NFSU-GVR-Portable.ps1`, `gvr_settings.ini`, `Tools\` (`unshield.exe`,
-`Apply-GvrSettings.ps1`), `DLLs\` (runtime DLLs), `Dependencies\` (`DotNet11` incl.
-the SP1 patch, `DirectX9`, `DXVK`), `SQLite\` (patched `PLUSDE.dll`, `GvrSqlite.dll`
+`Install-NFSU-GVR-Portable.ps1`, `GvrLaunch.exe` (launcher — start the game with this),
+`gvr_settings.ini`, `NFSU_GVR.ico` (desktop-shortcut icon, copied into the install root),
+`Fonts\` (populated from the disc at install time — not bundled),
+`Tools\` (`unshield.exe`), `DLLs\` (runtime DLLs
+plus `GVRInputRaw.dll` controller driver, **`GVRInputRaw_oem.dll`** and `dsound.dll`),
+`CardEmu\` (`GVRSCR28.dll`, `PCSCSCR2.dll`, `GvrCardKey.exe`), `Dependencies\` (`DotNet11`
+incl. the SP1 patch, `DirectX9`, `DXVK`), `SQLite\` (patched `PLUSDE.dll`, `GvrSqlite.dll`
 + `.cs`, `sqlite3.dll`, seeded `game.db`), `Reference_GVR_All.reg`.
 Not included: the game payload (from your OEM discs).
+
+> ⚠️ **`GVRInputRaw_oem.dll` must sit next to `UniverShell2.exe`.** The frontend copy of
+> `GVRInputRaw.dll` forwards the whole cabinet ABI to it; without it the frontend freezes after
+> roughly 100 seconds. `dsound.dll` belongs next to **both** executables (it keeps audio alive
+> when the window is not focused and frees the mouse cursor).
 
 ## Diagnostics
 Set env var `GVRSQLITE_LOG=1` to trace every SQL statement and error. On Windows

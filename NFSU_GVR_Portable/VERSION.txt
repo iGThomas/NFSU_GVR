@@ -24,10 +24,21 @@ redirection AVs inside PLUSDE's native C++ EH); app-local DXVK d3d9.dll caps the
 framerate-tied physics at 60fps (game side only); cabinet GammaSet.exe disabled
 (its rundll32 NvCpl.dll call pops a RunDLL error on 64-bit Windows).
 
-Resolution is configurable via gvr_settings.ini + Tools\Apply-GvrSettings.ps1 -
-neither EXE has any resolution setting, so the constants are rewritten in place
-from a pristine .orig backup. Use a 4:3 mode: the engine never adapts its
-projection to the render aspect, so 16:9 stretches the image.
+Everything configurable lives in gvr_settings.ini and is applied AT LAUNCH by
+GvrLaunch.exe / GVRInputRaw.dll / GvrCardKey.exe - resolution, fullscreen or
+borderless window, and the full controller map for both programs. Neither EXE
+has a settings screen, so those constants are patched in memory on every start;
+no executable on disk is ever modified. Start the game with GvrLaunch.exe.
+Use a 4:3 mode: the engine never adapts its projection to the render aspect,
+so 16:9 stretches the image (the installer picks the largest 4:3 that fits).
+
+Fonts: Disc 1 ships a Fonts component with four families no Windows has (GVR_nfsu,
+GVR_digital, Ethnocentric, Digital dream Narrow) that the shell's art.gvr asks for by
+name; without them the main menu, circuit name and operator menu fall back to Arial.
+The installer registers ONLY the missing families with Windows - the one thing it puts
+outside the install folder - and keeps copies in <InstallRoot>\Fonts. Loading them
+app-locally with AddFontResourceEx(FR_PRIVATE) was tried and renders those fields as
+unreadable garbage, with or without FR_NOT_ENUM.
 
 Free play: the shipped game.db sets Settings_NFS1.FreePlay = 1 deliberately. The stock
 cabinet value is 0 (an operator wants the coin door to charge); a home install has no

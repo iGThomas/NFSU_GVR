@@ -12,7 +12,7 @@ Pick the guide that matches your target system:
 
 | Guide | Summary |
 |-------|---------|
-| **[SQLite Edition (Release V2)](GameOnly_SQLite_Patched/README.md)** | ⭐ Recommended. Standalone installer that installs the game from your OEM discs into **any folder you choose** and runs it on an **embedded SQLite database** — no MSDE, no SQLXML, no `sa` password, no reboot, no fixed `C:\` paths. Runs on **Windows XP → Windows 11 (x64)**. Configurable resolution via `gvr_settings.ini`. Files are in the [`GameOnly_SQLite_Patched`](GameOnly_SQLite_Patched) folder. |
+| **[SQLite Edition (Release V2)](NFSU_GVR_Portable/README.md)** | ⭐ Recommended. Standalone installer that installs the game from your OEM discs into **any folder you choose** and runs it on an **embedded SQLite database** — no MSDE, no SQLXML, no `sa` password, no reboot, no fixed `C:\` paths. Runs on **Windows XP → Windows 11 (x64)**. Configurable resolution via `gvr_settings.ini`. Files are in the [`NFSU_GVR_Portable`](NFSU_GVR_Portable) folder. |
 | **[Windows 7 32-bit — Game-Only Install (V1, MSDE)](docs/install-windows-7-32bit.md)** | The original game-only installer using the migrated MSDE/SQL Server 2000 backend. Superseded by the SQLite Edition, but kept for reference and for setups closest to the original cabinet. Files are in the [`Win7-GameOnly`](Win7-GameOnly) folder. |
 | **[Windows XP — Standalone Install](docs/install-windows-xp.md)** | Manual step-by-step clean install on real XP SP3 hardware: registry values, .NET 1.1, manual MSDE setup, and disc installation. |
 | **[Recovery Disc & Virtual Machines](docs/recovery-disc-and-vm.md)** | Notes on the original Windows XPe System Recovery Disc and getting it to boot inside VirtualBox/VMware. |

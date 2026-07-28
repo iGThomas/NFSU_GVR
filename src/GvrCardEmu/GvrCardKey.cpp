@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <tlhelp32.h>
 #include <hidsdi.h>
+#include <hidpi.h>      // HidP_GetCaps - report length + collection usage (USB vs Bluetooth DS4)
 #include <setupapi.h>
 
 #pragma comment(lib, "hid.lib")
@@ -62,14 +63,100 @@ static void LoadXInput()
 static HANDLE     g_ds4 = INVALID_HANDLE_VALUE, g_ds4ev = NULL;
 static OVERLAPPED g_ds4ov = {};
 static bool       g_ds4pending = false;
-static BYTE       g_ds4rpt[78] = {};
+// Buffer must cover the collection's InputReportByteLength: USB DS4 = 64, but a BLUETOOTH DS4
+// reports a much larger length (seen: 547). A fixed 78-byte read simply FAILS over Bluetooth, which
+// is why Cross stopped inserting the card once the pad was paired wirelessly. Same fix as
+// GvrInputEmu: size the read from the device caps, prefer the GAMEPAD collection, and kick the pad
+// into full-report mode.
+static BYTE       g_ds4rpt[1024] = {};
+static DWORD      g_ds4rptlen = 78;
 static volatile bool g_ds4cross = false;
+static void Log(const char* fmt, ...);      // defined below
+
+// ---- which pad button inserts/ejects the card -------------------------------------------------
+// Configurable, like every other pad button: gvr_settings.ini [Frontend] `<button> = card`.
+// Default R3 (right stick click) - chosen because Cross is already menu "select" / in-race e-brake,
+// and R3 is unused by the game. This exe reads the pad itself (it is not the input DLL), so it
+// needs its own button table: DS4 raw-HID byte+mask, and the XInput wButtons mask.
+//   DS4 report (o = base): byte[o+5] = face buttons + hat, byte[o+6] = shoulders/sticks, [o+7] = PS
+struct PadBtnDef { const char* name; int byteOff; BYTE mask; int hat; WORD xi; };
+static const PadBtnDef PAD_BTNS[] = {
+    {"square",  5,0x10,-1,0x4000},{"cross",   5,0x20,-1,0x1000},{"circle", 5,0x40,-1,0x2000},
+    {"triangle",5,0x80,-1,0x8000},{"l1",      6,0x01,-1,0x0100},{"r1",     6,0x02,-1,0x0200},
+    {"l2",      6,0x04,-1,0x0000},{"r2",      6,0x08,-1,0x0000},{"share",  6,0x10,-1,0x0020},
+    {"options", 6,0x20,-1,0x0010},{"l3",      6,0x40,-1,0x0040},{"r3",     6,0x80,-1,0x0080},
+    {"ps",      7,0x01,-1,0x0000},
+    {"dup",     5,0x00, 0,0x0001},{"dright",  5,0x00, 1,0x0008},{"ddown",   5,0x00, 2,0x0002},
+    {"dleft",   5,0x00, 3,0x0004},
+    // Xbox aliases - alternative spellings of the same positional buttons (A=bottom, B=right,
+    // X=left, Y=top), so an Xbox player can write the name printed on their pad.
+    {"a",       5,0x20,-1,0x1000},{"b",       5,0x40,-1,0x2000},{"x",      5,0x10,-1,0x4000},
+    {"y",       5,0x80,-1,0x8000},{"lb",      6,0x01,-1,0x0100},{"rb",     6,0x02,-1,0x0200},
+    {"lt",      6,0x04,-1,0x0000},{"rt",      6,0x08,-1,0x0000},{"start",  6,0x20,-1,0x0010},
+    {"menu",    6,0x20,-1,0x0010},{"back",    6,0x10,-1,0x0020},{"view",   6,0x10,-1,0x0020},
+    {"ls",      6,0x40,-1,0x0040},{"rs",      6,0x80,-1,0x0080},{"guide",  7,0x01,-1,0x0000},
+};
+static const PadBtnDef* g_cardBtn = &PAD_BTNS[11];   // r3
+
+// hat (b5 & 0x0F) -> is direction `dir` (0=up 1=right 2=down 3=left) pressed?
+static bool HatHas(BYTE b5, int dir) {
+    int h = b5 & 0x0F;
+    switch (dir) {
+        case 0: return h == 0 || h == 1 || h == 7;
+        case 1: return h == 1 || h == 2 || h == 3;
+        case 2: return h == 3 || h == 4 || h == 5;
+        case 3: return h == 5 || h == 6 || h == 7;
+    }
+    return false;
+}
+static bool Ds4BtnHeld(const BYTE* rpt, int o) {
+    const PadBtnDef* d = g_cardBtn;
+    if (d->hat >= 0) return HatHas(rpt[o + 5], d->hat);
+    return (rpt[o + d->byteOff] & d->mask) != 0;
+}
+
+// Read the card button from the shared gvr_settings.ini: the [Frontend] line whose action is
+// `card`, e.g. `R3 = card`. The ini sits at the install root and this exe runs from CardEmu\ or
+// the root itself, so walk up. No file / no such line = keep the R3 default.
+static void LoadCardButton() {
+    char dir[MAX_PATH] = {0};
+    GetModuleFileNameA(NULL, dir, MAX_PATH);
+    char* s = strrchr(dir, '\\'); if (s) *s = 0;
+    char probe[MAX_PATH]; lstrcpynA(probe, dir, MAX_PATH);
+    for (int up = 0; up <= 4; ++up) {
+        char cand[MAX_PATH]; wsprintfA(cand, "%s\\gvr_settings.ini", probe);
+        FILE* f = fopen(cand, "r");
+        if (f) {
+            char line[256], section[64] = {0};
+            while (fgets(line, sizeof(line), f)) {
+                char* p = line; while (*p == ' ' || *p == '\t') ++p;
+                if (*p == ';' || *p == '#' || *p == '\r' || *p == '\n' || !*p) continue;
+                if (*p == '[') { char* e = strchr(p, ']'); if (e) { *e = 0; lstrcpynA(section, p + 1, sizeof(section)); } continue; }
+                if (_stricmp(section, "Frontend") != 0) continue;
+                char* eq = strchr(p, '='); if (!eq) continue;
+                *eq = 0; char* btn = p; char* act = eq + 1;
+                char* e = btn + strlen(btn); while (e > btn && (e[-1]==' '||e[-1]=='\t')) *--e = 0;
+                while (*act == ' ' || *act == '\t') ++act;
+                char* cmt = strpbrk(act, ";#"); if (cmt) *cmt = 0;
+                e = act + strlen(act); while (e > act && (e[-1]==' '||e[-1]=='\t'||e[-1]=='\r'||e[-1]=='\n')) *--e = 0;
+                if (_stricmp(act, "card") != 0) continue;
+                for (const PadBtnDef& d : PAD_BTNS) if (_stricmp(d.name, btn) == 0) { g_cardBtn = &d; break; }
+            }
+            fclose(f);
+            Log("card button: %s (from %s)", g_cardBtn->name, cand);
+            return;
+        }
+        char* q = strrchr(probe, '\\'); if (!q) break; *q = 0;
+    }
+    Log("card button: %s (no gvr_settings.ini found)", g_cardBtn->name);
+}
 
 static void OpenDs4()
 {
     GUID hg; HidD_GetHidGuid(&hg);
     HDEVINFO di = SetupDiGetClassDevs(&hg, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
     if (di == INVALID_HANDLE_VALUE) return;
+    HANDLE fallback = INVALID_HANDLE_VALUE; DWORD fallbackLen = 78;
     SP_DEVICE_INTERFACE_DATA ifd; ifd.cbSize = sizeof(ifd);
     for (DWORD i = 0; SetupDiEnumDeviceInterfaces(di, NULL, &hg, i, &ifd); ++i) {
         DWORD need = 0; SetupDiGetDeviceInterfaceDetailA(di, &ifd, NULL, 0, &need, NULL);
@@ -82,14 +169,42 @@ static void OpenDs4()
             if (h != INVALID_HANDLE_VALUE) {
                 HIDD_ATTRIBUTES at; at.Size = sizeof(at);
                 if (HidD_GetAttributes(h, &at) && at.VendorID == 0x054C) {
-                    g_ds4 = h; free(det); SetupDiDestroyDeviceInfoList(di); return;
+                    // A DS4 exposes several HID collections; take the GAMEPAD one (usage 01:05),
+                    // otherwise the button bytes we decode belong to a different collection.
+                    unsigned inLen = 0, usagePage = 0, usage = 0;
+                    PHIDP_PREPARSED_DATA pp = NULL;
+                    if (HidD_GetPreparsedData(h, &pp)) {
+                        HIDP_CAPS caps;
+                        if (HidP_GetCaps(pp, &caps) == HIDP_STATUS_SUCCESS) {
+                            inLen = caps.InputReportByteLength;
+                            usagePage = caps.UsagePage; usage = caps.Usage;
+                        }
+                        HidD_FreePreparsedData(pp);
+                    }
+                    DWORD rlen = (inLen > 0 && inLen <= sizeof(g_ds4rpt)) ? inLen : 78;
+                    if (usagePage == 0x01 && (usage == 0x05 || usage == 0x04)) {
+                        g_ds4 = h; g_ds4rptlen = rlen;
+                        // Bluetooth DS4 only sends the basic report until feature 0x02 is read.
+                        BYTE feat[64]; ZeroMemory(feat, sizeof(feat)); feat[0] = 0x02;
+                        HidD_GetFeature(g_ds4, feat, sizeof(feat));
+                        Log("gamepad: opened GAMEPAD collection, readLen=%lu", g_ds4rptlen);
+                        if (fallback != INVALID_HANDLE_VALUE) CloseHandle(fallback);
+                        free(det); SetupDiDestroyDeviceInfoList(di); return;
+                    }
+                    if (fallback == INVALID_HANDLE_VALUE) { fallback = h; fallbackLen = rlen; h = INVALID_HANDLE_VALUE; }
                 }
-                CloseHandle(h);
+                if (h != INVALID_HANDLE_VALUE) CloseHandle(h);
             }
         }
         free(det);
     }
     SetupDiDestroyDeviceInfoList(di);
+    if (fallback != INVALID_HANDLE_VALUE) {
+        g_ds4 = fallback; g_ds4rptlen = fallbackLen;
+        BYTE feat[64]; ZeroMemory(feat, sizeof(feat)); feat[0] = 0x02;
+        HidD_GetFeature(g_ds4, feat, sizeof(feat));
+        Log("gamepad: no gamepad-usage collection; using first 054C, readLen=%lu", g_ds4rptlen);
+    }
 }
 static void PumpDs4()
 {
@@ -103,22 +218,35 @@ static void PumpDs4()
             } else {
                 g_ds4pending = false;
                 int o = (g_ds4rpt[0] == 0x11) ? 2 : (g_ds4rpt[0] == 0x01 ? 0 : -1);
-                if (o >= 0 && (DWORD)(o + 6) <= rd) g_ds4cross = (g_ds4rpt[o + 5] & 0x20) != 0;
+                if (o >= 0 && (DWORD)(o + 8) <= rd) g_ds4cross = Ds4BtnHeld(g_ds4rpt, o);
             }
         }
-        ResetEvent(g_ds4ev); memset(g_ds4rpt, 0, sizeof(g_ds4rpt));
+        ResetEvent(g_ds4ev); memset(g_ds4rpt, 0, g_ds4rptlen);
         DWORD rd = 0;
-        if (ReadFile(g_ds4, g_ds4rpt, sizeof(g_ds4rpt), &rd, &g_ds4ov)) {
+        if (ReadFile(g_ds4, g_ds4rpt, g_ds4rptlen, &rd, &g_ds4ov)) {   // BT needs the FULL length
             int o = (g_ds4rpt[0] == 0x11) ? 2 : (g_ds4rpt[0] == 0x01 ? 0 : -1);
-            if (o >= 0 && (DWORD)(o + 6) <= rd) g_ds4cross = (g_ds4rpt[o + 5] & 0x20) != 0;
+            if (o >= 0 && (DWORD)(o + 8) <= rd) g_ds4cross = Ds4BtnHeld(g_ds4rpt, o);
         } else if (GetLastError() == ERROR_IO_PENDING) { g_ds4pending = true; return; }
         else return;
     }
 }
 // True while Cross/A is held (either controller type).
-static bool PadCrossHeld()
+// R3 (right stick click) = insert the card, or eject it if one is already in.
+// Chosen over Cross deliberately: Cross is already the menu "select" / in-race e-brake, so it was
+// doing double duty. R3 is unused by the game.
+//   DS4 raw HID: byte[o+6] bit 0x80 = R3.   XInput: XINPUT_GAMEPAD_RIGHT_THUMB = 0x0080.
+static bool PadInsertHeld()
 {
-    if (pXGet) { XST xs; if (pXGet(0, &xs) == 0 && (xs.g.wButtons & 0x1000)) return true; }
+    // Do NOT poll XInput every tick when no XInput pad is present: XInputGetState on an empty slot
+    // re-enumerates devices via DEVOBJ/cfgmgr32 on every call (very expensive). Back off to a 3s
+    // retry when the slot is empty. (Same defect caused the shell's race-end hang in GVRInputRaw.)
+    static DWORD nextTry = 0;
+    if (pXGet && (DWORD)(GetTickCount() - nextTry) < 0x80000000u) {
+        XST xs;
+        DWORD r = pXGet(0, &xs);
+        if (r == 0) { if (g_cardBtn->xi && (xs.g.wButtons & g_cardBtn->xi)) return true; }
+        else nextTry = GetTickCount() + 3000;
+    }
     PumpDs4();
     return g_ds4cross;
 }
@@ -156,7 +284,8 @@ static bool CardIn()
 }
 
 static volatile LONG g_wantInsert = 0;
-static volatile LONG g_wantToggle = 0;
+static volatile LONG g_wantToggle = 0;      // from the F9 key  (needs the game focused)
+static volatile LONG g_wantPadToggle = 0;   // from the pad R3   (game only needs to be running)
 static HWND g_wnd = NULL;
 static bool g_rawOk = false;   // raw input active -> it decides, the hook stands down
 
@@ -230,8 +359,17 @@ static bool GameIsForeground()
     if (!ok) return false;
     const char* base = path;
     for (const char* p = path; *p; ++p) if (*p == '\\' || *p == '/') base = p + 1;
-    return lstrcmpiA(base, "UniverShell2.exe") == 0 ||
-           lstrcmpiA(base, "UndergroundGVR.exe") == 0;
+    bool ours = lstrcmpiA(base, "UniverShell2.exe")   == 0 ||
+                lstrcmpiA(base, "UndergroundGVR.exe") == 0 ||
+                lstrcmpiA(base, "GvrLaunch.exe")      == 0;   // our launcher/backdrop counts too
+    if (!ours) {   // say WHICH window blocked it - this guard silently ate every pad insert once
+        static char lastBlocked[64] = "";
+        if (lstrcmpiA(lastBlocked, base) != 0) {
+            lstrcpynA(lastBlocked, base, sizeof(lastBlocked));
+            Log("insert ignored: foreground is '%s', not the game", base);
+        }
+    }
+    return ours;
 }
 
 static bool GameRunning()
@@ -263,13 +401,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int)
 
     g_ev = CreateEventA(NULL, TRUE, FALSE, EVENT_NAME);   // manual-reset, shared
 
-    // gamepad: Cross / A behaves like the S key (insert the card)
+    // gamepad: the configured button (default R3) toggles the card, like the S key inserts it
+    LoadCardButton();
     LoadXInput();
     g_ds4ev = CreateEventA(NULL, TRUE, FALSE, NULL);
     g_ds4ov.hEvent = g_ds4ev;
     OpenDs4();
-    Log("gamepad: xinput=%s ds4=%s (Cross/A inserts the card)",
-        pXGet ? "yes" : "no", g_ds4 != INVALID_HANDLE_VALUE ? "opened" : "none");
+    Log("gamepad: xinput=%s ds4=%s (%s toggles the card)",
+        pXGet ? "yes" : "no", g_ds4 != INVALID_HANDLE_VALUE ? "opened" : "none", g_cardBtn->name);
 
     // Raw Input, for the ORIGINATING DEVICE of each keystroke.
     // LLKHF_INJECTED is not enough: the attract demo's synthetic START arrives WITHOUT the
@@ -300,7 +439,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int)
         Log("!! SetWindowsHookEx failed (err %lu)", GetLastError());
         return 1;
     }
-    Log("started - S inserts the card, F9 toggles (out-of-process hook)");
+    Log("started - S inserts, F9 or pad %s toggles (out-of-process hook)", g_cardBtn->name);
 
     // Pump messages; exit shortly after the game closes so we never linger.
     MSG msg;
@@ -310,12 +449,22 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int)
             TranslateMessage(&msg);
             DispatchMessageA(&msg);
         }
-        // gamepad Cross/A -> insert (rising edge), same as the S key
+        // gamepad R3 -> TOGGLE the card (insert if the slot is empty, eject if one is in),
+        // i.e. the same action as F9 rather than the insert-only S key.
         {
-            static bool prevCross = false;
-            bool cross = PadCrossHeld();
-            if (cross && !prevCross) { g_wantInsert = 1; Log("pad Cross -> insert request"); }
-            prevCross = cross;
+            // Debounced edge: HID reads arrive in bursts, so a raw edge test fired many times per
+            // press (the log showed ~10 "requests" for one click, toggling the card in and out
+            // again). Require the button to read released for a moment before the next press counts.
+            static bool prevR3 = false;
+            static DWORD lastFire = 0;
+            bool r3 = PadInsertHeld();
+            DWORD now = GetTickCount();
+            if (r3 && !prevR3 && (now - lastFire) > 400) {
+                lastFire = now;
+                g_wantPadToggle = 1;          // pad path: no foreground requirement (see below)
+                Log("pad R3 -> card toggle request");
+            }
+            prevR3 = r3;
         }
 
         // perform whatever the hook recorded (event signalling + logging happen HERE)
@@ -325,10 +474,24 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int)
                 Log("insert (S or pad Cross) -> card INSERTED");
             }
         }
+        // KEYBOARD F9: keep the strict foreground check - a stray keypress in another app must not
+        // touch the card slot.
         if (InterlockedExchange(&g_wantToggle, 0)) {
             if (GameIsForeground()) {
                 if (CardIn()) { ResetEvent(g_ev); Log("F9 -> card REMOVED"); }
                 else          { SetEvent(g_ev);   Log("F9 -> card INSERTED"); }
+            }
+        }
+        // GAMEPAD R3: only require the game to be RUNNING, not focused. A pad button cannot be
+        // "typed into a browser" by accident, so the foreground rule buys nothing here - and it
+        // silently ate every pad press, because the borderless shell often leaves explorer.exe as
+        // the foreground window (it is no longer always-on-top).
+        if (InterlockedExchange(&g_wantPadToggle, 0)) {
+            if (GameRunning()) {
+                if (CardIn()) { ResetEvent(g_ev); Log("pad R3 -> card REMOVED"); }
+                else          { SetEvent(g_ev);   Log("pad R3 -> card INSERTED"); }
+            } else {
+                Log("pad R3 ignored: neither the shell nor the game is running");
             }
         }
 

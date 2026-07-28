@@ -1,0 +1,5 @@
+// Resources for GvrLaunch.exe.
+// The icon is embedded so the exe itself carries the game's icon (taskbar, alt-tab, Explorer),
+// not just the desktop shortcut the installer creates. ID 1 = the lowest numbered icon, which is
+// what Explorer picks as the application icon.
+1 ICON "NFSU_GVR.ico"
