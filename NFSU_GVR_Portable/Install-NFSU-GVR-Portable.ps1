@@ -677,10 +677,14 @@ function Deploy-Fonts($installRoot){
     # Windows has those, and dropping the disc's Arial (bold/italic faces with NO regular face)
     # over the system family is a good way to break text everywhere.
     $dst=Join-Path $installRoot "Fonts"
-    $cands=@((Join-Path $WorkRoot "Extracted\Fonts"), (Join-Path $WorkRoot "C\Fonts"), (Join-Path $Root "Fonts"))
+    # Prefer the user's own media (it carries all ten, Microsoft's four included); the four custom
+    # families bundled in Fonts\ are the last resort, for an -ExpandedPayloadRoot install whose
+    # payload has no Fonts folder.
+    $cands=@((Join-Path $WorkRoot "Extracted\Fonts"), (Join-Path $WorkRoot "C\Fonts"))
     if(![string]::IsNullOrEmpty($ExpandedPayloadRoot)){
         $cands += (Join-Path $ExpandedPayloadRoot "Fonts"), (Join-Path $ExpandedPayloadRoot "C\Fonts")
     }
+    $cands += (Join-Path $Root "Fonts")
     $src=$cands | Where-Object { Test-Path $_ } | Select-Object -First 1
     if(!$src){ Warn "OEM Fonts component not found - the frontend will fall back to Arial for GVR_nfsu et al."; return }
     if($DryRun){ Log "would copy the OEM fonts from $src to $dst and install the missing families into Windows"; return }

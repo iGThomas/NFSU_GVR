@@ -112,6 +112,8 @@ four families from it that **no Windows install has**:
 Without them GDI substitutes Arial: readable, but the main menu (`START GAME`), the circuit name and
 the operator menu lose the NFSU styling. So the installer **registers the missing families with
 Windows**, as the OEM installer did, and keeps a copy in `<InstallRoot>\Fonts\`.
+They are taken from your disc; the four custom families are also bundled in the package's
+`Fonts\` folder as a fallback, so an `-ExpandedPayloadRoot` install still gets them.
 
 Only families Windows lacks are installed. The component also holds Microsoft's Arial bold/italic,
 Arial Narrow, Impact and Trebuchet MS Bold — every modern Windows already has those, and the disc's
@@ -220,7 +222,7 @@ each of those fails in a way that is otherwise hard to attribute (see the warnin
 ## Package contents
 `Install-NFSU-GVR-Portable.ps1`, `GvrLaunch.exe` (launcher — start the game with this),
 `gvr_settings.ini`, `NFSU_GVR.ico` (desktop-shortcut icon, copied into the install root),
-`Fonts\` (populated from the disc at install time — not bundled),
+`Fonts\` (the four custom families; Microsoft's come from your disc),
 `Tools\` (`unshield.exe`), `DLLs\` (runtime DLLs
 plus `GVRInputRaw.dll` controller driver, **`GVRInputRaw_oem.dll`** and `dsound.dll`),
 `CardEmu\` (`GVRSCR28.dll`, `PCSCSCR2.dll`, `GvrCardKey.exe`), `Dependencies\` (`DotNet11`
