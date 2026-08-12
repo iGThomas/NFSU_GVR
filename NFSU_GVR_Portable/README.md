@@ -18,7 +18,7 @@ This project installs the GlobalVR arcade release into **one folder of your choi
 
 Before starting, have these ready:
 
-- The latest project ZIP from the GitHub **Releases** page
+- The latest project ZIP from the GitHub **[Releases](https://github.com/iGThomas/NFSU_GVR/releases) page**
 - The original NFS Underground: GlobalVR **Disc 1** and **Disc 2**, either as physical discs or ISO images made from your original media (https://archive.org/details/nfsug_gvr)
 - An account that can run PowerShell as **Administrator**
 - A folder where you want the game installed, for example:
