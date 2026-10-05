@@ -1,0 +1,4 @@
+# compiler output (the finished binaries are shipped in NFSU_GVR_Portable\)
+src/*/build/
+# release zips built by Tools\Make-Release.ps1 (uploaded to GitHub Releases, not committed)
+dist/

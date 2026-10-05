@@ -11,9 +11,11 @@
      <ROOT>\Underground\GVR\Gvr\          helpers
 
   No MSDE / SQL Server / SQLXML, no cabinet-lockdown Run keys, no fixed C:\.
-  The game learns its locations from the registry keys this installer emits at
-  the chosen paths (verified: UniverShell2's hardcoded C:\gvrRoot strings are
-  dead editor constants; everything runtime is registry- or cwd-relative).
+  The game learns its locations from its PRIVATE registry, <ROOT>\nfsu_registry.ini,
+  which GVRInputRaw.dll computes from the install folder - this installer writes
+  no game keys to the Windows registry (verified: UniverShell2's hardcoded
+  C:\gvrRoot strings are dead editor constants; everything runtime is registry-
+  or cwd-relative).
 
   Prompts for OEM Disc 1 / Disc 2 (or -ExpandedPayloadRoot).
 #>
@@ -27,6 +29,7 @@ param(
     [switch]$SkipDotNet,
     [switch]$SkipDirectX,
     [switch]$ForceOverwrite,
+    [switch]$NoShortcut,
     [switch]$DryRun
 )
 
@@ -34,7 +37,7 @@ $ErrorActionPreference = "Stop"
 trap { Write-Host "FAIL: $($_.Exception.Message)" -ForegroundColor Red; exit 1 }
 
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "2026-07-17-portable-v2"
+$Version = "2026-10-05-portable-v2-privreg"
 $WorkRoot = Join-Path $env:TEMP ("NFSU_GVR_V2_" + (Get-Date -Format "yyyyMMdd_HHmmss"))
 $LogFile = Join-Path $WorkRoot "install.log"
 
@@ -45,10 +48,13 @@ function New-Dir($p){ if(!(Test-Path $p)){ if($DryRun){Log "would mkdir $p"; ret
 function Test-Admin { $id=[Security.Principal.WindowsIdentity]::GetCurrent(); (New-Object Security.Principal.WindowsPrincipal($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) }
 # GDI font registration (Deploy-Fonts). AddFontResource makes a newly copied font usable without a
 # reboot; the WM_FONTCHANGE broadcast tells already-running programs to re-read the font table.
+# both GVR installers define this type; a second run in the same PowerShell window must reuse it
+if (-not ("GvrFontApi" -as [type])) {
 Add-Type -Name GvrFontApi -Namespace "" -MemberDefinition @'
 [DllImport("gdi32.dll", CharSet=CharSet.Auto)] public static extern int AddFontResource(string lpszFilename);
 [DllImport("user32.dll", CharSet=CharSet.Auto)] public static extern int SendMessageTimeout(IntPtr hWnd,int Msg,IntPtr wParam,IntPtr lParam,int flags,int timeout,out IntPtr result);
-'@ -EA SilentlyContinue
+'@
+}
 function Copy-FileRequired($s,$d){ if(!(Test-Path $s)){Fail "required file missing: $s"}; New-Dir (Split-Path -Parent $d); Copy-Item -LiteralPath $s $d -Force }
 function Copy-Contents($s,$d){ if(!(Test-Path $s)){return}; New-Dir $d; Copy-Item -Path (Join-Path $s "*") -Destination $d -Recurse -Force }
 
@@ -110,138 +116,21 @@ function Extract-Discs {
     elseif(!(Reshape-Payload $extract $targetC)){ Fail "Extractor ran but expected game folders were not produced. See $WorkRoot." }
 }
 
-# ===================== registry (parameterized) ===========================
-$RegTemplate = @'
-Windows Registry Editor Version 5.00
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr]
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules]
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\Boot]
-"BootValue"=dword:00000002
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\Dongle]
-"Inserted"=dword:00000000
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRBoot]
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCacheWarmer]
-"NumResources"=dword:00000000
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCoinMonitor]
-"CoinMeterMask1"=dword:00000000
-"CoinMeterMask2"=dword:00000004
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCrashMonitor]
-"NumApps"=dword:00000005
-"SleepDelay"=dword:00000064
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCrashMonitor\Prog00]
-"cmdargs"=""
-"delay"=dword:0000ea60
-"enabled"=dword:00000003
-"path"="__GVRROOT__"
-"program"="GVRDongleMonitor.exe"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCrashMonitor\Prog01]
-"cmdargs"=" "
-"delay"=dword:0000ea60
-"enabled"=dword:00000001
-"path"="__GVRROOT__"
-"program"="GVRCoinMonitor.exe"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCrashMonitor\Prog02]
-"cmdargs"=""
-"delay"=dword:00000064
-"enabled"=dword:00000001
-"path"="__GVRROOT__"
-"program"="GVRStallMonitor.exe"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCrashMonitor\Prog03]
-"cmdargs"=""
-"delay"=dword:00000064
-"enabled"=dword:00000000
-"path"="__GVRROOT__"
-"program"="GVRCacheWarmer.exe"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\GVRCrashMonitor\Prog04]
-"cmdargs"="-nosnapshot"
-"delay"=dword:0000ea60
-"enabled"=dword:00000001
-"path"="__GVRROOT__"
-"program"="Univershell2.exe"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\hercules\UniverShell2]
-"Restart_Flags"="0"
-"Restart_Idle"="300000"
-"Restart_Reset"="82800000"
-"Restart_Timeout"="86400000"
-"RestartEnable"="1"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\Installer\DeskTopEngine]
-"Exists"=dword:00000001
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\Plus\1.1\Cabinet]
-"GvrEventLogRemovalThreshold"="30"
-"LeaderboardWaitTime"="20000"
-"MaxObjectLoadCount"="30"
-"PatchDownloadPath"="__PATCH__"
-"PatchMaxDownloadRetry"="9"
-"PatchMaxExecutionRetry"="1"
-"PlayerCardRequestThreshold"="20"
-"PlusSchemaPath"="__GVRPLUS__\\1\\schema\\nfscabinetXml.enc"
-"PublicKeyPath"="__GVRPLUS__\\1\\key\\publickey.xml"
-"SyncRetryInterval"="15"
-"WebServerIP"="66.107.15.47"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Gvr\Plus\1.1\Server]
-"PlusSchemaPath"="__GVRPLUS__\\1\\schema\\nfsserverXml.enc"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\GlobalVR]
-"PQI Version"="PGA 2.0.0"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\GlobalVR\Need For Speed UnderGround]
-"Build"="027"
-"Prefix"=""
-"Suffix"=""
-"Version"="1.1.0"
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\GVRShell\Operator\Games\NFSUNDERGROUND]
-"Ini"="__UG__\\NFSUnderground.ini"
-'@
-
-function Emit-Registry($ug,$gvrroot,$gvrplus,$gvr,$root){
-    function E($p){ $p.Replace("\","\\") }   # .reg backslash escaping
-    $t = $RegTemplate
-    $t = $t.Replace("__GVRROOT__", (E $gvrroot))
-    $t = $t.Replace("__GVRPLUS__", (E $gvrplus))
-    $t = $t.Replace("__UG__",      (E $ug))
-    $t = $t.Replace("__PATCH__",   (E (Join-Path $root "PatchService")) + "\\")
-    $out=Join-Path $WorkRoot "game_paths.reg"
-    if(!(Test-Path $WorkRoot)){ New-Dir $WorkRoot }
-    Set-Content -LiteralPath $out -Value $t -Encoding ASCII
-    Log "importing relocated game registry (no SQL keys, no boot Run keys)"
-    if($DryRun){ Log "would reg import $out"; return }
-    $ErrorActionPreference="Continue"
-    & reg import $out 2>&1 | Out-Null
-    $ec=$LASTEXITCODE; $ErrorActionPreference="Stop"
-    if($ec -ne 0){ Fail "reg import failed ($ec) - $out" }
-    # ---- 64-bit OS (Win10/11 x64, also Win7 x64) support ------------------------------
-    # The game is 32-bit: on x64 Windows it reads HKLM\SOFTWARE via the WOW6432Node view.
-    # The import above (64-bit reg.exe) only populates the 64-bit view, and the game then
-    # silently exits (code -10) on its startup registry probe. Import again with the
-    # 32-bit reg.exe, which auto-redirects SOFTWARE into WOW6432Node.
-    $reg32=Join-Path $env:WINDIR "SysWOW64\reg.exe"
-    if(Test-Path $reg32){
-        $ErrorActionPreference="Continue"
-        & $reg32 import $out 2>&1 | Out-Null
-        $ec=$LASTEXITCODE; $ErrorActionPreference="Stop"
-        if($ec -ne 0){ Fail "32-bit reg import failed ($ec) - $out" }
-        Log "  registry also imported into the 32-bit view (WOW6432Node) for the 32-bit game"
-    }
-    # ------------------------------------------------------------------------------------
-    Log "  registry imported (GVRROOT=$gvrroot, GVRPLUS=$gvrplus)"
+# ===================== registry (private, nothing written) ================
+# The game no longer uses the Windows registry for its own keys. GVRInputRaw.dll (GvrInputEmu
+# + the shared GvrPrivReg library) answers every call for HKLM\SOFTWARE\Gvr, \GlobalVR and
+# \GVRShell from <ROOT>\nfsu_registry.ini, which it creates on the first launch:
+#   * the folder values (GvrRoot, GvrPlus, the ini path, PatchService) are computed from the
+#     install folder every time, so a moved install keeps working;
+#   * the rest are the OEM values this stage used to import (GvrInputEmu\NfsuPrivReg.cpp);
+#   * NASCAR shares HKLM\SOFTWARE\gvr\Plus\1.1\Cabinet in the real registry - it can no longer
+#     repoint NFSU at its own schema.
+# So: no reg import, no WOW6432Node double write, and no administrator rights needed for it.
+# Keys an earlier installer wrote are left alone (the other title may still use them).
+function Emit-Registry($root){
+    $store=Join-Path $root "nfsu_registry.ini"
+    if(Test-Path $store){ Log "private registry: keeping existing $store" }
+    else { Log "private registry: $store will be created by the game on first launch (nothing written to the Windows registry)" }
 }
 
 # ===================== .NET 1.1 / DirectX =================================
@@ -534,9 +423,9 @@ function Deploy-Sqlite($ug,$gvrroot,$gvrplus){
         Copy-Item (Join-Path $sd "game.db") $dbDst -Force
         Log "  game.db -> $dbDst  (fresh seed)"
     }
-    # belt-and-suspenders: the newer provider derives this from the registry, but the prebuilt
-    # fallback (used when the target has no 1.1 csc) reads GVRSQLITE_DB first.
-    [Environment]::SetEnvironmentVariable("GVRSQLITE_DB", $dbDst, "Machine")
+    # No machine-wide GVRSQLITE_DB any more: GvrLaunch.exe gives the shell and the race THIS
+    # install's game.db, and the provider can also derive it from the (private) PlusSchemaPath.
+    # So two installs never share a database, and no log-off is needed before the first start.
 }
 
 # ===================== batch-file path rewrite ============================
@@ -764,6 +653,7 @@ function Verify-Deployment($ug,$gvrroot,$installRoot){
 }
 
 function Make-Shortcut($ug,$gvrroot,$installRoot){
+    if($NoShortcut){ Log "no shortcut (-NoShortcut)"; return }
     # Point at GvrLaunch.exe so the ini is applied every time. It starts the frontend itself
     # (UniverShell2); GVRBoot - the arcade boot chain with the dongle/coin/stall monitors and a
     # 60s warm-up - stays skipped, as it is unnecessary and flaky for a home install.
@@ -832,7 +722,7 @@ if($gameInstalled -and -not $ForceOverwrite){
 Copy-Contents (Join-Path $Root "DLLs") $UG
 Copy-Contents (Join-Path $Root "DLLs") $GVRROOT
 
-Emit-Registry $UG $GVRROOT $GVRPLUS $GVR $InstallRoot
+Emit-Registry $InstallRoot
 Register-Assemblies $GVRPLUS
 Deploy-Sqlite $UG $GVRROOT $GVRPLUS
 Rewrite-Batches $UG $GVRROOT $GVRPLUS $GVR
@@ -858,10 +748,4 @@ Log "DONE. Installed to $UG on SQLite - no SQL Server, no fixed C:\ paths."
 Log "Launch: $InstallRoot\GvrLaunch.exe (what the shortcut points at - applies gvr_settings.ini)"
 Log "Settings: edit $InstallRoot\gvr_settings.ini - resolution, fullscreen/windowed, gamepad map."
 Log "  Nothing else to run: the exes are never modified, the settings apply on the next launch."
-# The SQLite provider locates game.db via the GVRSQLITE_DB machine env var. Processes already
-# running (Explorer!) don't see a var set mid-session, so a shortcut launch before re-logon
-# hands the game an empty environment -> the shell waits on a db it can't find (AppHangB1).
-Warn "IMPORTANT: log off and back on (or reboot) ONCE before first launch."
-Warn "Launching from the shortcut before that will hang - Explorer only picks up the"
-Warn "GVRSQLITE_DB environment variable on a fresh logon."
 if(!$DryRun){ Remove-Item -LiteralPath $WorkRoot -Recurse -Force -EA SilentlyContinue }

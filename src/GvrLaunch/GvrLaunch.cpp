@@ -101,6 +101,42 @@ static bool patch_dword(HANDLE proc, BYTE* addr, DWORD value, const char* what, 
     return ok != FALSE;
 }
 
+// ---- [Launcher] KeepShell=true : the frontend stays up behind the race --------------------------
+// UniverShell2's script opcode RUN (Interpreter_OpCode_RUN) normally tears its renderer, sound and
+// scene down, hides its window, starts the race and rebuilds everything after it. The OEM keeps a
+// "keep running" mode for tools: three tests on the launch entry's flag (`id && id->+8 && !golf`).
+// Each test starts with `ldloca.s V_43` (12 2B); a 2-byte `br.s` in its place takes the keep branch:
+//   IL_02BE  before the launch -> no teardown         (br.s IL_02D2)
+//   IL_039F  after CreateProcess -> window not hidden  (br.s IL_03D9)
+//   IL_04DD  after the race -> no rebuild              (br.s IL_0513)
+struct IlPatch { DWORD fileOff; BYTE want[2]; BYTE put[2]; const char* what; };
+static const IlPatch KEEP_SHELL[] = {
+    { 0x175C2, { 0x12, 0x2B }, { 0x2B, 0x12 }, "keep renderer" },
+    { 0x176A3, { 0x12, 0x2B }, { 0x2B, 0x38 }, "keep window"   },
+    { 0x177E1, { 0x12, 0x2B }, { 0x2B, 0x34 }, "skip rebuild"  },
+};
+static bool patch_keep_shell(HANDLE proc, BYTE* base, const char* exe, char* log, size_t logn) {
+    // all-or-nothing: verify every site first, so a different build is never half-patched
+    BYTE* at[3];
+    for (int i = 0; i < 3; ++i) {
+        DWORD rva = file_off_to_rva(exe, KEEP_SHELL[i].fileOff);
+        BYTE cur[2] = {0}; SIZE_T rw = 0;
+        at[i] = base + rva;
+        if (!rva || !ReadProcessMemory(proc, at[i], cur, 2, &rw) || memcmp(cur, KEEP_SHELL[i].want, 2) != 0) {
+            _snprintf(log + strlen(log), logn - strlen(log), "  KeepShell: %s site differs - not applied\r\n", KEEP_SHELL[i].what);
+            return false;
+        }
+    }
+    for (int i = 0; i < 3; ++i) {
+        DWORD old = 0; SIZE_T rw = 0;
+        VirtualProtectEx(proc, at[i], 2, PAGE_EXECUTE_READWRITE, &old);
+        WriteProcessMemory(proc, at[i], KEEP_SHELL[i].put, 2, &rw);
+        VirtualProtectEx(proc, at[i], 2, old, &old);
+    }
+    _snprintf(log + strlen(log), logn - strlen(log), "  KeepShell: frontend stays up during the race\r\n");
+    return true;
+}
+
 // ---- [Race] Fullscreen=true|false --------------------------------------------------------------
 // The shell launches the race with a base argument string stored in a GVRD container
 // (GvrRoot\gvr\CommandlineArgs_data.gvr). Whether the race runs fullscreen or in a window is just
@@ -153,6 +189,8 @@ static bool sync_race_fullscreen(const char* shellDir, bool wantFullscreen, char
 // top-level windows; we only sit behind them in the z-order.
 static HWND    g_backdrop = nullptr;
 static bool    g_merge = false;          // [Launcher] Merge=true -> adopt both windows as children
+static bool    g_keepShell = false;      // KeepShell applied: no swap to cover, only the focus watcher
+static bool    g_splash = true;          // [Launcher] Backdrop: boot screen while the shell loads
 static int     g_missing = 0;            // consecutive ticks with no game/frontend window visible
 static HBITMAP g_boot = nullptr;         // the game's own boot screen, shown between the two exes
 static int     g_bootW = 0, g_bootH = 0;
@@ -336,6 +374,16 @@ static LRESULT CALLBACK backdrop_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
             }
             if (!target) lastTarget = nullptr;   // window gone; re-focus when the next one appears
         }
+        // ---- KeepShell: the frontend never leaves the screen, so there is no swap to cover. The
+        // boot screen shows only until the shell's window first appears; after that this window
+        // stays hidden and the timer just runs the focus hand-off above. Exit once neither
+        // program has been running for 6 s (a minimised window must not end the watcher).
+        if (g_keepShell && !g_merge) {
+            if (app && IsWindowVisible(h)) ShowWindow(h, SW_HIDE);
+            if (exe_running("UniverShell2.exe") || exe_running("UndergroundGVR.exe")) g_lastSeen = now;
+            else if (g_lastSeen && now - g_lastSeen > 6000) PostQuitMessage(0);
+            return 0;
+        }
         if (app && g_merge) {
             // ---- TRUE MERGE: adopt the app window as a CHILD of the host ----------------------
             // Both programs then live inside one window: one taskbar entry, one alt-tab entry, and
@@ -414,7 +462,7 @@ static void create_backdrop(HINSTANCE hInst, int shellW, int shellH, int raceW, 
     DWORD ex = g_merge ? 0 : (WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
     g_backdrop = CreateWindowExA(ex, "GvrBackdrop", g_merge ? "NFS Underground" : "",
                                  WS_POPUP, x, y, w, h, nullptr, nullptr, hInst, nullptr);
-    ShowWindow(g_backdrop, g_merge ? SW_SHOW : SW_SHOWNOACTIVATE);
+    if (g_splash || g_merge) ShowWindow(g_backdrop, g_merge ? SW_SHOW : SW_SHOWNOACTIVATE);
     SetTimer(g_backdrop, 1, 120, nullptr);
 }
 
@@ -462,6 +510,16 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
         sync_race_fullscreen(shellDir, wantFull, logEarly, sizeof(logEarly));
     }
 
+    // This install's database (<GvrRoot>\..\GvrPlus\game.db) for the shell and the race it
+    // starts, which inherit our environment. It overrides the machine-wide GVRSQLITE_DB an
+    // older installer set, so two installs never share a database, and no log-off is needed.
+    {
+        char db[MAX_PATH], full[MAX_PATH];
+        wsprintfA(db, "%s\\..\\GvrPlus\\game.db", shellDir);
+        if (GetFullPathNameA(db, MAX_PATH, full, nullptr) && GetFileAttributesA(full) != INVALID_FILE_ATTRIBUTES)
+            SetEnvironmentVariableA("GVRSQLITE_DB", full);
+    }
+
     STARTUPINFOA si = {}; si.cb = sizeof(si);
     PROCESS_INFORMATION pi = {};
     char cmd[MAX_PATH * 2];
@@ -481,6 +539,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
             patch_dword(pi.hProcess, base + rvaPH, (DWORD)h, "panel height", log, sizeof(log));
         } else {
             _snprintf(log, sizeof(log), "could not resolve the patch sites - launching at stock size\r\n");
+        }
+    }
+    if (ini[0]) {
+        char ks[16] = {0};
+        GetPrivateProfileStringA("Launcher", "KeepShell", "false", ks, sizeof(ks), ini);
+        if (_stricmp(ks, "true") == 0 || _stricmp(ks, "1") == 0 || _stricmp(ks, "yes") == 0) {
+            BYTE* base = remote_image_base(pi.hProcess);
+            if (base) g_keepShell = patch_keep_shell(pi.hProcess, base, shell, log, sizeof(log));
         }
     }
     if (getenv("GVRLAUNCH_VERBOSE")) {
@@ -503,6 +569,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
         g_merge = (_stricmp(mg, "true") == 0 || _stricmp(mg, "1") == 0 || _stricmp(mg, "yes") == 0);
         if (g_merge) useBackdrop = true;                       // the host window IS the backdrop
     }
+    if (g_keepShell) {                // the window is also the focus watcher: always needed
+        g_splash = useBackdrop;       // Backdrop=false -> watcher only, no boot screen
+        useBackdrop = true;
+    }
     if (useBackdrop) {
         OleInitialize(nullptr);                 // needed by OleLoadPicture
         // installRoot = the folder holding gvr_settings.ini (falls back to our own folder)
@@ -510,6 +580,21 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
         if (ini[0]) { char* s2 = strrchr(root, '\\'); if (s2) *s2 = 0; }
         load_boot_image(root);
         create_backdrop(hInst, w, h, raceW, raceH);
+    }
+
+    // Load the shell's GVRInputRaw.dll (our GvrInputEmu) before UniverShell2's own code: it
+    // carries the game's PRIVATE registry (nfsu_registry.ini, GvrPrivReg) and the shell reads
+    // its keys long before its menu plug-in would load the DLL. Queued as an APC on the main
+    // thread, it runs while the loader initialises the process.
+    {
+        char dll[MAX_PATH];
+        wsprintfA(dll, "%s\\GVRInputRaw.dll", shellDir);
+        SIZE_T n = lstrlenA(dll) + 1;
+        void* mem = GetFileAttributesA(dll) == INVALID_FILE_ATTRIBUTES ? nullptr
+                  : VirtualAllocEx(pi.hProcess, nullptr, n, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        if (mem && WriteProcessMemory(pi.hProcess, mem, dll, n, nullptr))
+            QueueUserAPC((PAPCFUNC)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA"),
+                         pi.hThread, (ULONG_PTR)mem);
     }
 
     ResumeThread(pi.hThread);

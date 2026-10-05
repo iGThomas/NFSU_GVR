@@ -17,9 +17,9 @@ if not exist build mkdir build
 
 cl /nologo /LD /MT /EHsc /O2 /W3 ^
    /Fo:build\ /Fd:build\ ^
-   GvrInputEmu.cpp ^
+   GvrInputEmu.cpp NfsuPrivReg.cpp ..\GvrPrivReg\GvrPrivReg.cpp /I..\GvrPrivReg ^
    /link /DEF:GvrInputEmu.def /OUT:build\GVRInputRaw.dll /IMPLIB:build\GvrInputEmu.lib ^
-   hid.lib setupapi.lib user32.lib
+   hid.lib setupapi.lib user32.lib advapi32.lib
 
 if errorlevel 1 ( echo BUILD FAILED & exit /b 1 )
 

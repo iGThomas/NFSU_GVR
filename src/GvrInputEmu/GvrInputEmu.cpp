@@ -1221,6 +1221,10 @@ static void keep_not_topmost() {
     if (!h) return;
     char fgName[64] = "";
     bool focused = foreground_is_our_app(fgName, sizeof(fgName));
+    // [Display] OnTop=false: never take the always-on-top band. Other windows can then sit over
+    // the game, at the price of the taskbar covering a window as tall as the screen.
+    static int onTop = -1;
+    if (onTop < 0) { char ini[MAX_PATH]; onTop = find_settings_ini(ini, sizeof(ini)) ? ini_bool(ini, "OnTop", true) : 1; }
 
     // "Nobody owns the foreground" happens right after the race finishes loading: the frontend has
     // dropped focus and the race never took it, so the desktop is in front and the race would sink
@@ -1278,6 +1282,7 @@ static void keep_not_topmost() {
     // raised last sits highest. The window logged isTop=1 and still lost to the taskbar, because a
     // change-only update never re-raises us. Dropping back to non-topmost still only happens on a
     // real change, so we do not thrash when the player alt-tabs away.
+    if (!onTop) focused = false;             // OnTop=false: only ever drop out of the band
     if (focused) SetWindowPos(h, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     else if (isTopmost) SetWindowPos(h, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
@@ -1633,11 +1638,20 @@ int  GVRInputRawWriteDrivingValues(void* buf) { OEM_FWD_IP("GVRInputRawWriteDriv
 
 } // extern "C"
 
+void nfsu_privreg_attach(const char* installRoot, void (*log)(const char*, ...));
+
 BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
     if (reason == DLL_PROCESS_ATTACH) {
         g_hinst = hinst;               // for locating gvr_settings.ini from our own folder
         maybe_open_log();
         detect_host();
+        // HKLM\SOFTWARE\Gvr, \GlobalVR and \GVRShell come from <install>\nfsu_registry.ini
+        // (NfsuPrivReg.cpp). The install root is the folder holding gvr_settings.ini.
+        { char root[MAX_PATH];
+          if (find_settings_ini(root, sizeof(root))) {
+              char* s = strrchr(root, '\\'); if (s) *s = 0;
+              nfsu_privreg_attach(root, logf);
+          } }
         // The game statically imports us, so this runs BEFORE its entry point - early enough to
         // set the render resolution from the ini without ever touching the exe on disk.
         if (g_is_game) apply_race_resolution();

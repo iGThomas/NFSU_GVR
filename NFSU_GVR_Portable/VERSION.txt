@@ -3,9 +3,13 @@ NFSU_GVR_Portable - NFS Underground: GlobalVR as a normal Windows game
 Installs into a user-chosen folder with the GVR folders nested inside it:
   <ROOT>\Underground\  +  <ROOT>\Underground\GVR\{GvrRoot,GvrPlus,Gvr}
 
-Relocatable because the game learns its locations from the registry (Ini,
-PlusSchemaPath x2, PublicKeyPath, GVRCrashMonitor Prog0x path) which this installer
-emits at the chosen paths; UniverShell2.exe's hardcoded C:\gvrRoot strings are dead
+Version 2026-10-05-portable-v2-privreg.
+
+Relocatable because the game learns its locations from its registry keys (Ini,
+PlusSchemaPath x2, PublicKeyPath, GVRCrashMonitor Prog0x path), and GVRInputRaw.dll now
+answers those from <ROOT>\nfsu_registry.ini (a private registry, created on first start,
+folder values computed from the install every time) - nothing is written to the Windows
+registry. UniverShell2.exe's hardcoded C:\gvrRoot strings are dead
 editor constants (proven via Ghidra: zero xrefs); and the SQLite provider derives
 game.db from the registry PlusSchemaPath so it needs no env var. No MSDE / SQL Server
 / SQLXML, no cabinet-lockdown Run keys, no fixed C:\, no system32 dependency
@@ -17,7 +21,7 @@ Provider tracing: env var GVRSQLITE_LOG=1 -> gvrsqlite.log (Vista+ redirects it 
 %LOCALAPPDATA%\VirtualStore\gvrsqlite.log). Grep it for 'prepare FAIL': untranslated
 T-SQL fails at prepare time and silently returns zero rows with no in-game error.
 
-Win10/11 (x64): registry also imported into WOW6432Node (via SysWOW64\reg.exe); real
+Win10/11 (x64): real
 .NET 1.1 SP1 installed via slipstream (plain dotnetfx = MSI 1603, and CLR 2.0
 redirection AVs inside PLUSDE's native C++ EH); app-local DXVK d3d9.dll caps the
 framerate-tied physics at 60fps (game side only); cabinet GammaSet.exe disabled

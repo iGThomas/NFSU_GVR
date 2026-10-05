@@ -111,7 +111,7 @@ The installer then:
 
 - extracts the game files;
 - creates the required nested GVR folder layout;
-- writes the required registry paths;
+- prepares the game's private registry (`nfsu_registry.ini` — nothing is written to the Windows registry);
 - installs the SQLite backend;
 - installs or deploys required runtimes;
 - copies the controller and audio compatibility DLLs;
@@ -219,6 +219,7 @@ For manual or repeat installs, these switches are available:
 -Disc2Path <dir>
 -SkipDirectX
 -SkipDotNet
+-NoShortcut
 ```
 
 ### Examples
@@ -272,6 +273,7 @@ Width=1440
 Height=1080
 Fullscreen=false
 Borderless=true
+OnTop=true
 
 [Controller]
 Cross    = ebrake, confirm, skipintro
@@ -285,6 +287,7 @@ R3       = card
 
 [Launcher]
 Backdrop=true
+KeepShell=true
 Merge=false
 ```
 
@@ -298,12 +301,14 @@ Width=1440
 Height=1080
 Fullscreen=false
 Borderless=true
+OnTop=true
 ```
 
 - `Width` / `Height` — render size.
 - `Fullscreen=false` — recommended default.
 - `Borderless=true` — removes the title bar and centres the window when windowed.
 - `Fullscreen=true` — uses an exclusive fullscreen display mode.
+- `OnTop=true` — while the game is the active window it stays on top, covering the taskbar. `OnTop=false` never puts it on top, so other windows can sit over the game (the taskbar may then cover its bottom edge).
 
 The installer chooses a sensible 4:3 size only on a **fresh install**. It does not continuously redetect your display, and it does not overwrite an existing INI during a normal reinstall.
 
@@ -312,10 +317,12 @@ The installer chooses a sensible 4:3 size only on a **fresh install**. It does n
 ```ini
 [Launcher]
 Backdrop=true
+KeepShell=true
 Merge=false
 ```
 
-- `Backdrop=true` shows the game's boot screen during the frontend-to-race transition.
+- `KeepShell=true` (default) — the frontend stays on screen behind the race and is back instantly afterwards. On the cabinet the frontend unloads its graphics, hides and rebuilds itself after every race; `GvrLaunch.exe` changes that in memory (the executable on disk is untouched). `KeepShell=false` restores the original hand-over.
+- `Backdrop=true` shows the game's boot screen while the frontend starts (and, with `KeepShell=false`, during the frontend-to-race transition).
 - `Merge=true` attempts to run both programs inside one window. This is experimental and disabled by default.
 
 ---
@@ -444,11 +451,9 @@ D:\Games\NFSU\NFSU_GVR.ico                shortcut icon
 
 ## How the install stays location-independent
 
-### Registry paths
+### A private registry
 
-The installer writes the GVR registry paths using the install directory you selected.
-
-This includes keys for:
+The game reads its locations from registry values, including:
 
 - `NFSUNDERGROUND\Ini`;
 - `Gvr\Plus\1.1\Cabinet`;
@@ -457,7 +462,13 @@ This includes keys for:
 - `PublicKeyPath`;
 - `GVRCrashMonitor\Prog0x path`.
 
-The game reads its locations from these registry values.
+**Nothing is written to the Windows registry.** `GVRInputRaw.dll` answers every registry call for `HKLM\SOFTWARE\Gvr`, `\GlobalVR` and `\GVRShell` from:
+
+```text
+nfsu_registry.ini
+```
+
+in the install root. The file is created on the first start. The folder values are worked out from wherever the install is, every time, so the install folder can be moved or copied and keeps working. It also avoids a clash with another GlobalVR game (NASCAR Team Racing) that uses one of the same keys.
 
 ### `UniverShell2.exe`
 
@@ -467,15 +478,15 @@ At runtime, the shell loads its content relative to its working directory, so no
 
 ### SQLite database
 
-The SQLite provider derives the `game.db` path from the registry `PlusSchemaPath` value:
+`GvrLaunch.exe` points the game at this install's own database:
 
 ```text
 <GvrPlus>\game.db
 ```
 
-The database therefore remains co-located with the selected installation.
+The SQLite provider can also derive the same path from the (private) `PlusSchemaPath` value. The database therefore always belongs to the selected installation, and two installs never share one.
 
-No environment variable or reboot is required.
+No machine-wide environment variable, log-off or reboot is required.
 
 ### GVRD content
 
@@ -528,22 +539,6 @@ C:\Windows\system32
 ## Windows 10 / 11 x64 compatibility
 
 The installer contains separate compatibility blocks for modern 64-bit Windows. They are gated so older Windows installations are not unnecessarily changed.
-
-### WOW6432Node registry view
-
-The game is 32-bit and accesses the 32-bit view of:
-
-```text
-HKLM\SOFTWARE
-```
-
-On 64-bit Windows, importing only through the normal 64-bit `reg.exe` can leave the game unable to see its settings, causing an exit with `-10`.
-
-The installer therefore imports the required data into both registry views, including through:
-
-```text
-SysWOW64\reg.exe
-```
 
 ### .NET Framework 1.1 SP1
 
@@ -692,13 +687,11 @@ While active, the frontend and game windows can cover the taskbar.
 
 When you switch away from them, they drop behind it again.
 
-This is intentional so the game feels fullscreen without trapping Alt+Tab.
+This is intentional so the game feels fullscreen without trapping Alt+Tab. Set `[Display] OnTop=false` if you want other windows to be able to sit over the game.
 
-### Desktop edges during transitions
+### Desktop edges during transitions (`KeepShell=false` only)
 
-A brief glimpse of the desktop can appear while switching between the frontend and race.
-
-The launcher backdrop covers the game's 4:3 area rather than the entire 16:9 desktop.
+With `KeepShell=false`, a brief glimpse of the desktop can appear while switching between the frontend and race: the launcher backdrop covers the game's 4:3 area rather than the entire 16:9 desktop. With the default `KeepShell=true` the frontend stays on screen behind the race, so there is no gap.
 
 ### Experimental merged window
 
@@ -716,6 +709,8 @@ The frontend can exit when it is no longer running as a top-level window.
 The project has been verified on Windows 10 and Windows 11 x64 desktops.
 
 It has not been tested on original cabinet hardware.
+
+The private registry (`nfsu_registry.ini`) is new in version 2.0 and has only been tested on Windows 11; on Windows XP and 7 it is untested.
 
 ---
 

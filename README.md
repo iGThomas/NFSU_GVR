@@ -62,8 +62,9 @@ The disc images can be mounted with [WinCDEMU](https://wincdemu.sysprogs.org/) (
 **Working:**
 
 - ✅ SQLite Edition (V2): game runs on an embedded SQLite database — no MSDE service, no reboot
-- ✅ **Windows 11 (x64) on real hardware** — full install, frontend and racing (registry into `WOW6432Node`, real .NET 1.1 SP1 via slipstream, 60 fps cap via app-local DXVK)
-- ✅ Installs to **any folder**; nothing is written outside it except a handful of registry keys
+- ✅ **Windows 11 (x64) on real hardware** — full install, frontend and racing (real .NET 1.1 SP1 via slipstream, 60 fps cap via app-local DXVK)
+- ✅ Installs to **any folder**, and the install can be moved: the game's registry keys live in `nfsu_registry.ini` inside it (a private registry), so nothing is written to the Windows registry except the fonts
+- ✅ The frontend stays on screen behind the race and returns instantly (`[Launcher] KeepShell`)
 - ✅ Frontend car liveries, leaderboards and best times (needed a `SELECT TOP` → `LIMIT` fix in the SQLite shim)
 - ✅ Configurable resolution (`gvr_settings.ini`) — the stock 800×600 is not a hard limit
 - ✅ Game-only install on Windows 7 32-bit via the automated PowerShell installer (V1, MSDE)
