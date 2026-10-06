@@ -16,29 +16,22 @@ Your PC stays a normal PC — nothing takes over Windows.
 - **NFSU GlobalVR Disc 1 and Disc 2** — physical discs or ISO images
   ([archive.org/details/nfsug_gvr](https://archive.org/details/nfsug_gvr))
 
-## Install — 5 steps
+## Install — 4 steps
 
 **1. Download** `NFSU_GVR_Portable-<version>.zip` from the
 [Releases page](https://github.com/iGThomas/NFSU_GVR/releases/latest) and **extract it**
 (right-click → *Extract All*). Don't run anything from inside the ZIP.
 
 **2. Mount the discs.** Right-click each ISO → **Mount** (or insert the discs).
-Only one drive? Mount Disc 1 now; the installer asks for Disc 2 later.
+Only one drive? Mount Disc 1 now; the installer asks for Disc 2 when it needs it.
 
-**3. Open PowerShell as Administrator.** Start menu → type **PowerShell** → right-click →
-**Run as administrator** → **Yes**.
+**3. Double-click `Install.bat`** in the extracted folder and click **Yes** when Windows asks
+for administrator rights. (If Windows asks "Do you want to run this file?", click **Run**.)
 
-**4. Run the installer.** Paste these lines, using the folder you extracted to:
-
-```powershell
-cd "$env:USERPROFILE\Downloads\NFSU_GVR_Portable"
-Set-ExecutionPolicy -Scope Process Bypass
-.\Install-NFSU-GVR-Portable.ps1
-```
-
-**5. Answer the questions.** It asks **where to install** (for example `D:\Games\NFSU`) and finds
-the discs by itself. It takes a few minutes, installs what's missing (.NET 1.1, DirectX), and
-puts an **NFS Underground GVR** shortcut on your desktop. No reboot needed.
+**4. Pick where to install** (for example `C:\Games` — an `NFSU_GVR` folder is created inside it).
+The installer finds the discs by itself, installs what's missing (.NET 1.1, DirectX) and puts
+an **NFS Underground GVR** shortcut on your desktop. It takes a few minutes and tells you when
+it is done. No reboot needed.
 
 **Play:** double-click the desktop shortcut (or `GvrLaunch.exe` in the install folder).
 

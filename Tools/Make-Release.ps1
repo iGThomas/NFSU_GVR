@@ -15,7 +15,7 @@ $dist = Join-Path $repo "dist"
 $zip = Join-Path $dist "NFSU_GVR_Portable-$Version.zip"
 
 # the files that must be in every release (the installer warns but continues without them)
-foreach ($f in @("Install-NFSU-GVR-Portable.ps1", "GvrLaunch.exe", "gvr_settings.ini",
+foreach ($f in @("Install.bat", "Install-NFSU-GVR-Portable.ps1", "GvrLaunch.exe", "gvr_settings.ini",
                  "DLLs\GVRInputRaw.dll", "DLLs\GVRInputRaw_oem.dll", "DLLs\dsound.dll",
                  "Tools\unshield.exe", "SQLite\game.db")) {
     if (!(Test-Path (Join-Path $src $f))) { throw "missing from NFSU_GVR_Portable: $f" }

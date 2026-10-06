@@ -30,14 +30,15 @@ param(
     [switch]$SkipDirectX,
     [switch]$ForceOverwrite,
     [switch]$NoShortcut,
+    [switch]$NoGui,
     [switch]$DryRun
 )
 
 $ErrorActionPreference = "Stop"
-trap { Write-Host "FAIL: $($_.Exception.Message)" -ForegroundColor Red; exit 1 }
+trap { Write-Host "FAIL: $($_.Exception.Message)" -ForegroundColor Red; try { if(!$DryRun){ [void](Show-Message ("The installation stopped:" + [Environment]::NewLine + [Environment]::NewLine + $_.Exception.Message) "Error") } } catch {}; exit 1 }
 
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "2026-10-05-portable-v2-privreg"
+$Version = "2026-10-06-portable-v2.0.1"   # Install.bat + folder pickers; PowerShell 2.0 (Windows 7)
 $WorkRoot = Join-Path $env:TEMP ("NFSU_GVR_V2_" + (Get-Date -Format "yyyyMMdd_HHmmss"))
 $LogFile = Join-Path $WorkRoot "install.log"
 
@@ -58,6 +59,48 @@ Add-Type -Name GvrFontApi -Namespace "" -MemberDefinition @'
 function Copy-FileRequired($s,$d){ if(!(Test-Path $s)){Fail "required file missing: $s"}; New-Dir (Split-Path -Parent $d); Copy-Item -LiteralPath $s $d -Force }
 function Copy-Contents($s,$d){ if(!(Test-Path $s)){return}; New-Dir $d; Copy-Item -Path (Join-Path $s "*") -Destination $d -Recurse -Force }
 
+# ---- the questions as Windows dialogs (Install.bat starts PowerShell with -STA) ---------------
+# Windows dialogs need a single-threaded (STA) PowerShell: PowerShell 3+ is STA by default,
+# PowerShell 2.0 (Windows 7) only with -STA. Otherwise the typed prompts are used.
+function Test-CanShowDialogs {
+    if($NoGui){ return $false }
+    if([Threading.Thread]::CurrentThread.GetApartmentState() -ne "STA"){ return $false }
+    try { Add-Type -AssemblyName System.Windows.Forms; Add-Type -AssemblyName System.Drawing; return $true } catch { return $false }
+}
+function New-DialogOwner {
+    # an invisible topmost window, so the dialog opens IN FRONT of the console
+    $f=New-Object System.Windows.Forms.Form
+    $f.TopMost=$true; $f.ShowInTaskbar=$false; $f.Opacity=0
+    $f.StartPosition="CenterScreen"; $f.Size=New-Object System.Drawing.Size(1,1)
+    $f.Show(); $f.Activate(); return $f
+}
+# returns the chosen folder, or $null if the user cancelled
+function Select-Folder($description,[switch]$FromComputer){
+    $owner=New-DialogOwner
+    try {
+        $d=New-Object System.Windows.Forms.FolderBrowserDialog
+        $d.Description=$description; $d.ShowNewFolderButton=!$FromComputer
+        if($FromComputer){ $d.RootFolder=[Environment+SpecialFolder]::MyComputer }
+        if($d.ShowDialog($owner) -eq [System.Windows.Forms.DialogResult]::OK){ return $d.SelectedPath }
+        return $null
+    } finally { $owner.Close() }
+}
+function Show-Message($text,$icon="Information",$buttons="OK"){
+    if(!(Test-CanShowDialogs)){ return "OK" }
+    $owner=New-DialogOwner
+    try { return [string][System.Windows.Forms.MessageBox]::Show($owner,$text,"NFS Underground GVR installer",$buttons,$icon) }
+    finally { $owner.Close() }
+}
+# can we create files there? (a mounted ISO / DVD drive is read-only)
+function Test-WritableFolder($p){
+    try {
+        if(!(Test-Path $p)){ New-Item -ItemType Directory -Force $p -EA Stop | Out-Null }
+        $probe=Join-Path $p ("write-test-"+[Guid]::NewGuid().ToString("N")+".tmp")
+        [IO.File]::WriteAllText($probe,"x"); Remove-Item -LiteralPath $probe -Force
+        return $true
+    } catch { return $false }
+}
+
 # ===================== disc extraction (from the proven AIO) ==============
 function Test-Disc1($p){ (Test-Path (Join-Path $p "data1.hdr")) -and (Test-Path (Join-Path $p "data1.cab")) -and (Test-Path (Join-Path $p "data2.cab")) }
 function Test-Disc2($p){ Test-Path (Join-Path $p "data3.cab") }
@@ -66,7 +109,24 @@ function Find-Disc($kind,$pref){
     foreach($drv in [System.IO.DriveInfo]::GetDrives()){ if(!$drv.IsReady){continue}; $c=$drv.RootDirectory.FullName; if($kind -eq "Disc1" -and (Test-Disc1 $c)){return $c}; if($kind -eq "Disc2" -and (Test-Disc2 $c)){return $c} }
     return $null
 }
-function Request-Disc($kind,$pref){ $d=Find-Disc $kind $pref; while(!$d){ [void](Read-Host "Insert/mount $kind, then press Enter"); $d=Find-Disc $kind "" }; Log "$kind found: $d"; return $d }
+function Request-Disc($kind,$pref){
+    $d=Find-Disc $kind $pref
+    $name=$kind.Replace("Disc","Disc ")
+    while(!$d){
+        if(Test-CanShowDialogs){
+            $a=Show-Message ("$name was not found.`r`n`r`nMount the $name ISO (right-click it, Mount) or insert the disc, then click OK.`r`n`r`nClick Cancel to pick a folder that holds the disc files instead.") "Question" "OKCancel"
+            if($a -ne "OK"){
+                $p=Select-Folder "Select the folder or drive that holds $name." -FromComputer
+                if(!$p){ Log "cancelled - nothing was installed"; exit 0 }
+                if(($kind -eq "Disc1" -and (Test-Disc1 $p)) -or ($kind -eq "Disc2" -and (Test-Disc2 $p))){ $d=$p; break }
+                [void](Show-Message "That folder does not hold $name." "Warning")
+                continue
+            }
+        } else { [void](Read-Host "Insert/mount $kind, then press Enter") }
+        $d=Find-Disc $kind ""
+    }
+    Log "$kind found: $d"; return $d
+}
 function Stage-Disc1($r){ $r=(Resolve-Path $r).Path; $s=Join-Path $WorkRoot "DISCS\DISC 1"; New-Dir $s; foreach($n in @("data1.hdr","data1.cab","data2.cab")){ Copy-FileRequired (Join-Path $r $n) (Join-Path $s $n) } }
 function Stage-Disc2($r){ $r=(Resolve-Path $r).Path; $s=Join-Path $WorkRoot "DISCS\DISC 2"; New-Dir $s; Copy-FileRequired (Join-Path $r "data3.cab") (Join-Path $s "data3.cab") }
 function Find-Extractor {
@@ -581,7 +641,7 @@ function Deploy-Fonts($installRoot){
     # keep a copy in the install folder: it documents what was installed and lets anyone
     # re-install by hand (right-click -> Install) if the registration is ever lost.
     New-Dir $dst
-    $files=@(Get-ChildItem $src -File -EA SilentlyContinue | Where-Object { $_.Extension -match '^\.(ttf|otf|ttc|fon)$' })
+    $files=@(Get-ChildItem $src -EA SilentlyContinue | Where-Object { !$_.PSIsContainer -and $_.Extension -match '^\.(ttf|otf|ttc|fon)$' })   # no -File: PowerShell 2.0
     foreach($f in $files){ Copy-Item $f.FullName (Join-Path $dst $f.Name) -Force }
     Log "  fonts: $($files.Count) file(s) -> $dst"
 
@@ -674,11 +734,27 @@ function Make-Shortcut($ug,$gvrroot,$installRoot){
 if(!(Test-Admin)){ Fail "Run from an elevated Administrator PowerShell window." }
 Log "NFSU GlobalVR portable (SQLite) installer $Version"
 
+if([string]::IsNullOrEmpty($InstallRoot) -and (Test-CanShowDialogs)){
+    while($true){
+        $pick = Select-Folder "Where should NFS Underground GVR be installed?`r`nPick a folder or drive (for example C:\Games) - an NFSU_GVR folder is created inside it."
+        if(!$pick){ Log "cancelled - nothing was installed"; exit 0 }
+        $pick = $pick.TrimEnd("\")
+        if($pick -match '^[A-Za-z]:$'){ $InstallRoot = "$pick\NFSU_GVR" }
+        # an existing install folder (any NFSU* name, or one holding the game) is used as it is
+        elseif((Split-Path -Leaf $pick) -match '(?i)^NFSU' -or (Test-Path (Join-Path $pick "Underground\UndergroundGVR.exe"))){ $InstallRoot = $pick }
+        else { $InstallRoot = Join-Path $pick "NFSU_GVR" }
+        if($DryRun -or (Test-WritableFolder $InstallRoot)){ break }
+        [void](Show-Message "Cannot write to:`r`n$InstallRoot`r`n`r`nThat is probably a game disc or a read-only drive. Pick a folder on your hard drive, for example C:\Games." "Warning")
+    }
+}
 if([string]::IsNullOrEmpty($InstallRoot)){
-    $InstallRoot = Read-Host "Where would you like to install the game? (e.g. C:\Games\NFSU or D:\NFSU)"
+    $InstallRoot = Read-Host "Where would you like to install the game? (e.g. C:\Games\NFSU_GVR or D:\NFSU_GVR)"
     if([string]::IsNullOrEmpty($InstallRoot)){ Fail "No install folder given." }
 }
 $InstallRoot = $InstallRoot.TrimEnd("\")
+if(!$DryRun -and !(Test-WritableFolder $InstallRoot)){
+    Fail "Cannot write to $InstallRoot - it is probably a game disc or a read-only drive. Choose a folder on your hard drive, for example C:\Games\NFSU_GVR."
+}
 $UG      = Join-Path $InstallRoot "Underground"
 $GVRROOT = Join-Path $UG "GVR\GvrRoot"
 $GVRPLUS = Join-Path $UG "GVR\GvrPlus"
@@ -749,3 +825,4 @@ Log "Launch: $InstallRoot\GvrLaunch.exe (what the shortcut points at - applies g
 Log "Settings: edit $InstallRoot\gvr_settings.ini - resolution, fullscreen/windowed, gamepad map."
 Log "  Nothing else to run: the exes are never modified, the settings apply on the next launch."
 if(!$DryRun){ Remove-Item -LiteralPath $WorkRoot -Recurse -Force -EA SilentlyContinue }
+if(!$DryRun){ [void](Show-Message ("NFS Underground GVR is installed in:" + [Environment]::NewLine + $InstallRoot + [Environment]::NewLine + [Environment]::NewLine + "Start it with the NFS Underground GVR shortcut on your desktop." + [Environment]::NewLine + "Settings: gvr_settings.ini in that folder.")) }

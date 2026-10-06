@@ -9,7 +9,7 @@ free play, installed into one folder of your choice.
 1. Download the latest **`NFSU_GVR_Portable-<version>.zip`** from
    [Releases](https://github.com/iGThomas/NFSU_GVR/releases/latest).
 2. Get **Disc 1** and **Disc 2** — [archive.org/details/nfsug_gvr](https://archive.org/details/nfsug_gvr).
-3. Follow the **[5-step install guide](NFSU_GVR_Portable/README.md)**.
+3. Double-click **`Install.bat`** — see the [install guide](NFSU_GVR_Portable/README.md).
 
 Works on Windows 10 and 11 (64-bit).
 
