@@ -77,12 +77,179 @@ namespace GvrSqlite
         }
     }
 
-    // ---- diagnostic log (remove for release) ------------------------------
+    // ---- diagnostic log ----------------------------------------------------
+    // Turning this on is meant to be trivial for an end user who hit a crash and
+    // was asked for a log: set [Debug] Log=true in the install's gvr_settings.ini
+    // (or nascar_settings.ini), start the game, reproduce, and hand over the file
+    // the game wrote to the LOG folder in the install root. No environment
+    // variable, no log off/on, no elevation - the same ergonomics as every other
+    // setting in that ini.
     internal sealed class Log
     {
         private static readonly object _lock = new object();
-        // Off by default. Set env var GVRSQLITE_LOG (to anything) to enable tracing.
-        private static readonly bool _on = (Environment.GetEnvironmentVariable("GVRSQLITE_LOG") != null);
+
+        // kernel32 ini reader - the exact same API GvrLaunch.exe uses to read this
+        // file, so the flag behaves identically in both.
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+        private static extern int GetPrivateProfileStringA(
+            string section, string key, string def,
+            System.Text.StringBuilder ret, int size, string file);
+
+        // Enabled by EITHER the ini flag (the user-facing switch) OR the legacy
+        // GVRSQLITE_LOG env var (kept for existing tooling / scripted captures,
+        // and so a value that looks like a path can still force the destination).
+        private static readonly bool _on;
+
+        // Where the trace goes, in priority order:
+        //   1. GVRSQLITE_LOG set to a path (contains \ / :)  -> that exact file.
+        //   2. a LOG folder in the install root (the dir holding the settings ini),
+        //      one file per process: LOG\gvrsqlite-<exe>.log. This is the default
+        //      and what an end user is pointed at.
+        //   3. %TEMP%\gvrsqlite.log, if the install root cannot be found.
+        //
+        // It is NEVER a hardcoded "C:\gvrsqlite.log" - that was a real bug: the
+        // root of C: needs elevation, the write threw, the catch below swallowed
+        // it, and the trace looked *empty* rather than blocked, so the one
+        // diagnostic that would have explained a shell failure produced nothing.
+        private static readonly string _path;
+
+        private static bool _started;   // first write of this run truncates
+
+        static Log()
+        {
+            bool on = false;
+            string iniPath = FindSettingsIni();   // full path to the settings ini, or null
+
+            if (iniPath != null && IniBool(iniPath, "Debug", "Log", false))
+                on = true;
+
+            string env = null;
+            try { env = Environment.GetEnvironmentVariable("GVRSQLITE_LOG"); }
+            catch { }
+            if (env != null) on = true;
+
+            _on = on;
+            // Resolve the destination only when enabled - resolving must have no
+            // side effect (it used to create the LOG folder even with logging off).
+            _path = on ? ResolvePath(env, iniPath) : null;
+
+            // We are the only managed code WE control that gets loaded into the host
+            // process (the shell loads us via PLUSDE). Hooking UnhandledException
+            // here turns "the shell just dies with 0xC000041D" into an actual
+            // exception type, message and stack in the trace log - there is no other
+            // way to see it without a CLR 1.1 debugger.
+            if (!_on) return;
+            try
+            {
+                AppDomain.CurrentDomain.UnhandledException +=
+                    new UnhandledExceptionEventHandler(OnUnhandled);
+            }
+            catch { }
+        }
+
+        // Walk up from the places this DLL might be loaded from, looking for the
+        // install's settings ini. The directory that holds it is the install root
+        // (the same anchor GvrLaunch.exe uses). We accept either title's ini so the
+        // one shared provider logs into whichever install it is running under.
+        private static string FindSettingsIni()
+        {
+            string[] names = new string[] { "gvr_settings.ini", "nascar_settings.ini" };
+            string[] starts = new string[3];
+            try { starts[0] = System.IO.Path.GetDirectoryName(typeof(Log).Assembly.Location); }
+            catch { }
+            try { starts[1] = AppDomain.CurrentDomain.BaseDirectory; }
+            catch { }
+            try { starts[2] = System.IO.Directory.GetCurrentDirectory(); }
+            catch { }
+
+            for (int s = 0; s < starts.Length; s++)
+            {
+                string d = starts[s];
+                for (int up = 0; up <= 8 && d != null && d.Length > 0; up++)
+                {
+                    for (int n = 0; n < names.Length; n++)
+                    {
+                        try
+                        {
+                            string cand = System.IO.Path.Combine(d, names[n]);
+                            if (System.IO.File.Exists(cand)) return cand;
+                        }
+                        catch { }
+                    }
+                    string parent;
+                    try { parent = System.IO.Path.GetDirectoryName(d); }
+                    catch { break; }
+                    if (parent == null || parent == d) break;
+                    d = parent;
+                }
+            }
+            return null;
+        }
+
+        private static bool IniBool(string ini, string section, string key, bool def)
+        {
+            try
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(32);
+                GetPrivateProfileStringA(section, key, "", sb, sb.Capacity, ini);
+                string v = sb.ToString();
+                if (v == null) return def;
+                v = v.Trim().ToLower(CultureInfo.InvariantCulture);
+                if (v.Length == 0) return def;
+                return !(v == "false" || v == "0" || v == "no" || v == "off");
+            }
+            catch { return def; }
+        }
+
+        private static string ProcName()
+        {
+            try { return System.Diagnostics.Process.GetCurrentProcess().ProcessName; }
+            catch { return "gvr"; }
+        }
+
+        private static string ResolvePath(string env, string iniPath)
+        {
+            // 1. explicit path in the env var wins (contains a separator)
+            if (env != null && (env.IndexOf('\\') >= 0 || env.IndexOf('/') >= 0 || env.IndexOf(':') >= 0))
+                return env;
+
+            // 2. preferred: a LOG folder in the install root, one file per process.
+            //    The folder is created lazily on the first write (W), not here, so
+            //    merely resolving the path leaves the disk untouched.
+            if (iniPath != null)
+            {
+                try
+                {
+                    string root = System.IO.Path.GetDirectoryName(iniPath);
+                    return System.IO.Path.Combine(System.IO.Path.Combine(root, "LOG"),
+                                                  "gvrsqlite-" + ProcName() + ".log");
+                }
+                catch { }
+            }
+
+            // 3. fallback that always works for the host
+            try { return System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gvrsqlite.log"); }
+            catch { return "gvrsqlite.log"; }
+        }
+
+        private static void OnUnhandled(object sender, UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                W("*** UNHANDLED MANAGED EXCEPTION (terminating=" + e.IsTerminating + ") ***");
+                Exception ex = e.ExceptionObject as Exception;
+                if (ex == null) { W("  non-Exception object: " + e.ExceptionObject); return; }
+                int depth = 0;
+                while (ex != null && depth++ < 8)
+                {
+                    W("  [" + depth + "] " + ex.GetType().FullName + ": " + ex.Message);
+                    if (ex.StackTrace != null) W("      " + ex.StackTrace);
+                    ex = ex.InnerException;
+                }
+            }
+            catch { }
+        }
+
         internal static void W(string s)
         {
             if (!_on) return;
@@ -90,7 +257,30 @@ namespace GvrSqlite
             {
                 lock (_lock)
                 {
-                    System.IO.StreamWriter sw = new System.IO.StreamWriter("C:\\gvrsqlite.log", true);
+                    if (!_started)
+                    {
+                        // create the LOG folder on demand (only reached when enabled)
+                        try
+                        {
+                            string dir = System.IO.Path.GetDirectoryName(_path);
+                            if (dir != null && dir.Length > 0 && !System.IO.Directory.Exists(dir))
+                                System.IO.Directory.CreateDirectory(dir);
+                        }
+                        catch { }
+                    }
+                    // First write of the run truncates, so each launch gets a clean
+                    // file (append within the run). A bug report is then "reproduce
+                    // once, grab the file" and the log holds exactly that session.
+                    System.IO.StreamWriter sw = new System.IO.StreamWriter(_path, _started);
+                    if (!_started)
+                    {
+                        _started = true;
+                        int pid = 0;
+                        try { pid = System.Diagnostics.Process.GetCurrentProcess().Id; }
+                        catch { }
+                        sw.WriteLine("==== GvrSqlite  " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                            + "  proc=" + ProcName() + " pid=" + pid + " ====");
+                    }
                     sw.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff") + "  " + s);
                     sw.Close();
                 }
@@ -124,6 +314,11 @@ namespace GvrSqlite
             // Shared DB for both the cabinet (UndergroundGVR.exe) and shell
             // (UniverShell2.exe) processes: a fixed absolute path wins so they
             // never diverge into per-folder databases.
+            // Per-title override, checked first so a NASCAR install and an NFSU
+            // install can coexist on one machine: GVRSQLITE_DB is machine-wide and
+            // whichever title set it last would otherwise capture both.
+            string game = Environment.GetEnvironmentVariable("GVRSQLITE_DB_NAS1");
+            if (game != null && game.Length > 0) return game;
             string env = Environment.GetEnvironmentVariable("GVRSQLITE_DB");
             if (env != null && env.Length > 0) return env;
             string path = null;
@@ -257,6 +452,11 @@ namespace GvrSqlite
         public GvrConnection Connection { get { return _connection; } set { _connection = value; } }
         private GvrParameterCollection _params = new GvrParameterCollection();
         public GvrParameterCollection Parameters { get { return _params; } }
+        // SQLite has no per-command server timeout; accepted and ignored so the
+        // caller's SqlCommand.CommandTimeout assignment still binds. (NASCAR's
+        // PLUSDE sets this; NFSU's build never did.)
+        private int _timeout = 30;
+        public int CommandTimeout { get { return _timeout; } set { _timeout = value; } }
 
         public GvrCommand() { }
         public GvrCommand(string text, GvrConnection conn) { CommandText = text; Connection = conn; }
@@ -286,6 +486,40 @@ namespace GvrSqlite
                 return Exec(sql, vals);
             }
             catch (Exception ex) { Log.W("ExecuteNonQuery EX type=" + CommandType + " text=[" + CommandText + "] " + ex.GetType().FullName + ": " + ex.Message + "\n" + ex.StackTrace); throw; }
+        }
+
+        // First column of the first row, or null when the query returns nothing.
+        // Used by NASCAR's PLUSDE (identity/count probes); mirrors SqlCommand.ExecuteScalar.
+        public object ExecuteScalar()
+        {
+            try
+            {
+                object[] vals; bool q;
+                string sql = Translate(out vals, out q);
+                Log.W("ExecuteScalar: " + sql);
+                IntPtr st, tail;
+                int rc = Native.sqlite3_prepare_v2(Connection.Db, Native.Utf8z(sql), -1, out st, out tail);
+                if (rc != Native.OK)
+                {
+                    string e = Native.FromUtf8(Native.sqlite3_errmsg(Connection.Db));
+                    Log.W("  prepare FAIL rc=" + rc + " err=" + e);
+                    throw new GvrException("prepare(scalar) failed (" + rc + "): " + e + " || " + sql);
+                }
+                Bind(st, vals);
+                object result = null;
+                if (Native.sqlite3_step(st) == Native.ROW && Native.sqlite3_column_count(st) > 0)
+                {
+                    int ct = Native.sqlite3_column_type(st, 0);
+                    if (ct == Native.SI_NULL) result = null;
+                    else if (ct == Native.SI_INTEGER) result = Native.sqlite3_column_int64(st, 0);
+                    else if (ct == Native.SI_FLOAT) result = Native.sqlite3_column_double(st, 0);
+                    else result = Native.FromUtf8(Native.sqlite3_column_text(st, 0));
+                }
+                Native.sqlite3_finalize(st);
+                Log.W("  ExecuteScalar -> " + (result == null ? "(null)" : result.ToString()));
+                return result;
+            }
+            catch (Exception ex) { Log.W("ExecuteScalar EX text=[" + CommandText + "] " + ex.GetType().FullName + ": " + ex.Message); throw; }
         }
 
         internal int Exec(string sql, object[] vals)
@@ -343,13 +577,50 @@ namespace GvrSqlite
 
         public GvrDataAdapter() { }
 
+        // The name ADO.NET would give the filled table. Callers look the result up
+        // as ds.Tables["<name>"], so getting this wrong hands them a null table.
+        // NASCAR's PLUSDE does exactly that on its very first query and dies with an
+        // access violation inside its mixed-mode code; naming the table is the fix.
+        private string MappedName()
+        {
+            if (_maps != null && _maps.Count > 0)
+            {
+                // ADO.NET calls the first result set "Table"; that is the SourceTable
+                // a caller maps to its real name.
+                for (int i = 0; i < _maps.Count; i++)
+                {
+                    DataTableMapping m = _maps[i];
+                    if (m == null) continue;
+                    if (string.Compare(m.SourceTable, "Table", true, CultureInfo.InvariantCulture) == 0)
+                        return m.DataSetTable;
+                }
+                if (_maps[0] != null) return _maps[0].DataSetTable;
+            }
+            return null;
+        }
+
         public int Fill(DataSet ds)
         {
             try
             {
-                DataTable dt = new DataTable();
+                string name = MappedName();
+                DataTable dt = null;
+                bool existing = false;
+                if (name != null && name.Length > 0 && ds.Tables.Contains(name))
+                {
+                    // refill rather than Add() a duplicate name (which throws)
+                    dt = ds.Tables[name];
+                    dt.Rows.Clear();
+                    existing = true;
+                }
+                if (dt == null)
+                {
+                    dt = new DataTable();
+                    if (name != null && name.Length > 0) dt.TableName = name;
+                }
                 int n = FillTable(dt, SelectCommand);
-                ds.Tables.Add(dt);
+                if (!existing) ds.Tables.Add(dt);
+                Log.W("  Fill -> table [" + dt.TableName + "] " + n + " row(s)");
                 return n;
             }
             catch (Exception ex) { Log.W("Fill EX " + ex.GetType().FullName + ": " + ex.Message + "\n" + ex.StackTrace); throw; }
@@ -366,6 +637,10 @@ namespace GvrSqlite
             GvrCommand.Bind(st, vals);
             int cols = Native.sqlite3_column_count(st);
             string table = Sql.TableOf(sql);
+            // No TableMappings entry? Fall back to the table in the FROM clause, so
+            // ds.Tables["<table>"] still resolves the way a caller expects.
+            if ((dt.TableName == null || dt.TableName.Length == 0) && table != null && table.Length > 0)
+                dt.TableName = table;
             string[] names = new string[cols];
             for (int i = 0; i < cols; i++)
             {
@@ -476,14 +751,14 @@ namespace GvrSqlite
             ArrayList vs = new ArrayList();
             for (int i = 0; i < ps.Count; i++) vs.Add(ps[i].Value);
             values = (object[])vs.ToArray(typeof(object));
-            return Build(proc, ps, values, out isQuery);
+            return Build(proc, ps, ref values, out isQuery);
         }
         internal static string FromProcValues(string proc, GvrParameterCollection ps, object[] values, out object[] outValues)
         {
-            bool q; outValues = values; return Build(proc, ps, values, out q);
+            bool q; outValues = values; return Build(proc, ps, ref outValues, out q);
         }
 
-        private static string Build(string proc, GvrParameterCollection ps, object[] values, out bool isQuery)
+        private static string Build(string proc, GvrParameterCollection ps, ref object[] values, out bool isQuery)
         {
             isQuery = false;
             string name = proc.Trim();
@@ -516,8 +791,43 @@ namespace GvrSqlite
                 case "GetSet":
                     isQuery = true;
                     return "SELECT * FROM [" + table + "]";
+                case "InsertDepth":
+                case "UpdateDepth":
+                {
+                    // SP_(Insert|Update)Depth_<T> is a multi-table cascade: its parameters
+                    // are named <Table>_<Col> for the primary row and
+                    // <OtherTable>_<FkCol>_<Col> for each joined row it would also write.
+                    // Those nested rows exist for the GvrPlus propagation engine (cabinet
+                    // -> GlobalVR server sync), which a standalone cabinet never runs, so
+                    // we write the primary row and log the groups we dropped rather than
+                    // blindly upserting prefixed column names that do not exist.
+                    string pfx = table + "_";
+                    ArrayList pc = new ArrayList(), pv = new ArrayList(), skipped = new ArrayList();
+                    for (int i = 0; i < cols.Length; i++)
+                    {
+                        if (!cols[i].StartsWith(pfx)) { skipped.Add(cols[i]); continue; }
+                        string rest = cols[i].Substring(pfx.Length);
+                        if (rest.IndexOf('_') >= 0) { skipped.Add(cols[i]); continue; }
+                        pc.Add(rest);
+                        pv.Add(i < values.Length ? values[i] : null);
+                    }
+                    if (pc.Count == 0)
+                    {
+                        Log.W("  " + op + " " + table + ": no primary-table parameters found; falling back to flat upsert");
+                        return "INSERT OR REPLACE INTO [" + table + "] (" + Join(cols, null) + ") VALUES (" + Marks(cols.Length) + ")";
+                    }
+                    string[] pcols = (string[])pc.ToArray(typeof(string));
+                    values = (object[])pv.ToArray(typeof(object));
+                    if (skipped.Count > 0)
+                        Log.W("  " + op + " " + table + ": wrote primary row only, ignored " + skipped.Count
+                              + " nested propagation column(s)");
+                    return "INSERT OR REPLACE INTO [" + table + "] (" + Join(pcols, null) + ") VALUES (" + Marks(pcols.Length) + ")";
+                }
                 default:
-                    // Depth variants and anything else: best-effort upsert
+                    // Unknown op: an upsert of the parameters as-named is the closest
+                    // guess. It will fail loudly at prepare() if the names are not
+                    // columns, which is what we want - see the T-SQL dialect-gap notes.
+                    Log.W("  UNKNOWN proc op '" + op + "' for table " + table + " - attempting flat upsert");
                     return "INSERT OR REPLACE INTO [" + table + "] (" + Join(cols, null) + ") VALUES (" + Marks(cols.Length) + ")";
             }
         }
@@ -655,7 +965,14 @@ namespace GvrSqlite
     }
 
     // ---- exception surface -------------------------------------------------
-    public sealed class GvrError { internal int _n; public int Number { get { return _n; } } }
+    public sealed class GvrError
+    {
+        internal int _n;
+        internal string _msg = "";
+        public int Number { get { return _n; } }
+        // NASCAR's PLUSDE logs ex.Errors[i].Message; SqlError exposes it, so we must too.
+        public string Message { get { return _msg; } }
+    }
     public sealed class GvrErrorCollection
     {
         internal ArrayList Items = new ArrayList();
@@ -665,8 +982,19 @@ namespace GvrSqlite
     public sealed class GvrException : Exception
     {
         private GvrErrorCollection _errs = new GvrErrorCollection();
-        public GvrException(string msg) : base(msg) { }
+        public GvrException(string msg) : base(msg)
+        {
+            // Populate one error so callers that walk Errors[0] (NASCAR's PLUSDE
+            // does, inside its catch blocks) don't index an empty collection and
+            // throw a second exception out of the handler.
+            GvrError e = new GvrError();
+            e._msg = msg;
+            _errs.Items.Add(e);
+        }
         public GvrErrorCollection Errors { get { return _errs; } }
+        // Explicit member so the swapped typeref resolves directly on GvrException
+        // rather than only through System.Exception.
+        public override string Message { get { return base.Message; } }
     }
 
     // ---- info message delegate/args ---------------------------------------

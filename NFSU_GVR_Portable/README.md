@@ -86,7 +86,12 @@ self-contained.
 1. Start the game with the **desktop shortcut / `GvrLaunch.exe`**, not `UniverShell2.exe`.
 2. Picture stretched or odd? Use a **4:3** size and `Fullscreen=false` first.
 3. Re-run the installer into the same folder — it repairs missing files and keeps your data.
-4. Still stuck? Open an [issue](https://github.com/iGThomas/NFSU_GVR/issues) with what you see.
+4. **Crashes or hangs on launch? Turn on logging.** In `gvr_settings.ini` set `[Debug]`
+   `Log=true`, start the game, let it fail **once**, then look in the **`LOG`** folder that
+   appears next to `gvr_settings.ini`. It captures the launcher's timeline and, if the frontend
+   or the race crashes, the faulting address — set it back to `false` afterwards.
+5. Still stuck? Open an [issue](https://github.com/iGThomas/NFSU_GVR/issues) with what you see,
+   and attach the zipped **`LOG`** folder from step 4.
 
 ---
 

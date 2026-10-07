@@ -128,20 +128,82 @@ static void load_oem() {
     logf("oem: loaded %s (Init=%p Update=%p)", path, g_oemInit, g_oemUpdate);
 }
 
+static bool g_log_on = false;   // logging was switched on for this process
+
+// Install-root settings ini, for the shared diagnostic switch. Checks both titles'
+// ini names so this one logger behaves the same wherever the DLL is dropped. This is
+// deliberately separate from find_settings_ini() (gvr_settings.ini only), which the
+// resolution / private-registry code depends on - we must not widen that.
+static bool find_log_ini(char* out, size_t n) {
+    static const char* names[2] = { "gvr_settings.ini", "nascar_settings.ini" };
+    char probe[MAX_PATH] = {0};
+    GetModuleFileNameA(g_hinst, probe, MAX_PATH);
+    char* s = strrchr(probe, '\\'); if (s) *s = 0;
+    for (int up = 0; up <= 6; ++up) {
+        for (int i = 0; i < 2; ++i) {
+            char cand[MAX_PATH];
+            wsprintfA(cand, "%s\\%s", probe, names[i]);
+            if (GetFileAttributesA(cand) != INVALID_FILE_ATTRIBUTES) { lstrcpynA(out, cand, (int)n); return true; }
+        }
+        char* q = strrchr(probe, '\\'); if (!q) break; *q = 0;
+    }
+    return false;
+}
+
+static bool ini_debug_log_on(const char* ini) {
+    char buf[32] = {0};
+    GetPrivateProfileStringA("Debug", "Log", "", buf, sizeof(buf), ini);
+    if (!buf[0]) return false;
+    return !(_stricmp(buf, "false") == 0 || _stricmp(buf, "0") == 0 ||
+             _stricmp(buf, "no") == 0 || _stricmp(buf, "off") == 0);
+}
+
+// Logging is switched on by [Debug] Log=true in the install's settings ini (the
+// end-user switch, no reboot) OR the legacy GVRINPUT_LOG env var. When on, the trace
+// goes to a LOG folder in the install root - the same folder GvrSqlite writes to - so
+// a bug report is "set the flag, reproduce, zip the LOG folder".
 static void maybe_open_log() {
-    if (g_log || !getenv("GVRINPUT_LOG")) return;
-    // PER-PROCESS log file. Both the shell and the game load this DLL; with one shared filename
-    // each fopen(...,"w") TRUNCATED the file while the other process still held it open at a large
-    // offset, so the survivor kept writing past EOF into a sparse gap (heavy, pointless I/O on the
-    // input thread). Name the file after the host exe + pid so they can never collide.
+    if (g_log) return;
+    char ini[MAX_PATH] = {0};
+    bool haveIni = find_log_ini(ini, sizeof(ini));
+    bool on = (getenv("GVRINPUT_LOG") != nullptr) || (haveIni && ini_debug_log_on(ini));
+    if (!on) return;
+    g_log_on = true;
+
+    // PER-PROCESS log file. Both the shell and the game load this DLL; with one shared
+    // filename each fopen(...,"w") TRUNCATED the file while the other process still held
+    // it open at a large offset, so the survivor wrote past EOF into a sparse gap (heavy,
+    // pointless I/O on the input thread). Name the file after the host exe + pid so they
+    // can never collide.
     char exe[MAX_PATH] = {0};
     GetModuleFileNameA(nullptr, exe, MAX_PATH);
     const char* base = strrchr(exe, '\\'); base = base ? base + 1 : exe;
     char stem[64]; lstrcpynA(stem, base, sizeof(stem));
     char* dot = strrchr(stem, '.'); if (dot) *dot = 0;
-    char path[MAX_PATH]; DWORD n = GetTempPathA(MAX_PATH, path);
-    wsprintfA(path + n, "gvrinput_%s_%lu.log", stem, GetCurrentProcessId());
+
+    char path[MAX_PATH] = {0};
+    bool placed = false;
+    if (haveIni) {
+        char root[MAX_PATH]; lstrcpynA(root, ini, sizeof(root));
+        char* s = strrchr(root, '\\'); if (s) *s = 0;        // install root = dir of the ini
+        char logdir[MAX_PATH]; wsprintfA(logdir, "%s\\LOG", root);
+        CreateDirectoryA(logdir, nullptr);                    // harmless if it already exists
+        if (GetFileAttributesA(logdir) != INVALID_FILE_ATTRIBUTES) {
+            wsprintfA(path, "%s\\gvrinput-%s-%lu.log", logdir, stem, GetCurrentProcessId());
+            placed = true;
+        }
+    }
+    if (!placed) {
+        DWORD n = GetTempPathA(MAX_PATH, path);
+        wsprintfA(path + n, "gvrinput_%s_%lu.log", stem, GetCurrentProcessId());
+    }
     g_log = fopen(path, "w");
+    if (g_log) {
+        SYSTEMTIME st; GetLocalTime(&st);
+        logf("==== GVRInputRaw  %04d-%02d-%02d %02d:%02d:%02d  exe=%s pid=%lu ====",
+             st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, base,
+             GetCurrentProcessId());
+    }
 }
 
 // ------------------------------------------------------------------ XInput (Xbox)
@@ -1640,11 +1702,54 @@ int  GVRInputRawWriteDrivingValues(void* buf) { OEM_FWD_IP("GVRInputRawWriteDriv
 
 void nfsu_privreg_attach(const char* installRoot, void (*log)(const char*, ...));
 
+// ------------------------------------------------------------------ crash capture
+// The race (UndergroundGVR.exe) is native and has no other crash log at all; the
+// shell's native-side faults (e.g. a D3D device create on a bad driver) are not caught
+// by the managed GvrSqlite hook either. We sit in both processes very early, so a
+// last-chance filter here turns "it just vanished" into a faulting module+offset in the
+// LOG folder. We only LOG and then chain to whatever was there before (WER / the JIT
+// debugger), so the crash behaviour itself is unchanged.
+static LPTOP_LEVEL_EXCEPTION_FILTER g_prev_filter = nullptr;
+
+static LONG WINAPI crash_filter(EXCEPTION_POINTERS* ep) {
+    __try {
+        EXCEPTION_RECORD* er = ep ? ep->ExceptionRecord : nullptr;
+        void* addr = er ? er->ExceptionAddress : nullptr;
+        unsigned long code = er ? er->ExceptionCode : 0;
+        char mod[MAX_PATH] = "?"; unsigned long off = 0;
+        HMODULE hm = nullptr;
+        if (addr && GetModuleHandleExA(
+                GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                (LPCSTR)addr, &hm) && hm) {
+            GetModuleFileNameA(hm, mod, MAX_PATH);
+            off = (unsigned long)((DWORD_PTR)addr - (DWORD_PTR)hm);
+        }
+        const char* b = strrchr(mod, '\\'); b = b ? b + 1 : mod;
+        logf("*** UNHANDLED EXCEPTION code=0x%08lX addr=%p  %s+0x%lX ***",
+             code, addr, b, off);
+        if (er && code == EXCEPTION_ACCESS_VIOLATION && er->NumberParameters >= 2)
+            logf("    access violation %s address %p",
+                 er->ExceptionInformation[0] ? "writing" : "reading",
+                 (void*)er->ExceptionInformation[1]);
+        CONTEXT* c = ep ? ep->ContextRecord : nullptr;
+        if (c) logf("    EIP=%08lX ESP=%08lX EBP=%08lX EAX=%08lX EBX=%08lX ECX=%08lX EDX=%08lX",
+                    (unsigned long)c->Eip, (unsigned long)c->Esp, (unsigned long)c->Ebp,
+                    (unsigned long)c->Eax, (unsigned long)c->Ebx, (unsigned long)c->Ecx,
+                    (unsigned long)c->Edx);
+        if (g_log) fflush(g_log);
+    } __except (EXCEPTION_EXECUTE_HANDLER) { }
+    return g_prev_filter ? g_prev_filter(ep) : EXCEPTION_CONTINUE_SEARCH;
+}
+
 BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
     if (reason == DLL_PROCESS_ATTACH) {
         g_hinst = hinst;               // for locating gvr_settings.ini from our own folder
         maybe_open_log();
+        // last-chance native crash logging, only when logging is on (keeps behaviour
+        // identical for a normal play session where the flag is off)
+        if (g_log_on) g_prev_filter = SetUnhandledExceptionFilter(crash_filter);
         detect_host();
+        logf("host: %s", g_is_game ? "UndergroundGVR (race)" : g_is_shell ? "UniverShell2 (frontend)" : "other");
         // HKLM\SOFTWARE\Gvr, \GlobalVR and \GVRShell come from <install>\nfsu_registry.ini
         // (NfsuPrivReg.cpp). The install root is the folder holding gvr_settings.ini.
         { char root[MAX_PATH];

@@ -9,6 +9,6 @@ rc /nologo /fo build\GvrLaunch.res GvrLaunch.rc
 if errorlevel 1 ( echo RESOURCE COMPILE FAILED & exit /b 1 )
 cl /nologo /MT /EHsc /O2 /W3 /D_CRT_SECURE_NO_WARNINGS /Fo:build\ /Fd:build\ GvrLaunch.cpp ^
    /link /OUT:build\GvrLaunch.exe /SUBSYSTEM:WINDOWS build\GvrLaunch.res ^
-   user32.lib kernel32.lib gdi32.lib ole32.lib oleaut32.lib
+   user32.lib kernel32.lib gdi32.lib ole32.lib oleaut32.lib advapi32.lib
 if errorlevel 1 ( echo BUILD FAILED & exit /b 1 )
 echo BUILD_OK

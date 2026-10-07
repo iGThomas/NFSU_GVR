@@ -41,6 +41,120 @@ static void die(const char* fmt, ...) {
     ExitProcess(1);
 }
 
+// ---- optional session log: LOG\gvrlaunch.log, switched on by [Debug] Log=true -----------------
+// A timeline of the whole launch from the orchestrator's side: which exe started, the size and
+// window mode applied, the in-memory patch result, and when the shell / race appear and exit.
+// Together with the in-process logs (GvrSqlite managed crashes, GVRInputRaw native crashes) this
+// is what turns a "hangs then crashes" report into something readable. Off unless the flag is set.
+static FILE* g_lf = nullptr;
+static void lflog(const char* fmt, ...) {
+    if (!g_lf) return;
+    SYSTEMTIME st; GetLocalTime(&st);
+    fprintf(g_lf, "%02d:%02d:%02d.%03d  ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+    va_list ap; va_start(ap, fmt); vfprintf(g_lf, fmt, ap); va_end(ap);
+    fputc('\n', g_lf); fflush(g_lf);
+}
+static bool ini_debug_log(const char* ini) {
+    char buf[32] = {0};
+    GetPrivateProfileStringA("Debug", "Log", "", buf, sizeof(buf), ini);
+    if (!buf[0]) return false;
+    return !(_stricmp(buf, "false") == 0 || _stricmp(buf, "0") == 0 ||
+             _stricmp(buf, "no") == 0 || _stricmp(buf, "off") == 0);
+}
+static void open_session_log(const char* ini) {
+    if (g_lf || !ini || !ini[0]) return;
+    if (!ini_debug_log(ini) && !getenv("GVRLAUNCH_VERBOSE")) return;   // env still forces it on
+    char root[MAX_PATH]; lstrcpynA(root, ini, MAX_PATH);
+    char* s = strrchr(root, '\\'); if (s) *s = 0;                      // install root = dir of the ini
+    char logdir[MAX_PATH]; wsprintfA(logdir, "%s\\LOG", root);
+    CreateDirectoryA(logdir, nullptr);
+    char path[MAX_PATH]; wsprintfA(path, "%s\\gvrlaunch.log", logdir);
+    g_lf = fopen(path, "w");
+    if (g_lf) {
+        SYSTEMTIME st; GetLocalTime(&st);
+        fprintf(g_lf, "==== GvrLaunch  %04d-%02d-%02d %02d:%02d:%02d  pid=%lu ====\n",
+                st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, GetCurrentProcessId());
+        fflush(g_lf);
+    }
+}
+
+// ---- PC configuration dump (diagnostic) --------------------------------------------------------
+// Pure registry + Win32 so it works on everything from XP to Win11 and needs no WMI/COM. This is
+// the single most useful thing in a "works on my machine, not theirs" report - the GPU driver in
+// particular. Only called when the session log is open.
+static bool reg_read_sz(HKEY root, const char* sub, const char* val, char* out, DWORD n) {
+    out[0] = 0;
+    HKEY k;
+    if (RegOpenKeyExA(root, sub, 0, KEY_READ | KEY_WOW64_64KEY, &k) != ERROR_SUCCESS) return false;
+    DWORD type = 0, cb = n - 1;
+    LONG r = RegQueryValueExA(k, val, nullptr, &type, (BYTE*)out, &cb);
+    RegCloseKey(k);
+    if (r != ERROR_SUCCESS) { out[0] = 0; return false; }
+    if (type == REG_DWORD && cb == 4) { DWORD d = *(DWORD*)out; wsprintfA(out, "%lu", d); return true; }
+    out[(cb < n) ? cb : n - 1] = 0;   // REG_SZ may omit the terminator
+    return true;
+}
+
+static void log_pc_config() {
+    if (!g_lf) return;
+    lflog("---- PC configuration (diagnostic) ----");
+
+    char prod[256], disp[64], build[32], ubr[32];
+    reg_read_sz(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", prod, sizeof(prod));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "DisplayVersion", disp, sizeof(disp));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentBuildNumber", build, sizeof(build));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "UBR", ubr, sizeof(ubr));
+    lflog("os      : %s %s (build %s.%s)", prod, disp, build, ubr[0] ? ubr : "0");
+
+    SYSTEM_INFO si; GetNativeSystemInfo(&si);
+    const char* arch = si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 ? "x64" :
+                       si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL ? "x86" :
+                       si.wProcessorArchitecture == 12 /*ARM64*/ ? "ARM64" : "?";
+    lflog("arch    : %s, %lu logical CPUs", arch, si.dwNumberOfProcessors);
+
+    char cpu[256], vendor[64];
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", "ProcessorNameString", cpu, sizeof(cpu));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", "VendorIdentifier", vendor, sizeof(vendor));
+    lflog("cpu     : %s (%s)", cpu[0] ? cpu : "?", vendor);
+
+    MEMORYSTATUSEX ms; ms.dwLength = sizeof(ms);
+    if (GlobalMemoryStatusEx(&ms))
+        lflog("ram     : %.1f GB total, %.1f GB free",
+              ms.ullTotalPhys / 1073741824.0, ms.ullAvailPhys / 1073741824.0);
+
+    char sysman[128], sysprod[128], bbman[128], bbprod[128], bios[128], biosdate[64];
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "SystemManufacturer", sysman, sizeof(sysman));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "SystemProductName", sysprod, sizeof(sysprod));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "BaseBoardManufacturer", bbman, sizeof(bbman));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "BaseBoardProduct", bbprod, sizeof(bbprod));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "BIOSVersion", bios, sizeof(bios));
+    reg_read_sz(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "BIOSReleaseDate", biosdate, sizeof(biosdate));
+    lflog("system  : %s %s", sysman, sysprod);
+    lflog("mainboard: %s %s", bbman, bbprod);
+    lflog("bios    : %s (%s)", bios, biosdate);
+
+    // every display adapter + its driver, from the display device-class key
+    static const char* CLS = "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}";
+    for (int i = 0; i < 16; ++i) {
+        char keypath[320]; wsprintfA(keypath, "%s\\%04d", CLS, i);
+        char desc[256];
+        if (!reg_read_sz(HKEY_LOCAL_MACHINE, keypath, "DriverDesc", desc, sizeof(desc)) || !desc[0]) continue;
+        char dver[64], ddate[64], prov[128];
+        reg_read_sz(HKEY_LOCAL_MACHINE, keypath, "DriverVersion", dver, sizeof(dver));
+        reg_read_sz(HKEY_LOCAL_MACHINE, keypath, "DriverDate", ddate, sizeof(ddate));
+        reg_read_sz(HKEY_LOCAL_MACHINE, keypath, "ProviderName", prov, sizeof(prov));
+        lflog("gpu[%d]  : %s  drv %s (%s, %s)", i, desc,
+              dver[0] ? dver : "?", ddate[0] ? ddate : "?", prov[0] ? prov : "?");
+    }
+
+    DEVMODEA dm; dm.dmSize = sizeof(dm); dm.dmDriverExtra = 0;
+    if (EnumDisplaySettingsA(nullptr, ENUM_CURRENT_SETTINGS, &dm))
+        lflog("display : %lux%lu %lubpp @ %luHz (desktop)",
+              dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel, dm.dmDisplayFrequency);
+
+    lflog("---- end PC configuration ----");
+}
+
 // walk up from `start` looking for gvr_settings.ini
 static bool find_ini(const char* start, char* out) {
     char probe[MAX_PATH]; lstrcpynA(probe, start, MAX_PATH);
@@ -366,10 +480,18 @@ static LRESULT CALLBACK backdrop_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
         {
             static HWND lastTarget = nullptr;
             bool gameUp = exe_running("UndergroundGVR.exe");
+            // session-log the race starting / ending (only when the state flips)
+            static int lastGameUp = -1;
+            if (g_lf && (int)gameUp != lastGameUp) {
+                if (lastGameUp != -1) lflog(gameUp ? "race started (UndergroundGVR.exe up)"
+                                                   : "race ended (UndergroundGVR.exe gone)");
+                lastGameUp = (int)gameUp;
+            }
             HWND target = gameUp ? find_window_of("UndergroundGVR.exe")
                                  : find_window_of("UniverShell2.exe");
             if (target && target != lastTarget) {
                 lastTarget = target;
+                if (g_lf) lflog("foreground -> %s window %p", gameUp ? "race" : "frontend", (void*)target);
                 give_focus(target);
             }
             if (!target) lastTarget = nullptr;   // window gone; re-focus when the next one appears
@@ -510,14 +632,39 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
         sync_race_fullscreen(shellDir, wantFull, logEarly, sizeof(logEarly));
     }
 
+    // Session log (LOG\gvrlaunch.log) once we know the ini - [Debug] Log=true switches it on.
+    open_session_log(ini);
+    log_pc_config();   // dump CPU / board / GPU+driver / OS first, for "works on my machine" reports
+    lflog("ini     : %s", ini[0] ? ini : "(none)");
+    lflog("shell   : %s", shell);
+    lflog("size    : %dx%d", w, h);
+    if (logEarly[0]) { char* p = logEarly; while (*p == '\r' || *p == '\n' || *p == ' ') ++p; lflog("race    : %s", p); }
+
     // This install's database (<GvrRoot>\..\GvrPlus\game.db) for the shell and the race it
     // starts, which inherit our environment. It overrides the machine-wide GVRSQLITE_DB an
     // older installer set, so two installs never share a database, and no log-off is needed.
+    //
+    // CRUCIAL: also clear GVRSQLITE_DB_NAS1 for the child. That is NASCAR's per-title override,
+    // and the SQLite provider checks it FIRST - so with NASCAR installed, NFSU would otherwise
+    // open NASCAR's game.db, every NFSU table would be "no such table", and Plus would fail. We
+    // only clear it in the process we launch; NASCAR's own launcher re-sets it, so the two titles
+    // stay on their own databases.
     {
         char db[MAX_PATH], full[MAX_PATH];
         wsprintfA(db, "%s\\..\\GvrPlus\\game.db", shellDir);
-        if (GetFullPathNameA(db, MAX_PATH, full, nullptr) && GetFileAttributesA(full) != INVALID_FILE_ATTRIBUTES)
+        if (GetFullPathNameA(db, MAX_PATH, full, nullptr) && GetFileAttributesA(full) != INVALID_FILE_ATTRIBUTES) {
             SetEnvironmentVariableA("GVRSQLITE_DB", full);
+            lflog("db      : %s", full);
+        } else {
+            lflog("db      : <GvrRoot>\\..\\GvrPlus\\game.db not found - provider will derive from the registry");
+        }
+        // delete NASCAR's per-title override so it cannot capture NFSU's shell
+        char nas1[MAX_PATH] = {0};
+        DWORD nlen = GetEnvironmentVariableA("GVRSQLITE_DB_NAS1", nas1, sizeof(nas1));
+        if (nlen > 0) {
+            SetEnvironmentVariableA("GVRSQLITE_DB_NAS1", nullptr);
+            lflog("db      : cleared inherited GVRSQLITE_DB_NAS1 (was %s) so NFSU uses its own database", nas1);
+        }
     }
 
     STARTUPINFOA si = {}; si.cb = sizeof(si);
@@ -549,6 +696,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
             if (base) g_keepShell = patch_keep_shell(pi.hProcess, base, shell, log, sizeof(log));
         }
     }
+    if (g_lf && log[0]) {
+        // the patch buffer is multi-line "key = value\r\n"; emit each as its own entry
+        char tmp[1024]; lstrcpynA(tmp, log, sizeof(tmp));
+        for (char* line = strtok(tmp, "\r\n"); line; line = strtok(nullptr, "\r\n")) lflog("patch   : %s", line);
+    }
+    lflog("keepshell: %s", g_keepShell ? "on" : "off");
     if (getenv("GVRLAUNCH_VERBOSE")) {
         char m[2048]; _snprintf(m, sizeof(m), "ini: %s\r\nshell: %s\r\nshell size %dx%d\r\n%s%s",
                                 ini, shell, w, h, logEarly, log);
@@ -597,16 +750,19 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
                          pi.hThread, (ULONG_PTR)mem);
     }
 
+    lflog("resuming shell (backdrop=%s, merge=%s)", useBackdrop ? "on" : "off", g_merge ? "on" : "off");
     ResumeThread(pi.hThread);
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
 
-    if (!useBackdrop) return 0;
+    if (!useBackdrop) { lflog("no backdrop - launcher exiting"); if (g_lf) fclose(g_lf); return 0; }
 
     // Stay alive behind the two programs until both are gone.
     g_lastSeen = GetTickCount();
     MSG msg;
     while (GetMessageA(&msg, nullptr, 0, 0)) { TranslateMessage(&msg); DispatchMessageA(&msg); }
     if (g_shot) DeleteObject(g_shot);
+    lflog("both programs gone - launcher exiting");
+    if (g_lf) fclose(g_lf);
     return 0;
 }

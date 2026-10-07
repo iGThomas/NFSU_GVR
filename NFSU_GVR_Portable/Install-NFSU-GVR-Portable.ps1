@@ -38,7 +38,7 @@ $ErrorActionPreference = "Stop"
 trap { Write-Host "FAIL: $($_.Exception.Message)" -ForegroundColor Red; try { if(!$DryRun){ [void](Show-Message ("The installation stopped:" + [Environment]::NewLine + [Environment]::NewLine + $_.Exception.Message) "Error") } } catch {}; exit 1 }
 
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "2026-10-06-portable-v2.0.1"   # Install.bat + folder pickers; PowerShell 2.0 (Windows 7)
+$Version = "2026-10-07-portable-v2.1"   # [Debug] Log switch -> LOG folder (PC config + crash logs for both exes)
 $WorkRoot = Join-Path $env:TEMP ("NFSU_GVR_V2_" + (Get-Date -Format "yyyyMMdd_HHmmss"))
 $LogFile = Join-Path $WorkRoot "install.log"
 

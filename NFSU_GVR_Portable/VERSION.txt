@@ -17,9 +17,16 @@ game.db from the registry PlusSchemaPath so it needs no env var. No MSDE / SQL S
 
 Provider is compiled on the target with the machine's .NET 1.1 csc (prebuilt binary
 is the fallback). Disc-based (asks for OEM Disc 1 / Disc 2) or -ExpandedPayloadRoot.
-Provider tracing: env var GVRSQLITE_LOG=1 -> gvrsqlite.log (Vista+ redirects it to
-%LOCALAPPDATA%\VirtualStore\gvrsqlite.log). Grep it for 'prepare FAIL': untranslated
-T-SQL fails at prepare time and silently returns zero rows with no in-game error.
+
+Diagnostics: set [Debug] Log=true in gvr_settings.ini and a LOG folder appears in the
+install root (no reboot, no admin; off by default). It collects gvrlaunch.log (a PC
+config dump - CPU, motherboard, GPU + driver version, OS build, RAM, display - then the
+launch timeline), gvrinput-<exe>-<pid>.log (our input DLL in BOTH programs, with a native
+crash filter recording the faulting module+offset) and gvrsqlite-<exe>.log (every DB query
+plus any .NET crash in the frontend). Together they cover the frontend (UniverShell2) and
+the race (UndergroundGVR). In the SQLite log, grep for 'prepare FAIL': untranslated T-SQL
+fails at prepare time and silently returns zero rows with no in-game error. The legacy env
+vars (GVRSQLITE_LOG / GVRINPUT_LOG / GVRLAUNCH_VERBOSE) still force logging on.
 
 Win10/11 (x64): real
 .NET 1.1 SP1 installed via slipstream (plain dotnetfx = MSI 1603, and CLR 2.0
