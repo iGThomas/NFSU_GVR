@@ -38,7 +38,7 @@ $ErrorActionPreference = "Stop"
 trap { Write-Host "FAIL: $($_.Exception.Message)" -ForegroundColor Red; try { if(!$DryRun){ [void](Show-Message ("The installation stopped:" + [Environment]::NewLine + [Environment]::NewLine + $_.Exception.Message) "Error") } } catch {}; exit 1 }
 
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "2026-10-07-portable-v2.1"   # [Debug] Log switch -> LOG folder (PC config + crash logs for both exes)
+$Version = "2026-10-09-portable-v2.2"   # install guard (.NET 1.1 by file) + Verify-NFSU-GVR.ps1 file-by-file check
 $WorkRoot = Join-Path $env:TEMP ("NFSU_GVR_V2_" + (Get-Date -Format "yyyyMMdd_HHmmss"))
 $LogFile = Join-Path $WorkRoot "install.log"
 

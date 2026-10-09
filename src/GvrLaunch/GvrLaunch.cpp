@@ -95,6 +95,33 @@ static bool reg_read_sz(HKEY root, const char* sub, const char* val, char* out, 
     return true;
 }
 
+// .NET Framework 1.1 presence. DETECT THE FILE, not the registry: 1.1 predates the NDP\vX layout
+// that 2.0+ use, so a machine can have a perfectly working 1.1 (the game runs) with no
+// NDP\v1.1.4322 key at all - confirmed on the dev box. This is exactly the check the installer's
+// Ensure-DotNet uses, so the guard and the installer agree. It is the one hard per-machine
+// prerequisite that cannot travel inside a copied install folder.
+static bool dotnet11_installed() {
+    char p[MAX_PATH];
+    UINT n = GetWindowsDirectoryA(p, MAX_PATH);
+    if (!n || n > MAX_PATH - 48) return true;   // can't tell -> don't block
+    lstrcatA(p, "\\Microsoft.NET\\Framework\\v1.1.4322\\mscorlib.dll");
+    return GetFileAttributesA(p) != INVALID_FILE_ATTRIBUTES;
+}
+// NDP registry check, reliable for 2.0+ only (informational logging).
+static bool net_ndp_installed(const char* ndpSubkey) {
+    HKEY k;
+    char path[160]; wsprintfA(path, "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\%s", ndpSubkey);
+    REGSAM views[2] = { KEY_WOW64_64KEY, KEY_WOW64_32KEY };
+    for (int i = 0; i < 2; ++i) {
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, path, 0, KEY_READ | views[i], &k) != ERROR_SUCCESS) continue;
+        DWORD val = 0, cb = sizeof(val), type = 0;
+        LONG r = RegQueryValueExA(k, "Install", nullptr, &type, (BYTE*)&val, &cb);
+        RegCloseKey(k);
+        if (r == ERROR_SUCCESS && type == REG_DWORD && val == 1) return true;
+    }
+    return false;
+}
+
 static void log_pc_config() {
     if (!g_lf) return;
     lflog("---- PC configuration (diagnostic) ----");
@@ -151,6 +178,15 @@ static void log_pc_config() {
     if (EnumDisplaySettingsA(nullptr, ENUM_CURRENT_SETTINGS, &dm))
         lflog("display : %lux%lu %lubpp @ %luHz (desktop)",
               dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel, dm.dmDisplayFrequency);
+
+    // .NET — the game REQUIRES 1.1 (detected by its files; the NDP registry key is unreliable for
+    // 1.1). This is the first line to read on a "won't start" report: 1.1(files)=NO means the
+    // install step was skipped. The 2.0/3.5/4 flags are informational (NDP registry).
+    lflog(".net    : 1.1(files)=%s  2.0=%s  3.5=%s  v4=%s",
+          dotnet11_installed() ? "yes" : "NO",
+          net_ndp_installed("v2.0.50727") ? "yes" : "no",
+          net_ndp_installed("v3.5") ? "yes" : "no",
+          net_ndp_installed("v4\\Full") ? "yes" : "no");
 
     lflog("---- end PC configuration ----");
 }
@@ -615,7 +651,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
     if (GetFileAttributesA(shell) == INVALID_FILE_ATTRIBUTES)
         wsprintfA(shell, "%s\\Underground\\GVR\\GvrRoot\\UniverShell2.exe", selfDir);
     if (GetFileAttributesA(shell) == INVALID_FILE_ATTRIBUTES)
-        die("UniverShell2.exe not found.\n\nPut GvrLaunch.exe in the install root or next to the shell.");
+        die("NFS Underground GVR is not installed here.\n\n"
+            "UniverShell2.exe was not found next to GvrLaunch.exe or under\n"
+            "Underground\\GVR\\GvrRoot. Run Install.bat first, then start the game\n"
+            "from the desktop shortcut it creates.");
 
     char shellDir[MAX_PATH]; lstrcpynA(shellDir, shell, MAX_PATH);
     { char* s = strrchr(shellDir, '\\'); if (s) *s = 0; }
@@ -639,6 +678,25 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR cmdline, int) {
     lflog("shell   : %s", shell);
     lflog("size    : %dx%d", w, h);
     if (logEarly[0]) { char* p = logEarly; while (*p == '\r' || *p == '\n' || *p == ' ') ++p; lflog("race    : %s", p); }
+
+    // ---- prerequisite guard: .NET Framework 1.1 ------------------------------------------------
+    // The game files can be copied to a PC, but .NET 1.1 cannot - it is installed per machine by
+    // Install.bat. Running GvrLaunch on a box that never ran the installer would otherwise start
+    // the shell under the wrong/absent runtime and fail in confusing ways. Detected by the 1.1
+    // FILES (see dotnet11_installed), so a working 1.1 with no NDP registry key - which is normal
+    // for 1.1 - is NOT falsely blocked. This is the one hard thing a bare folder copy is missing.
+    if (!dotnet11_installed()) {
+        lflog("PREREQ FAIL: .NET Framework 1.1 not found - not launching; asking the user to run Install.bat");
+        if (g_lf) fclose(g_lf);
+        MessageBoxA(nullptr,
+            "NFS Underground GVR is not fully set up on this PC.\n\n"
+            "Microsoft .NET Framework 1.1 - which the game needs - was not found.\n"
+            "It is installed for you by Install.bat (in this folder); copying the game\n"
+            "folder by hand does not install it.\n\n"
+            "Please run Install.bat once, then start the game again.",
+            "NFS Underground GVR - please run Install.bat", MB_ICONERROR | MB_OK);
+        return 1;
+    }
 
     // This install's database (<GvrRoot>\..\GvrPlus\game.db) for the shell and the race it
     // starts, which inherit our environment. It overrides the machine-wide GVRSQLITE_DB an

@@ -18,6 +18,13 @@ game.db from the registry PlusSchemaPath so it needs no env var. No MSDE / SQL S
 Provider is compiled on the target with the machine's .NET 1.1 csc (prebuilt binary
 is the fallback). Disc-based (asks for OEM Disc 1 / Disc 2) or -ExpandedPayloadRoot.
 
+Won't start? Two things to try. (1) Run Verify-NFSU-GVR.ps1 (right-click -> Run with
+PowerShell): it checks every file against manifest.sha256 and reports anything missing,
+truncated or corrupt, writing LOG\verify-report.txt. (2) GvrLaunch refuses to run if the game
+files or .NET Framework 1.1 are missing and tells you to run Install.bat - copying the folder
+by hand does not install .NET 1.1 (detected by its files, not the registry, which 1.1 does not
+populate like 2.0+).
+
 Diagnostics: set [Debug] Log=true in gvr_settings.ini and a LOG folder appears in the
 install root (no reboot, no admin; off by default). It collects gvrlaunch.log (a PC
 config dump - CPU, motherboard, GPU + driver version, OS build, RAM, display - then the

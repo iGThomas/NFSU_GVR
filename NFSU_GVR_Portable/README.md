@@ -90,8 +90,12 @@ self-contained.
    `Log=true`, start the game, let it fail **once**, then look in the **`LOG`** folder that
    appears next to `gvr_settings.ini`. It captures the launcher's timeline and, if the frontend
    or the race crashes, the faulting address — set it back to `false` afterwards.
-5. Still stuck? Open an [issue](https://github.com/iGThomas/NFSU_GVR/issues) with what you see,
-   and attach the zipped **`LOG`** folder from step 4.
+5. **Check your files are intact.** Run **`Verify-NFSU-GVR.ps1`** (right‑click → Run with
+   PowerShell). It compares every file against a known‑good install and reports anything
+   **missing, truncated, or corrupt** — a common cause of "won't start" after a bad copy or
+   download. It writes `LOG\verify-report.txt`.
+6. Still stuck? Open an [issue](https://github.com/iGThomas/NFSU_GVR/issues) with what you see,
+   and attach the zipped **`LOG`** folder (it now has the diagnostic logs *and* the verify report).
 
 ---
 
