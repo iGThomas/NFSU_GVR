@@ -4,6 +4,8 @@ Play the **GlobalVR arcade version of Need for Speed Underground** as a normal W
 the real arcade menus and races, Xbox / PlayStation controllers, free play, all in one folder.
 Your PC stays a normal PC — nothing takes over Windows.
 
+**💬 Need help or want to chat? Join the Discord community: https://discord.gg/h7tBkSMbeB**
+
 > [!IMPORTANT]
 > You need the original **Disc 1** and **Disc 2** (see *What you need* below). The download
 > contains the installer only; the game itself is installed from the discs.
@@ -94,8 +96,9 @@ self-contained.
    PowerShell). It compares every file against a known‑good install and reports anything
    **missing, truncated, or corrupt** — a common cause of "won't start" after a bad copy or
    download. It writes `LOG\verify-report.txt`.
-6. Still stuck? Open an [issue](https://github.com/iGThomas/NFSU_GVR/issues) with what you see,
-   and attach the zipped **`LOG`** folder (it now has the diagnostic logs *and* the verify report).
+6. Still stuck? Ask in the **[Discord community](https://discord.gg/h7tBkSMbeB)** or open an
+   [issue](https://github.com/iGThomas/NFSU_GVR/issues) — attach the zipped **`LOG`** folder
+   (it has the diagnostic logs *and* the verify report).
 
 ---
 

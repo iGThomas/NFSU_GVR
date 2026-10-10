@@ -1,5 +1,11 @@
 # NFSU_GVR
 
+<p align="center">
+  <a href="https://discord.gg/h7tBkSMbeB"><img src="https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join the NFSU_GVR Discord"></a>
+</p>
+
+<p align="center"><b>Questions, help or just want to chat? <a href="https://discord.gg/h7tBkSMbeB">Join our Discord community</a>.</b></p>
+
 Run **Need for Speed Underground: GlobalVR Arcade Edition** as a normal Windows game — the real
 arcade menus and races, on SQLite instead of SQL Server, with Xbox / PlayStation controllers and
 free play, installed into one folder of your choice.
